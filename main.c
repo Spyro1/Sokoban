@@ -8,6 +8,7 @@
     #include <windows.h>
 #endif
 
+
 /* == Adatstruktúrák == */
 
 typedef struct position{
