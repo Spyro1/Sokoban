@@ -3,27 +3,21 @@
 #include <stdbool.h>
 #include <dirent.h>
 #include "econio.h"
+#include "main.h"
+#include "datatypes.h"
+#include "datapath.h"
 
 #ifdef _WIN32
     #include <windows.h>
 #endif
 
-
-/* == Adatstruktúrák == */
-
-typedef struct position{
-    int x, y;
-} pos;
-typedef enum object { PLAYER, AIR, WALL, BOX, TARGET, EMPTY } object;
-
-
 /* == Konstansok == */
 
-char const chrPlayer[] = "◎",
+char const chrPlayer[] = "◉", //◎,
            chrPlyerOnTarget[] = "◉",
            chrWall[] = "█",
            chrTarget[] = "◈",
-           chrBox[] = "⊠",
+           chrBox[] = "▢", //◾"//"◽""⊠",
            chrBoxOnTarget[] = "▣";
 int const colorPlayer = COL_CYAN,
           colorPlayerOnTarget = COL_BLUE,
@@ -35,17 +29,6 @@ int const colorPlayer = COL_CYAN,
           minDificulty = 1;
 
 
-
-
-
-// Függvények
-void MainScreen(int *selectedDificulty, int *selectedLevel, char *filename[]);
-void PrintMap(char const **map, int width, int height);
-void ReadXSBFile(char const filename[], char ***map);
-int ToIndex(pos p);
-pos ToPos(int index);
-
-
 int main() {
     #ifdef _WIN32
         SetConsoleOutputCP(CP_UTF8);
@@ -54,19 +37,19 @@ int main() {
     // == Változók ==
     int totalWidth = 25,  // Szélesség
         totalHeight = 25; // Magasság
-    pos playerPos; // A Játékos poziciója
+    Point playerPos; // A Játékos poziciója
 
     // Főképernyő kiiratása és Szint választás
     int selectedDificulty = 1,
         selectedLevel = 1;
-    char selectedLevelFileName[100];
-    MainScreen(&selectedDificulty, &selectedLevel, &selectedLevelFileName);
+    Player *player1;
+    MainScreen(&selectedDificulty, &selectedLevel, &player1);
 
     char **map; // = (char*)malloc(totalHeight * totalWidth * sizeof(char)); // Ez lesz a dinamikus tömb ami a pályát tárolja
-    ReadXSBFile(selectedLevelFileName, &map);
+    //ReadXSBFile(selectedLevelFileName, &map);
     return 0;
 }
-void MainScreen(int *selectedDificulty, int *selectedLevel, char *filename[]){
+void MainScreen(int *selectedPlayer, int *selectedLevel, Player **players){
     // CÍM Kiírása
     /*printf("\n"
            "#   _______  _______  ___   _  _______  _______  _______  __    _ \n"
@@ -97,65 +80,132 @@ void MainScreen(int *selectedDificulty, int *selectedLevel, char *filename[]){
     printf("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n");
 
     econio_textcolor(COL_LIGHTCYAN);
-    econio_textbackground(COL_RESET);
-    econio_gotoxy(12,8);
-    printf("NEHÉZSÉG: ");
+    //econio_textbackground(COL_RESET);
 
-    econio_gotoxy(16,20); printf("↑");
+    econio_gotoxy(16,20); printf("↑    ");
     econio_gotoxy(3,21); printf("Navigálás: ← ↓ →  ↲");
 
+    // Menü Változók
     int key = -1;
-    enum State { exit, choseDificulty, choseLevel, startLvl};
-    enum State state = choseDificulty;
+    bool displayFirst = true;
+    bool runMenu = true;
+    int option = 0;
+    int numOfPlayers = 0; // !!!!!!!!!!!!!!!!!!!!!!
+    enum State { exit, chosePlayer, choseLevel, startLvl};
+    enum State state = chosePlayer;
 
     econio_rawmode();
     // Nehézség kiválasztása
-    while(state != startLvl){
+    while(runMenu){
+        // Lenyomott billentyű kiértékelése
         switch (key){
             case KEY_ESCAPE:
-                state--;
+            case KEY_BACKSPACE:
+                state--; // Módváltás
+                displayFirst = true;
+                option = 0;
                 break;
             case KEY_ENTER:
-                state++;
+                if (state == exit && option == 0) { runMenu = false; }
+                state++; // Módváltás
+                displayFirst = true;
+                option = 0;
                 break;
             case KEY_RIGHT:
-                if (state == choseDificulty && *selectedDificulty < maxDificulty) (*selectedDificulty)++;
+                //if (state == choseDificulty && *selectedPlayer < maxDificulty) (*selectedPlayer)++;
+                if (state == exit && option == 0) option = 1;
                 break;
             case KEY_LEFT:
-                if (state == choseDificulty && *selectedDificulty > minDificulty) (*selectedDificulty)--;
+                //if (state == choseDificulty && *selectedPlayer > minDificulty) (*selectedPlayer)--;
+                if (state == exit && option == 1) option = 0;
                 break;
             case KEY_UP:
-
+                if (state == chosePlayer && *selectedPlayer > 0) (*selectedPlayer)--;
                 break;
-
             case KEY_DOWN:
-
+                if (state == chosePlayer && *selectedPlayer < numOfPlayers-1) (*selectedPlayer)++;
                 break;
         }
-        // Display Dificulty Selecter
-        if (state == choseDificulty){
-            econio_gotoxy(23,8);
-            for (int i = 0; i < 16; i++){
-                // Kiválasztott szint kiemelése
-                if (*selectedDificulty == i+1){
-                    econio_textcolor(COL_BLUE);
-                    econio_textbackground(COL_LIGHTCYAN);
+        // Képernyőre írás a múd szerint
+        switch (state) {
+            case exit: {
+                char _x = 25, _y = 8;
+                if (displayFirst) {
+                    displayFirst = false;
+                    ClearScreenSection(0, 8, 60, 19, COL_RESET);
+                    econio_textcolor(COL_RED);
+                    econio_gotoxy(_x, _y+1);
+                    printf("╔════════════════════════╗\n");
+                    econio_gotoxy(_x, _y+2);
+                    printf("║    BIZTOSAN KILÉPSZ?   ║\n");
+                    econio_gotoxy(_x, _y+3);
+                    printf("║                        ║\n");
+                    econio_gotoxy(_x, _y+4);
+                    printf("║    IGEN        NEM     ║\n");
+                    econio_gotoxy(_x, _y+5);
+                    printf("╚════════════════════════╝\n");
+                }
+                if (option == 0) {
+                    econio_gotoxy(_x+5, _y+4);
+                    econio_textcolor(COL_WHITE); econio_textbackground(COL_LIGHTRED);
+                    printf("IGEN");
+                    econio_gotoxy(_x+17, _y+4);
+                    econio_textcolor(COL_RED); econio_textbackground(COL_RESET);
+                    printf("NEM");
                 }
                 else {
-                    econio_textcolor(COL_LIGHTCYAN);
+                    econio_gotoxy(_x+5, _y+4);
+                    econio_textcolor(COL_RED);
                     econio_textbackground(COL_RESET);
+                    printf("IGEN");
+                    econio_gotoxy(_x+17, _y+4);
+                    econio_textcolor(COL_WHITE);
+                    econio_textbackground(COL_LIGHTRED);
+                    printf("NEM");
                 }
-                printf("%d", i+1);
-                econio_textbackground(COL_RESET);
-                printf(" ");
-            }
+            }break;
+            case chosePlayer:
+                if (displayFirst){
+                    ClearScreenSection(0, 8, 60, 19, COL_RESET);
+                    displayFirst = false;
+                    econio_gotoxy(0,8);
+                    printf("JÁTÉKOSOK:\n");
+                    // Fájl beolvasása
+
+                    FILE* fp = fopen("src/players.txt", "r");
+                    if (fp == NULL) {
+                        printf("Nem lehet megnyitni a fájlt\n");
+                    }
+                    else {
+
+                    }
+                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    *players = NULL;
+                    char fajlnev[33], nev[45];
+                    int ret;
+                    while ((ret = fscanf(fp, "%s %[^\n]", fajlnev, nev)) == 2) {
+                        Player *uj = new_player(fajlnev, nev); // !!!!!!!!!!!!!
+                        uj->next = *players;
+                        *players = uj;
+                    }
+                    fclose(fp);
+                }
+
+                break;
+            case choseLevel:
+                ClearScreenSection(0, 8, 60, 19, COL_RESET);
+                break;
+            case startLvl:
+                break;
         }
-
-
-        key = econio_getch();
+        econio_gotoxy(0,0);
+        if (runMenu) key = econio_getch();
     }
 
-    econio_gotoxy(12,12);
+    ClearScreenSection(0, 8, 60, 19, COL_RESET);
+    printf("KILÉP: %d\n", state);
+
+    /*econio_gotoxy(12,12);
     printf("SZINT: ");
     key = -1;
 
@@ -166,23 +216,15 @@ void MainScreen(int *selectedDificulty, int *selectedLevel, char *filename[]){
     else {
         struct dirent *de;
         while ((de = readdir(d)) != NULL) {
-            if (de->d_name[0] == hex[*selectedDificulty]){
+            if (de->d_name[0] == hex[*selectedPlayer]){
                 printf("%s\n", de->d_name);
             }
         }
         closedir(d);
-    }
+    }*/
 
 //    econio_gotoxy(12,10);
-//    printf("Selected: %d", *selectedDificulty);
-
-    // Szint kiválasztása
-//    while (key != KEY_ENTER){
-//        if (key == KEY_DOWN && *selectedLevel < maxDificulty) (*selectedDificulty)++;
-//        if (key == KEY_UP && *selectedLevel > minDificulty) (*selectedDificulty)--;
-//    }
-
-
+//    printf("Selected: %d", *selectedPlayer);
 }
 
 void PrintMap(char const **map, int width, int height){
@@ -191,6 +233,17 @@ void PrintMap(char const **map, int width, int height){
             printf("%c", map[y][x]);
         }
         printf("\n");
+    }
+}
+void ClearScreenSection(int x1, int y1, int x2, int y2, EconioColor bgColor){
+    econio_gotoxy(x1,y1);
+    econio_textcolor(bgColor);
+    econio_textbackground(COL_RESET);
+    for (int i = 0; i < y2-y1; i++){
+        for(int j = 0; j < x2-x1; j++){
+            printf(" ");
+        }
+        econio_gotoxy(x1,y1+i);
     }
 }
 void ReadXSBFile(char const filename[], char ***map){
@@ -202,9 +255,9 @@ void ReadXSBFile(char const filename[], char ***map){
 //        szamok[y] = (char*) malloc(szelesseg * sizeof(char));
 
 }
-/*int ToIndex(pos p){
+/*int ToIndex(Point p){
     return p.x + p.y * totalWidth;
 }
-pos ToPos(int index){
-    return (pos){index % totalWidth, index / totalWidth};
+Point ToPos(int index){
+    return (Point){index % totalWidth, index / totalWidth};
 }*/
