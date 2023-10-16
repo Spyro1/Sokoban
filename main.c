@@ -26,24 +26,22 @@ char const chrPlayer[] = "◎",
            chrBox[] = "⊠",
            chrBoxOnTarget[] = "▣";
 int const colorPlayer = COL_CYAN,
+          colorPlayerOnTarget = COL_BLUE,
           colorBox = COL_BROWN,
-          colorWall = COL_LIGHTRED,
-          colorTarget = COL_GREEN,
+          colorBoxOnTarget = COL_LIGHTGREEN,
+          colorWall = COL_LIGHTGRAY,
+          colorTarget = COL_RED,
           maxDificulty = 16,
           minDificulty = 1;
 
 
-/* == Változók == */
 
-int totalWidth = 25,  // Szélesség
-    totalHeight = 25; // Magasság
-pos playerPos; // A Játékos poziciója
 
 
 // Függvények
-void PrintMainScreen(int *selectedDificulty, int *selectedLevel);
-void PrintMap(char map[]);
-void ReadXSBFile(char filename[]);
+void MainScreen(int *selectedDificulty, int *selectedLevel, char *filename[]);
+void PrintMap(char const **map, int width, int height);
+void ReadXSBFile(char const filename[], char ***map);
 int ToIndex(pos p);
 pos ToPos(int index);
 
@@ -52,15 +50,23 @@ int main() {
     #ifdef _WIN32
         SetConsoleOutputCP(CP_UTF8);
     #endif
-    // Főképernyő kiiratása és Szint választás
-    int selectedDificulty = 1, selectedLevel = 1;
-    PrintMainScreen(&selectedDificulty, &selectedLevel);
 
-    char *map = (char*)malloc(totalHeight * totalWidth * sizeof(char)); // Ez lesz a dinamikus tömb ami a pályát tárolja
-    ReadXSBFile(map);
+    // == Változók ==
+    int totalWidth = 25,  // Szélesség
+        totalHeight = 25; // Magasság
+    pos playerPos; // A Játékos poziciója
+
+    // Főképernyő kiiratása és Szint választás
+    int selectedDificulty = 1,
+        selectedLevel = 1;
+    char selectedLevelFileName[100];
+    MainScreen(&selectedDificulty, &selectedLevel, &selectedLevelFileName);
+
+    char **map; // = (char*)malloc(totalHeight * totalWidth * sizeof(char)); // Ez lesz a dinamikus tömb ami a pályát tárolja
+    ReadXSBFile(selectedLevelFileName, &map);
     return 0;
 }
-void PrintMainScreen(int *selectedDificulty, int *selectedLevel){
+void MainScreen(int *selectedDificulty, int *selectedLevel, char *filename[]){
     // CÍM Kiírása
     /*printf("\n"
            "#   _______  _______  ___   _  _______  _______  _______  __    _ \n"
@@ -89,42 +95,71 @@ void PrintMainScreen(int *selectedDificulty, int *selectedLevel){
            "       ███████  ██████  ██   ██  ██████  ██████  ██   ██ ██   ████ \n");
     econio_textcolor(COL_LIGHTBLUE);
     printf("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n");
+
     econio_textcolor(COL_LIGHTCYAN);
     econio_textbackground(COL_RESET);
     econio_gotoxy(12,8);
     printf("NEHÉZSÉG: ");
+
     econio_gotoxy(16,20); printf("↑");
     econio_gotoxy(3,21); printf("Navigálás: ← ↓ →  ↲");
 
     int key = -1;
+    enum State { exit, choseDificulty, choseLevel, startLvl};
+    enum State state = choseDificulty;
 
     econio_rawmode();
-    // Szint kiválasztása
-    while(key != KEY_ENTER){
-        if (key == KEY_RIGHT && *selectedDificulty < maxDificulty) (*selectedDificulty)++;
-        if (key == KEY_LEFT && *selectedDificulty > minDificulty) (*selectedDificulty)--;
-        econio_gotoxy(23,8);
-        for (int i = 0; i < 16; i++){
-            // Kiválasztott szint kiemelése
-            if (*selectedDificulty == i+1){
-                econio_textcolor(COL_BLUE);
-                econio_textbackground(COL_LIGHTCYAN);
-            }
-            else {
-                econio_textcolor(COL_LIGHTCYAN);
-                econio_textbackground(COL_RESET);
-            }
-            printf("%d", i+1);
-            econio_textbackground(COL_RESET);
-            printf(" ");
+    // Nehézség kiválasztása
+    while(state != startLvl){
+        switch (key){
+            case KEY_ESCAPE:
+                state--;
+                break;
+            case KEY_ENTER:
+                state++;
+                break;
+            case KEY_RIGHT:
+                if (state == choseDificulty && *selectedDificulty < maxDificulty) (*selectedDificulty)++;
+                break;
+            case KEY_LEFT:
+                if (state == choseDificulty && *selectedDificulty > minDificulty) (*selectedDificulty)--;
+                break;
+            case KEY_UP:
+
+                break;
+
+            case KEY_DOWN:
+
+                break;
         }
+        // Display Dificulty Selecter
+        if (state == choseDificulty){
+            econio_gotoxy(23,8);
+            for (int i = 0; i < 16; i++){
+                // Kiválasztott szint kiemelése
+                if (*selectedDificulty == i+1){
+                    econio_textcolor(COL_BLUE);
+                    econio_textbackground(COL_LIGHTCYAN);
+                }
+                else {
+                    econio_textcolor(COL_LIGHTCYAN);
+                    econio_textbackground(COL_RESET);
+                }
+                printf("%d", i+1);
+                econio_textbackground(COL_RESET);
+                printf(" ");
+            }
+        }
+
+
         key = econio_getch();
     }
-//    econio_gotoxy(12,10);
-//    printf("Selected: %d", *selectedDificulty);
+
+    econio_gotoxy(12,12);
+    printf("SZINT: ");
+    key = -1;
 
     char hex[16] = "0123456789ABCDEF";
-
     // Szintek beolvasása
     DIR *d = opendir("./levels/");  // melyik mappa
     if (d == NULL) { perror("Nem sikerült megnyitni"); }
@@ -132,27 +167,44 @@ void PrintMainScreen(int *selectedDificulty, int *selectedLevel){
         struct dirent *de;
         while ((de = readdir(d)) != NULL) {
             if (de->d_name[0] == hex[*selectedDificulty]){
-
                 printf("%s\n", de->d_name);
             }
         }
         closedir(d);
     }
+
+//    econio_gotoxy(12,10);
+//    printf("Selected: %d", *selectedDificulty);
+
+    // Szint kiválasztása
+//    while (key != KEY_ENTER){
+//        if (key == KEY_DOWN && *selectedLevel < maxDificulty) (*selectedDificulty)++;
+//        if (key == KEY_UP && *selectedLevel > minDificulty) (*selectedDificulty)--;
+//    }
+
+
 }
 
-void PrintMap(char *map){
-    for(int i = 0; i < totalWidth*totalHeight; i++)
-    {
-        if (i % totalWidth == 0) printf("\n");
-        printf("%c", map[i]);
+void PrintMap(char const **map, int width, int height){
+    for(int x = 0; x < width; x++){
+        for(int y = 0; y < height; y++){
+            printf("%c", map[y][x]);
+        }
+        printf("\n");
     }
 }
-void ReadXSBFile(char filename[]){
+void ReadXSBFile(char const filename[], char ***map){
+//    char **newmap;
+//    FILE* fp = fopen(filename, "r");
+// foglalás
+//    newmap = (char**) malloc(magassag * sizeof(char*));
+//    for (int y = 0; y < magassag; ++y)
+//        szamok[y] = (char*) malloc(szelesseg * sizeof(char));
 
 }
-int ToIndex(pos p){
+/*int ToIndex(pos p){
     return p.x + p.y * totalWidth;
 }
 pos ToPos(int index){
     return (pos){index % totalWidth, index / totalWidth};
-}
+}*/
