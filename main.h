@@ -7,7 +7,7 @@
 #include "datatypes.h"
 
 // Függvények
-void MainScreen(int *selectedPlayer, int *selectedLevel, Player **players);
+void MainScreen(int *selectedPlayer, int *selectedLevel, Player **currentPlayer);
 
 void PrintMap(char const **map, int width, int height);
 

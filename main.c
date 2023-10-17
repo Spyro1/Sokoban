@@ -42,14 +42,14 @@ int main() {
     // Főképernyő kiiratása és Szint választás
     int selectedDificulty = 1,
         selectedLevel = 1;
-    Player *player1;
-    MainScreen(&selectedDificulty, &selectedLevel, &player1);
+    Player *currentPlayer = NULL;
+    MainScreen(&selectedDificulty, &selectedLevel, &currentPlayer);
 
     char **map; // = (char*)malloc(totalHeight * totalWidth * sizeof(char)); // Ez lesz a dinamikus tömb ami a pályát tárolja
     //ReadXSBFile(selectedLevelFileName, &map);
     return 0;
 }
-void MainScreen(int *selectedPlayer, int *selectedLevel, Player **players){
+void MainScreen(int *selectedPlayer, int *selectedLevel, Player **currentPlayer){
     // CÍM Kiírása
     /*printf("\n"
            "#   _______  _______  ___   _  _______  _______  _______  __    _ \n"
@@ -176,19 +176,23 @@ void MainScreen(int *selectedPlayer, int *selectedLevel, Player **players){
                     if (fp == NULL) {
                         printf("Nem lehet megnyitni a fájlt\n");
                     }
-                    else {
-
+                    else { // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        //*currentPlayer = NULL;
+                        char name[50];
+                        int completedLevels, totalMoves, averageMoves;
+                        int ret;
+                        while ((ret = fscanf(fp, "%s;%d;%d;%d[^\n]", name, completedLevels, totalMoves, averageMoves)) == 2) {
+                            Player *newPlayer = { name, completedLevels, totalMoves, averageMoves };//new_player(fajlnev, nev); // !!!!!!!!!!!!!
+                            if (currentPlayer != NULL) (*currentPlayer)->next = newPlayer;
+                            newPlayer->back = currentPlayer;
+                            newPlayer->next = NULL;
+                            *currentPlayer = newPlayer;
+                        }
+                        fclose(fp);
                     }
-                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    *players = NULL;
-                    char fajlnev[33], nev[45];
-                    int ret;
-                    while ((ret = fscanf(fp, "%s %[^\n]", fajlnev, nev)) == 2) {
-                        Player *uj = new_player(fajlnev, nev); // !!!!!!!!!!!!!
-                        uj->next = *players;
-                        *players = uj;
-                    }
-                    fclose(fp);
+                }
+                while((*currentPlayer)->next != NULL){
+                    // kiirás
                 }
 
                 break;

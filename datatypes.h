@@ -19,7 +19,7 @@ typedef struct player {
     int completedLevels,
             totalMoves,
             averageMoves;
-    struct Player *next;
+    struct Player *next, *back;
 } Player;
 
 
