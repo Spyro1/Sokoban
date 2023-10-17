@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <dirent.h>
+#include <string.h>
 #include "main.h"
 #include "econio.h"
 #include "datatypes.h"
@@ -47,6 +48,10 @@ int main() {
 
     char **map; // = (char*)malloc(totalHeight * totalWidth * sizeof(char)); // Ez lesz a dinamikus tömb ami a pályát tárolja
     //ReadXSBFile(selectedLevelFileName, &map);
+
+
+     // Free up allocated memory
+    FreePlayerList(currentPlayer);
     return 0;
 }
 void MainScreen(int *selectedPlayer, int *selectedLevel, Player **PlayerList){
@@ -129,7 +134,7 @@ void MainScreen(int *selectedPlayer, int *selectedLevel, Player **PlayerList){
         // Képernyőre írás a múd szerint
         char _x, _y;
         switch (state) {
-            case exit: {
+            case exit:
                 _x = 25, _y = 8;
                 if (displayFirst) {
                     displayFirst = false;
@@ -166,21 +171,31 @@ void MainScreen(int *selectedPlayer, int *selectedLevel, Player **PlayerList){
                 }
                 break;
             case chosePlayer:
-                 _x = 0;
+                 _x = 12;
                 if (displayFirst){
                     ClearScreenSection(0, 8, 60, 19, COL_RESET);
                     displayFirst = false;
-                    econio_gotoxy(_x,8);
+                    econio_gotoxy(_x+10,8);
                     printf("JÁTÉKOSOK:\n");
                     // Fájl beolvasása
-                    ReadPlayerTxtFile(&PlayerList);
-                    }
+                    ReadPlayerTxtFile(PlayerList);
                 }
-                econio_gotoxy(_x,9);
-                while((*PlayerList)->next != NULL){
+                int item = 0;
+                while((*PlayerList) != NULL){
                     // kiirás
-                    printf("Jatékos: %s, Szintek: %d\n", (*PlayerList)->name, (*PlayerList)->completedLevels);
+                    econio_gotoxy(_x,9+item);
+                    if (item == option){
+                        econio_textcolor(COL_DARKGRAY);
+                        econio_textbackground(COL_LIGHTBLUE);
+                    }
+                    else {
+                        econio_textcolor(COL_CYAN);
+                        econio_textbackground(COL_RESET);
+                    }
+                    printf("%s Teljesített szintek:  %d", (*PlayerList)->name, (*PlayerList)->completedLevels);
                     (*PlayerList) = (*PlayerList)->next;
+                    item++;
+                    econio_textbackground(COL_RESET);
                 }
                 break;
             case choseLevel:
@@ -218,19 +233,41 @@ void MainScreen(int *selectedPlayer, int *selectedLevel, Player **PlayerList){
 //    printf("Selected: %d", *selectedPlayer);
 }
 void ReadPlayerTxtFile(Player **players) {
+    /*DIR *folder;
+    struct dirent *entry;
+    int files = 0;
+
+    folder = opendir(".");
+    if(folder == NULL)
+    {
+        perror("Unable to read directory");
+    }
+
+    while( (entry=readdir(folder)) )
+    {
+        files++;
+        printf("File %3d: %s\n",
+               files,
+               entry->d_name
+        );
+    }
+
+    closedir(folder);*/
     FILE *fp;
-    fp = fopen("./src/players.txt", "rt");
+    fp = fopen("./players.txt", "r");
     if (fp == NULL) { // ???? Miért nem nyitja meg a fájlt ????
         printf("Nem lehet megnyitni a fájlt\n");
     } else {
+        char inputLine[100];
         char name[50];
         int completedLevels, totalMoves, averageMoves;
-        int numberOfReadElements;
-        while ((numberOfReadElements = fscanf(fp, "%s;%d;%d;%d[^\n]", name, completedLevels, totalMoves, averageMoves)) == 4) {
+
+        while (fgets(inputLine, 100, fp)) {
+            sscanf(inputLine, "%50[^;];%d;%d;%d", name, &completedLevels,&totalMoves,&averageMoves);
             Player *newPlayer = MakePlayer(name, completedLevels, totalMoves, averageMoves);
-            if (players != NULL) (*players)->next = newPlayer;
-            newPlayer->back = *players;
-            newPlayer->next = NULL;
+            if (*players != NULL) (*players)->back = newPlayer;
+            newPlayer->next = *players;
+            newPlayer->back = NULL;
             *players = newPlayer;
         }
     }
