@@ -8,10 +8,17 @@
 
 // Függvények
 void MainScreen(int *selectedPlayer, int *selectedLevel, Player **PlayerList);
-void ReadPlayerTxtFile(Player **players, int *numOfPlayers);
+
+void ReadPlayerTxtFile(Player **playerList, int *numOfPlayers);
+
+void AddPlayer(Player *newPlayer, Player **playerList, int *numOfPlayers);
+
 Player *MakePlayer(char name[], int completedLevels, int totalMoves, int averageMoves);
+
 void FreePlayerList(Player *playerList);
+
 void PrintPlayerList(Player *playerList, int numOfPlayers, int selectedPlayerIndex, Point start);
+
 void PrintMap(char const **map, int width, int height);
 
 void ReadXSBFile(char const filename[], char ***map);

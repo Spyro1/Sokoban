@@ -27,7 +27,8 @@ int const colorPlayer = COL_CYAN,
           colorWall = COL_LIGHTGRAY,
           colorTarget = COL_RED,
           maxDificulty = 16,
-          minDificulty = 1;
+          minDificulty = 1,
+          nameLenght = 20;
 
 
 int main() {
@@ -56,23 +57,6 @@ int main() {
 }
 void MainScreen(int *selectedPlayer, int *selectedLevel, Player **PlayerList){
     // CÍM Kiírása
-    /*printf("\n"
-           "#   _______  _______  ___   _  _______  _______  _______  __    _ \n"
-           "#  |       ||       ||   | | ||       ||  _    ||   _   ||  |  | |\n"
-           "#  |  _____||   _   ||   |_| ||   _   || |_|   ||  |_|  ||   |_| |\n"
-           "#  | |_____ |  | |  ||      _||  | |  ||       ||       ||       |\n"
-           "#  |_____  ||  |_|  ||     |_ |  |_|  ||  _   | |       ||  _    |\n"
-           "#   _____| ||       ||    _  ||       || |_|   ||   _   || | |   |\n"
-           "#  |_______||_______||___| |_||_______||_______||__| |__||_|  |__|");*/
-    /*printf("\n"
-           " ________  ________  ___  __    ________  ________  ________  ________      \n"
-           "|\\   ____\\|\\   __  \\|\\  \\|\\  \\ |\\   __  \\|\\   __  \\|\\   __  \\|\\   ___  \\    \n"
-           "\\ \\  \\___|\\ \\  \\|\\  \\ \\  \\/  /|\\ \\  \\|\\  \\ \\  \\|\\ /\\ \\  \\|\\  \\ \\  \\\\ \\  \\   \n"
-           " \\ \\_____  \\ \\  \\\\\\  \\ \\   ___  \\ \\  \\\\\\  \\ \\   __  \\ \\   __  \\ \\  \\\\ \\  \\  \n"
-           "  \\|____|\\  \\ \\  \\\\\\  \\ \\  \\\\ \\  \\ \\  \\\\\\  \\ \\  \\|\\  \\ \\  \\ \\  \\ \\  \\\\ \\  \\ \n"
-           "    ____\\_\\  \\ \\_______\\ \\__\\\\ \\__\\ \\_______\\ \\_______\\ \\__\\ \\__\\ \\__\\\\ \\__\\\n"
-           "   |\\_________\\|_______|\\|__| \\|__|\\|_______|\\|_______|\\|__|\\|__|\\|__| \\|__|\n"
-           "   \\|_________|\n\n\n");*/
     econio_textcolor(COL_LIGHTBLUE);
     printf("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n");
     econio_textcolor(COL_CYAN);
@@ -83,10 +67,9 @@ void MainScreen(int *selectedPlayer, int *selectedLevel, Player **PlayerList){
            "       ███████  ██████  ██   ██  ██████  ██████  ██   ██ ██   ████ \n");
     econio_textcolor(COL_LIGHTBLUE);
     printf("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n");
-
-    econio_textcolor(COL_LIGHTCYAN);
     //econio_textbackground(COL_RESET);
 
+    econio_textcolor(COL_LIGHTCYAN);
     econio_gotoxy(16,20); printf("↑    ");
     econio_gotoxy(3,21); printf("Navigálás: ← ↓ →  ↲");
 
@@ -96,7 +79,7 @@ void MainScreen(int *selectedPlayer, int *selectedLevel, Player **PlayerList){
     bool runMenu = true;
     int option = 0;
     int numOfPlayers = 0; // !!!!!!!!!!!!!!!!!!!!!!
-    enum State { exit, chosePlayer, choseLevel, startLvl};
+    enum State { exitApp, chosePlayer, choseLevel, startLvl};
     enum State state = chosePlayer;
 
     econio_rawmode();
@@ -111,19 +94,17 @@ void MainScreen(int *selectedPlayer, int *selectedLevel, Player **PlayerList){
                 option = 0;
                 break;
             case KEY_ENTER:
-                if (state == exit && option == 0) { runMenu = false; }
+                if (state == exitApp && option == 0) { runMenu = false; }
                 if (state < startLvl) state++; // Módváltás
                 displayFirst = true;
                 option = 0;
                 *PlayerList = NULL;
                 break;
             case KEY_RIGHT:
-                //if (state == choseDificulty && *selectedPlayer < maxDificulty) (*selectedPlayer)++;
-                if (state == exit && option == 0) option = 1;
+                if (state == exitApp && option == 0) option = 1;
                 break;
             case KEY_LEFT:
-                //if (state == choseDificulty && *selectedPlayer > minDificulty) (*selectedPlayer)--;
-                if (state == exit && option == 1) option = 0;
+                if (state == exitApp && option == 1) option = 0;
                 break;
             case KEY_UP:
                 if (state == chosePlayer && *selectedPlayer > 0) (*selectedPlayer)--;
@@ -132,10 +113,10 @@ void MainScreen(int *selectedPlayer, int *selectedLevel, Player **PlayerList){
                 if (state == chosePlayer && *selectedPlayer < numOfPlayers-1) (*selectedPlayer)++;
                 break;
         }
-        // Képernyőre írás a múd szerint
+        // Képernyőre írás a mód szerint
         char _x, _y;
         switch (state) {
-            case exit:
+            case exitApp:
                 _x = 25, _y = 8;
                 if (displayFirst) {
                     displayFirst = false;
@@ -177,11 +158,12 @@ void MainScreen(int *selectedPlayer, int *selectedLevel, Player **PlayerList){
                     ClearScreenSection(0, 8, 60, 19, COL_RESET);
                     displayFirst = false;
                     econio_gotoxy(_x+10,8);
+                    econio_textcolor(COL_LIGHTCYAN);
                     printf("JÁTÉKOSOK:\n");
                     // Fájl beolvasása
                     ReadPlayerTxtFile(PlayerList, &numOfPlayers);
                 }
-                PrintPlayerList(*PlayerList,numOfPlayers,option,(Point) {_x,_y});
+                PrintPlayerList(*PlayerList, numOfPlayers,*selectedPlayer,(Point) {_x,_y});
 
                 break;
             case choseLevel:
@@ -194,6 +176,7 @@ void MainScreen(int *selectedPlayer, int *selectedLevel, Player **PlayerList){
         if (runMenu) key = econio_getch();
     }
 
+    econio_normalmode();
     ClearScreenSection(0, 8, 60, 19, COL_RESET);
     printf("KILÉP: %d\n", state);
 
@@ -218,7 +201,7 @@ void MainScreen(int *selectedPlayer, int *selectedLevel, Player **PlayerList){
 //    econio_gotoxy(12,10);
 //    printf("Selected: %d", *selectedPlayer);
 }
-void ReadPlayerTxtFile(Player **players, int *numOfPlayers) {
+void ReadPlayerTxtFile(Player **playerList, int *numOfPlayers) {
     /*DIR *folder;
     struct dirent *entry;
     int files = 0;
@@ -246,34 +229,38 @@ void ReadPlayerTxtFile(Player **players, int *numOfPlayers) {
         printf("Nem lehet megnyitni a fájlt\n");
     }
     else {
-        char inputLine[100], name[50];
+        char inputLine[30], name[nameLenght];
         int completedLevels, totalMoves, averageMoves;
 
-        while (fgets(inputLine, 100, fp)) {
-            sscanf(inputLine, "%50[^;];%d;%d;%d", name, &completedLevels,&totalMoves,&averageMoves);
-            Player *newPlayer = MakePlayer(name, completedLevels, totalMoves, averageMoves);
-            if (*players != NULL) (*players)->back = newPlayer;
-            newPlayer->next = *players;
-            newPlayer->back = NULL;
-            *players = newPlayer;
-            (*numOfPlayers)++;
+        while (fgets(inputLine, 30, fp)) {
+            // %20 helyére a (int const) nameLenght értékét mindig
+            if (sscanf(inputLine, "%20[^;];%d;%d;%d", name, &completedLevels,&totalMoves,&averageMoves) == 4){
+                AddPlayer(MakePlayer(name, completedLevels, totalMoves, averageMoves), playerList, numOfPlayers);
+            }
         }
     }
     fclose(fp);
+}
+void AddPlayer(Player *newPlayer, Player **playerList, int *numOfPlayers){
+    if (*playerList != NULL) (*playerList)->back = (struct Player*) newPlayer;
+    newPlayer->next = (struct Player*) *playerList;
+    newPlayer->back = NULL;
+    *playerList = newPlayer;
+    (*numOfPlayers)++;
 }
 Player *MakePlayer(char name[], int completedLevels, int totalMoves, int averageMoves){
     Player *uj = (Player *) malloc(sizeof(Player));
     strcpy(uj->name, name);
     uj->completedLevels = completedLevels;
     uj->totalMoves = totalMoves;
-    uj->averageMoves;
+    uj->averageMoves = averageMoves;
     uj->next = NULL;
     uj->back = NULL;
     return uj;
 }
 void FreePlayerList(Player *playerList){
     while (playerList != NULL) {
-        Player *temp = playerList->next;
+        Player *temp = (Player*) playerList->next;
         free(playerList);
         playerList = temp;
     }
@@ -284,15 +271,15 @@ void PrintPlayerList(Player *playerList, int numOfPlayers, int selectedPlayerInd
         // kiirás !!!!!!!!!!!!!!!!!!
         econio_gotoxy(start.x, 9 + currentIndex);
         if (currentIndex == selectedPlayerIndex){
-            econio_textcolor(COL_DARKGRAY);
-            econio_textbackground(COL_LIGHTBLUE);
+            econio_textcolor(COL_BLUE);
+            econio_textbackground(COL_LIGHTCYAN);
         }
         else {
-            econio_textcolor(COL_CYAN);
+            econio_textcolor(COL_LIGHTCYAN);
             econio_textbackground(COL_RESET);
         }
-        printf("%s Teljesített szintek:  %d", playerList->name, playerList->completedLevels);
-        playerList = playerList->next;
+        printf("%s,  Szint: %d, Átlag: %d  lépés", playerList->name, playerList->completedLevels, playerList->averageMoves);
+        playerList = (Player*) playerList->next;
         currentIndex++;
         econio_textbackground(COL_RESET);
     }
@@ -325,9 +312,3 @@ void ReadXSBFile(char const filename[], char ***map){
 //        szamok[y] = (char*) malloc(szelesseg * sizeof(char));
 
 }
-/*int ToIndex(Point p){
-    return p.x + p.y * totalWidth;
-}
-Point ToPos(int index){
-    return (Point){index % totalWidth, index / totalWidth};
-}*/

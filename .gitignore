@@ -52,5 +52,6 @@ Mkfile.old
 dkms.conf
 
 .idea/
-cmake-build-*
+cmake-build-debug/*
+!cmake-build-debug/players.txt
 #levels/
