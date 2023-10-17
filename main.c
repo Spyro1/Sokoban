@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <dirent.h>
-#include "econio.h"
 #include "main.h"
+#include "econio.h"
 #include "datatypes.h"
 #include "datapath.h"
 
@@ -49,7 +49,7 @@ int main() {
     //ReadXSBFile(selectedLevelFileName, &map);
     return 0;
 }
-void MainScreen(int *selectedPlayer, int *selectedLevel, Player **currentPlayer){
+void MainScreen(int *selectedPlayer, int *selectedLevel, Player **PlayerList){
     // CÍM Kiírása
     /*printf("\n"
            "#   _______  _______  ___   _  _______  _______  _______  __    _ \n"
@@ -101,13 +101,13 @@ void MainScreen(int *selectedPlayer, int *selectedLevel, Player **currentPlayer)
         switch (key){
             case KEY_ESCAPE:
             case KEY_BACKSPACE:
-                state--; // Módváltás
+                if (state > 0) state--; // Módváltás
                 displayFirst = true;
                 option = 0;
                 break;
             case KEY_ENTER:
                 if (state == exit && option == 0) { runMenu = false; }
-                state++; // Módváltás
+                if (state < startLvl) state++; // Módváltás
                 displayFirst = true;
                 option = 0;
                 break;
@@ -127,9 +127,10 @@ void MainScreen(int *selectedPlayer, int *selectedLevel, Player **currentPlayer)
                 break;
         }
         // Képernyőre írás a múd szerint
+        char _x, _y;
         switch (state) {
             case exit: {
-                char _x = 25, _y = 8;
+                _x = 25, _y = 8;
                 if (displayFirst) {
                     displayFirst = false;
                     ClearScreenSection(0, 8, 60, 19, COL_RESET);
@@ -163,38 +164,24 @@ void MainScreen(int *selectedPlayer, int *selectedLevel, Player **currentPlayer)
                     econio_textbackground(COL_LIGHTRED);
                     printf("NEM");
                 }
-            }break;
+                break;
             case chosePlayer:
+                 _x = 0;
                 if (displayFirst){
                     ClearScreenSection(0, 8, 60, 19, COL_RESET);
                     displayFirst = false;
-                    econio_gotoxy(0,8);
+                    econio_gotoxy(_x,8);
                     printf("JÁTÉKOSOK:\n");
                     // Fájl beolvasása
-
-                    FILE* fp = fopen("src/players.txt", "r");
-                    if (fp == NULL) {
-                        printf("Nem lehet megnyitni a fájlt\n");
-                    }
-                    else { // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        //*currentPlayer = NULL;
-                        char name[50];
-                        int completedLevels, totalMoves, averageMoves;
-                        int ret;
-                        while ((ret = fscanf(fp, "%s;%d;%d;%d[^\n]", name, completedLevels, totalMoves, averageMoves)) == 2) {
-                            Player *newPlayer = { name, completedLevels, totalMoves, averageMoves };//new_player(fajlnev, nev); // !!!!!!!!!!!!!
-                            if (currentPlayer != NULL) (*currentPlayer)->next = newPlayer;
-                            newPlayer->back = currentPlayer;
-                            newPlayer->next = NULL;
-                            *currentPlayer = newPlayer;
-                        }
-                        fclose(fp);
+                    ReadPlayerTxtFile(&PlayerList);
                     }
                 }
-                while((*currentPlayer)->next != NULL){
+                econio_gotoxy(_x,9);
+                while((*PlayerList)->next != NULL){
                     // kiirás
+                    printf("Jatékos: %s, Szintek: %d\n", (*PlayerList)->name, (*PlayerList)->completedLevels);
+                    (*PlayerList) = (*PlayerList)->next;
                 }
-
                 break;
             case choseLevel:
                 ClearScreenSection(0, 8, 60, 19, COL_RESET);
@@ -230,7 +217,42 @@ void MainScreen(int *selectedPlayer, int *selectedLevel, Player **currentPlayer)
 //    econio_gotoxy(12,10);
 //    printf("Selected: %d", *selectedPlayer);
 }
-
+void ReadPlayerTxtFile(Player **players) {
+    FILE *fp;
+    fp = fopen("./src/players.txt", "rt");
+    if (fp == NULL) { // ???? Miért nem nyitja meg a fájlt ????
+        printf("Nem lehet megnyitni a fájlt\n");
+    } else {
+        char name[50];
+        int completedLevels, totalMoves, averageMoves;
+        int numberOfReadElements;
+        while ((numberOfReadElements = fscanf(fp, "%s;%d;%d;%d[^\n]", name, completedLevels, totalMoves, averageMoves)) == 4) {
+            Player *newPlayer = MakePlayer(name, completedLevels, totalMoves, averageMoves);
+            if (players != NULL) (*players)->next = newPlayer;
+            newPlayer->back = *players;
+            newPlayer->next = NULL;
+            *players = newPlayer;
+        }
+    }
+    fclose(fp);
+}
+Player *MakePlayer(char name[], int completedLevels, int totalMoves, int averageMoves){
+    Player *uj = (Player *) malloc(sizeof(Player));
+    strcpy(uj->name, name);
+    uj->completedLevels = completedLevels;
+    uj->totalMoves = totalMoves;
+    uj->averageMoves;
+    uj->next = NULL;
+    uj->back = NULL;
+    return uj;
+}
+void FreePlayerList(Player *playerlist){
+    while (playerlist != NULL) {
+        Player *temp = playerlist->next;
+        free(playerlist);
+        playerlist = temp;
+    }
+}
 void PrintMap(char const **map, int width, int height){
     for(int x = 0; x < width; x++){
         for(int y = 0; y < height; y++){

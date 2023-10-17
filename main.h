@@ -7,8 +7,9 @@
 #include "datatypes.h"
 
 // Függvények
-void MainScreen(int *selectedPlayer, int *selectedLevel, Player **currentPlayer);
-
+void MainScreen(int *selectedPlayer, int *selectedLevel, Player **PlayerList);
+void ReadPlayerTxtFile(Player **players);
+Player *MakePlayer(char name[], int completedLevels, int totalMoves, int averageMoves);
 void PrintMap(char const **map, int width, int height);
 
 void ReadXSBFile(char const filename[], char ***map);
