@@ -11,4 +11,5 @@ add_executable(sokoban2 main.c
         datatypes.c
         datatypes.h
         game.h
+        debugmalloc.h
 )

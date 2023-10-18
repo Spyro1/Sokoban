@@ -1,3 +1,4 @@
+#include "debugmalloc.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -6,21 +7,12 @@
 #include "main.h"
 #include "econio.h"
 #include "datatypes.h"
-#include "datapath.h"
 
 #ifdef _WIN32
     #include <windows.h>
 #endif
 
-int const colorPlayer = COL_CYAN,
-          colorPlayerOnTarget = COL_BLUE,
-          colorBox = COL_BROWN,
-          colorBoxOnTarget = COL_LIGHTGREEN,
-          colorWall = COL_LIGHTGRAY,
-          colorTarget = COL_RED,
-          maxDificulty = 16,
-          minDificulty = 1,
-          nameLenght = 20;
+int const nameLenght = 20;
 
 
 int main() {
@@ -40,13 +32,23 @@ int main() {
     char selectedLevelFileName[50];
     MainScreen(&currentPlayer, selectedLevelFileName);
 
-    char **map; // = (char*)malloc(totalHeight * totalWidth * sizeof(char)); // Ez lesz a dinamikus tömb ami a pályát tárolja
+    //char **map; // = (char*)malloc(totalHeight * totalWidth * sizeof(char)); // Ez lesz a dinamikus tömb ami a pályát tárolja
     //
     //ReadXSBFile(selectedLevelFileName, &map);
 
-
+    //    Debugmalloc
+    econio_clrscr();
+    econio_gotoxy(0,0);
+    econio_textbackground(COL_RESET);
+    econio_textcolor(COL_RED);
+    debugmalloc_dump();
      // Free up allocated memory
-    FreePlayerList(currentPlayer);
+    FreePlayerList(&currentPlayer);
+    // Debug after Free
+    econio_textbackground(COL_RESET);
+    econio_textcolor(COL_GREEN);
+    debugmalloc_dump();
+    scanf("%d", &selectedPlayer);
     return 0;
 }
 void MainScreen(Player **PlayerList, char *selectedLevelFileName){
@@ -172,6 +174,8 @@ void MainScreen(Player **PlayerList, char *selectedLevelFileName){
                     ReadPlayerTxtFile(PlayerList, &numOfPlayers);
                 }
                 PrintPlayerList(*PlayerList, numOfPlayers,selectedPlayer,(Point) {_x,_y});
+                    econio_gotoxy(0,18);
+                    debugmalloc_dump();
                 break;
             case choseLevel:
                 _x = 12; _y = 9;
@@ -256,11 +260,11 @@ Player *MakePlayer(char name[], int completedLevels, int totalMoves, int average
     uj->back = NULL;
     return uj;
 }
-void FreePlayerList(Player *playerList){
+void FreePlayerList(Player **playerList){
     while (playerList != NULL) {
-        Player *temp = (Player*) playerList->next;
+        Player *temp = (Player*) (*playerList)->next;
         free(playerList);
-        playerList = temp;
+        *playerList = temp;
     }
 }
 void PrintPlayerList(Player *playerList, int numOfPlayers, int selectedPlayerIndex, Point start){

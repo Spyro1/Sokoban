@@ -14,7 +14,7 @@ void AddPlayer(Player *newPlayer, Player **playerList, int *numOfPlayers);
 
 Player *MakePlayer(char name[], int completedLevels, int totalMoves, int averageMoves);
 
-void FreePlayerList(Player *playerList);
+void FreePlayerList(Player **playerList);
 
 void PrintPlayerList(Player *playerList, int numOfPlayers, int selectedPlayerIndex, Point start);
 
