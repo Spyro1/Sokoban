@@ -10,4 +10,5 @@ add_executable(sokoban2 main.c
         main.h
         datatypes.c
         datatypes.h
+        game.h
 )

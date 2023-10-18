@@ -8,6 +8,6 @@
 #include <windows.h>
 #endif
 
-void StartGame(){
+void StartGame(char ***map){
 
 }
