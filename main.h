@@ -23,9 +23,9 @@ void PrintPlayerList(Player *playerList, int numOfPlayers, int selectedPlayerInd
 
 void ClearScreenSection(int x1, int y1, int x2, int y2, EconioColor bgColor);
 
-void ReadDirectoryLevelNames(char directory[], char *fileNames[], int *numberOfFiles);
+void ReadDirectoryLevelNames(char directory[], char ***fileNames, int *numOfFiles);
 
-void PrintLevels(char *levelList, int numOfLevels, int *selectedLevel, int maxLevels, Point start);
+void PrintLevels(char *levelList[], int numOfLevels, int selectedLevel, int maxLevels, Point start);
 
 void ReadXSBFile(char const filename[], char ***map);
 

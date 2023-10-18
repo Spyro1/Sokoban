@@ -77,9 +77,10 @@ void MainScreen(Player **PlayerList, char *selectedLevelFileName){
     bool runMenu = true;
     int option = 0;
     int numOfPlayers = 0;
+    int numOfLevels = 0;
     int selectedPlayer = 0;
-    char *levelFileNames;
-    int numOfLevels;
+    int selectedLevel = 0;
+    char **levelFileNames; // String array
     enum State { exitApp, chosePlayer, choseLevel, startLvl};
     enum State state = chosePlayer;
 
@@ -111,9 +112,11 @@ void MainScreen(Player **PlayerList, char *selectedLevelFileName){
                 break;
             case KEY_UP:
                 if (state == chosePlayer && selectedPlayer > 0) selectedPlayer--;
+                if (state == choseLevel && selectedLevel > 0) selectedLevel--;
                 break;
             case KEY_DOWN:
                 if (state == chosePlayer && selectedPlayer < numOfPlayers-1) selectedPlayer++;
+                if (state == choseLevel && selectedLevel < numOfLevels-1) selectedLevel++;
                 break;
         }
         #pragma endregion Lenyomot_ billentyű_kiértékelése
@@ -173,6 +176,7 @@ void MainScreen(Player **PlayerList, char *selectedLevelFileName){
             case choseLevel:
                 _x = 12; _y = 9;
                 if (displayFirst){
+                    displayFirst = false;
                     ClearScreenSection(0, 8, 60, 19, COL_RESET);
                     econio_gotoxy(_x+10,_y-1);
                     econio_textcolor(COL_LIGHTCYAN);
@@ -180,7 +184,7 @@ void MainScreen(Player **PlayerList, char *selectedLevelFileName){
                     econio_gotoxy(0,_y);
                     ReadDirectoryLevelNames("./levels/", &levelFileNames, &numOfLevels);
                 }
-
+                PrintLevels(levelFileNames,numOfLevels, selectedLevel,(*PlayerList)->completedLevels, (Point) {_x, _y});
                 break;
             case startLvl:
                 break;
@@ -296,10 +300,10 @@ void ClearScreenSection(int x1, int y1, int x2, int y2, EconioColor bgColor){
         econio_gotoxy(x1,y1+i);
     }
 }
-void ReadDirectoryLevelNames(char directory[], char **fileNames, int *numberOfFiles){
+void ReadDirectoryLevelNames(char directory[], char ***fileNames, int *numOfFiles){
     DIR *folder = opendir(directory);
     struct dirent *entry;
-    int files = 0;
+    *numOfFiles = 0;
     if(folder == NULL){
         printf("Nem lehet megnyitni a fájlt\n");
         perror("Unable to read directory");
@@ -307,26 +311,30 @@ void ReadDirectoryLevelNames(char directory[], char **fileNames, int *numberOfFi
     while((entry=readdir(folder)))
     {
         if (entry->d_name[0] != '.'){
-            files++;
+            numOfFiles++;
             //printf("File %3d: %s\n", files, entry->d_name);
         }
     }
-    rewinddir(folder);
+    closedir(folder);
+    folder = opendir(directory);
     int i = 0;
-    *fileNames = (char*) malloc(files * sizeof(char));
+    fileNames = (char**) malloc(*numOfFiles * sizeof(char*));
     while((entry=readdir(folder)))
     {
-        if (entry->d_name[0] != '.'){
-            fileNames[i++] = entry->d_name;
+//        printf("%d: %s\n",i, entry->d_name);
+        if (entry->d_name[0] != '.'){ // Miért akad el a 78.-nál? CN4D-...
+            //fileNames[i] = (char*) malloc(entry->d_namlen);
+            fileNames[i] = entry->d_name;
+            i++;
         }
     }
     closedir(folder);
 }
-void PrintLevels(char levelList[], int numOfLevels, int *selectedLevel, int maxLevels, Point start){
+void PrintLevels(char *levelList[], int numOfLevels, int selectedLevel, int maxLevels, Point start){
     int currentIndex = 0;
     while(currentIndex < maxLevels && currentIndex < numOfLevels) {
         econio_gotoxy(start.x, start.y + currentIndex);
-        if (currentIndex == *selectedLevel){
+        if (currentIndex == selectedLevel){
             econio_textcolor(COL_BLUE);
             econio_textbackground(COL_LIGHTCYAN);
         }
