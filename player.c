@@ -54,7 +54,7 @@ void player_AddPlayer(Player *newPlayer, Player **playerList, int *numOfPlayers)
 void player_FreePlayerList(Player **playerList){
     while (*playerList != NULL) {
         Player *temp = (Player*) (*playerList)->next;
-        free(playerList);
+        free(*playerList); // itt a hiba !!!!!!!!
         *playerList = temp;
     }
 }

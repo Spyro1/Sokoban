@@ -137,7 +137,7 @@ void MainScreen(Player **currentPlayer, char *selectedLevelFileName){
                 _x = 25, _y = 8;
                 if (displayFirst) {
                     displayFirst = false;
-                    ClearScreenSection(0, 8, 60, 19, COL_RESET);
+                    ClearScrBellow();
                     econio_textcolor(COL_RED);
                     econio_gotoxy(_x, _y+1);
                     printf("╔════════════════════════╗\n");
@@ -173,8 +173,9 @@ void MainScreen(Player **currentPlayer, char *selectedLevelFileName){
                 _x = 12; _y = 9;
                 if (displayFirst){
                     displayFirst = false;
-                    PlayerList = NULL;
-                    ClearScreenSection(0, 8, 60, 19, COL_RESET);
+                    player_FreePlayerList(&PlayerList);
+//                    PlayerList = NULL;
+                    ClearScrBellow();
                     econio_gotoxy(_x+20,_y-1);
                     econio_textcolor(COL_LIGHTCYAN);
                     printf("JÁTÉKOSOK:");
@@ -189,11 +190,12 @@ void MainScreen(Player **currentPlayer, char *selectedLevelFileName){
                 _x = 22; _y = 9;
                 if (displayFirst){
                     displayFirst = false;
-                    ClearScreenSection(0, 8, 70, 19, COL_RESET);
+                    ClearScrBellow();
                     econio_gotoxy(_x+10,_y-1);
                     econio_textcolor(COL_LIGHTCYAN);
                     printf("SZINTEK:");
                     econio_gotoxy(0,_y);
+                    FreeLevelList(&levelFileNames,numOfLevels);
                     ReadDirectoryLevelNames("./levels/", &levelFileNames, &numOfLevels);
                     // Jump to currentPlayer
                     *currentPlayer = player_GetSelectedPlayer(PlayerList, selectedPlayer);
@@ -218,7 +220,9 @@ void MainScreen(Player **currentPlayer, char *selectedLevelFileName){
     debugmalloc_log_file("debugafterlog.txt");
     econio_normalmode();
 }
-
+void ClearScrBellow(){
+    ClearScreenSection(0, 8, 70, 19, COL_RESET);
+}
 void ClearScreenSection(int x1, int y1, int x2, int y2, EconioColor bgColor){
     econio_gotoxy(x1,y1);
     econio_textcolor(bgColor);
