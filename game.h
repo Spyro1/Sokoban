@@ -19,6 +19,6 @@ int const colorPlayer = COL_CYAN,
           colorTarget = COL_RED;
 
 void StartGame(char ***map);
-
+void ReadXSBFile(char const filename[], char ***map);
 
 #endif //GITIGNORE_GAME_H
