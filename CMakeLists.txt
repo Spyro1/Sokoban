@@ -6,10 +6,11 @@ set(CMAKE_C_STANDARD 11)
 add_executable(sokoban2 main.c
         econio.c
         econio.h
-        game.c
-        main.h
         datatypes.c
         datatypes.h
+        game.c
+        main.h
+        game.c
         game.h
         debugmalloc.h
         player.c

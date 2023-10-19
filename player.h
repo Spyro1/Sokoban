@@ -6,6 +6,10 @@
 #include "econio.h"
 #include "main.h"
 #include "debugmalloc.h"
+#include <dirent.h>
+#include <string.h>
+
+
 
 
 void player_ReadTxtFile(Player **playerList, int *numOfPlayers);

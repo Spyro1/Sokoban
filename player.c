@@ -8,7 +8,7 @@
 #include <dirent.h>
 #include <string.h>
 
-int const nameLenght = 20;
+int const nameLenght = 21;
 
 void player_ReadTxtFile(Player **playerList, int *numOfPlayers) {
     *numOfPlayers = 0;
@@ -23,7 +23,7 @@ void player_ReadTxtFile(Player **playerList, int *numOfPlayers) {
 
         while (fgets(inputLine, 30, fp)) {
             // %20 helyére a (int const) nameLenght értékét mindig
-            if (sscanf(inputLine, "%20[^;];%d;%d;%d", name, &completedLevels,&totalMoves,&averageMoves) == 4){
+            if (sscanf(inputLine, "%21[^;];%d;%d;%d", name, &completedLevels,&totalMoves,&averageMoves) == 4){
                 player_AddPlayer(player_MakePlayer(name, completedLevels, totalMoves, averageMoves), playerList, numOfPlayers);
             }
         }
@@ -66,7 +66,7 @@ void player_RemovePlayer(Player *removablePlayer, Player **playerList, int *numO
     // Player Keresése
     // Ha az első elem:
     if (temp != NULL && temp->name == removablePlayer->name) {
-        *playerList = temp->next; // Changed head
+        *playerList = (Player *) temp->next; // Changed head
         free(temp); // free old head
         return;
     }
@@ -74,7 +74,7 @@ void player_RemovePlayer(Player *removablePlayer, Player **playerList, int *numO
     // previous node as we need to change 'prev->next'
     while (temp != NULL && temp->name != removablePlayer->name) {
         prev = temp;
-        temp = temp->next;
+        temp = (Player *) temp->next;
     }
 
     // If key was not present in linked list
@@ -124,10 +124,12 @@ void player_PrintPlayerList(Player *playerList, int numOfPlayers, int selectedPl
 }
 
 Player* player_GetSelectedPlayer(Player *playerList, int selectedPlayer){
-    for (int i = 0; i < selectedPlayer; i++){
-//        Player *temp = (Player*) playerList->next;
-//        playerList = temp;
-        playerList = (Player*) playerList->next;
+    if (playerList != NULL){
+        for (int i = 0; i < selectedPlayer; i++){
+        //        Player *temp = (Player*) playerList->next;
+        //        playerList = temp;
+            playerList = (Player*) playerList->next;
+        }
     }
     return playerList;
 }

@@ -1,3 +1,4 @@
 Matyika;1;1;1
+Gaboca;15;11;23
 Nagymami;2;15;13
 Janoska;8;13;18

@@ -3,15 +3,22 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <dirent.h>
+#include <string.h>
+#include "main.h"
 #include "econio.h"
+#include "datatypes.h"
+#include "player.h"
 
 #ifdef _WIN32
 #include <windows.h>
 #endif
 
-void StartGame(char ***map){
+void StartGame(Player *player, char *levelFileName){
     //char **map; // = (char*)malloc(totalHeight * totalWidth * sizeof(char)); // Ez lesz a dinamikus tömb ami a pályát tárolja
-    //
+    econio_clrscr();
+    int key = -1;
+    printf("Játék kezdete");
+    key = econio_getch();
 }
 
 /*void PrintMap(char const **map, int width, int height){

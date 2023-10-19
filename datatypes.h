@@ -1,10 +1,6 @@
 #ifndef SOKOBAN2_DATATYPES_H
 #define SOKOBAN2_DATATYPES_H
 
-// == Konstansok ==
-
-
-
 // == Adatstruktúrák ==
 
 typedef enum celltype { PLAYER, AIR, WALL, BOX, TARGET, EMPTY } CellType;
@@ -19,7 +15,7 @@ typedef struct cell{
 } Cell;
 
 typedef struct player {
-    char name[20];
+    char name[21];
     int completedLevels,
             totalMoves,
             averageMoves;

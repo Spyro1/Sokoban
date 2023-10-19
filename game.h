@@ -1,16 +1,18 @@
 #ifndef GITIGNORE_GAME_H
 #define GITIGNORE_GAME_H
 
+#include "datatypes.h"
 #include "econio.h"
+#include "player.h"
 
 /* == Konstansok == */
 
 char const chrPlayer[] = "◉", //◎,
-chrPlyerOnTarget[] = "◉",
+        chrPlyerOnTarget[] = "◉",
         chrWall[] = "█",
         chrTarget[] = "◈",
         chrBox[] = "▢", //◾"//"◽""⊠",
-chrBoxOnTarget[] = "▣";
+        chrBoxOnTarget[] = "▣";
 int const colorPlayer = COL_CYAN,
           colorPlayerOnTarget = COL_BLUE,
           colorBox = COL_BROWN,
@@ -18,7 +20,7 @@ int const colorPlayer = COL_CYAN,
           colorWall = COL_LIGHTGRAY,
           colorTarget = COL_RED;
 
-void StartGame(char ***map);
+void StartGame(Player *player, char *levelFileName);
 void ReadXSBFile(char const filename[], char ***map);
 
 #endif //GITIGNORE_GAME_H
