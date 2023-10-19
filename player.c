@@ -33,6 +33,14 @@ void player_ReadTxtFile(Player **playerList, int *numOfPlayers) {
     player_AddPlayer(player_MakePlayer("Új Játékos", 0, 0,0), playerList, numOfPlayers);
 }
 
+void player_FreePlayerList(Player **playerList){
+    while (*playerList != NULL) {
+        Player *temp = (Player*) (*playerList)->next;
+        free(*playerList);
+        *playerList = temp;
+    }
+}
+
 Player *player_MakePlayer(char name[], int completedLevels, int totalMoves, int averageMoves){
     Player *uj = (Player *) malloc(sizeof(Player));
     strcpy(uj->name, name);
@@ -40,24 +48,60 @@ Player *player_MakePlayer(char name[], int completedLevels, int totalMoves, int 
     uj->totalMoves = totalMoves;
     uj->averageMoves = averageMoves;
     uj->next = NULL;
-    uj->back = NULL;
+    //uj->back = NULL;
     return uj;
 }
+
 void player_AddPlayer(Player *newPlayer, Player **playerList, int *numOfPlayers){
-    if (*playerList != NULL) (*playerList)->back = (struct Player*) newPlayer;
+    //if (*playerList != NULL) (*playerList)->back = (struct Player*) newPlayer;
     newPlayer->next = (struct Player*) *playerList;
-    newPlayer->back = NULL;
+    //newPlayer->back = NULL;
     *playerList = newPlayer;
     (*numOfPlayers)++;
 }
 
-void player_FreePlayerList(Player **playerList){
-    while (*playerList != NULL) {
-        Player *temp = (Player*) (*playerList)->next;
-        free(*playerList); // itt a hiba !!!!!!!!
-        *playerList = temp;
+void player_RemovePlayer(Player *removablePlayer, Player **playerList, int *numOfPlayers){
+    // Store Head of the List
+    Player *temp = *playerList, *prev;
+    // Player Keresése
+    // Ha az első elem:
+    if (temp != NULL && temp->name == removablePlayer->name) {
+        *playerList = temp->next; // Changed head
+        free(temp); // free old head
+        return;
     }
+    // Search for the key to be deleted, keep track of the
+    // previous node as we need to change 'prev->next'
+    while (temp != NULL && temp->name != removablePlayer->name) {
+        prev = temp;
+        temp = temp->next;
+    }
+
+    // If key was not present in linked list
+    if (temp == NULL)
+        return;
+
+    // Unlink the node from linked list
+    prev->next = temp->next;
+
+    free(temp); // Free memory
+
+//    while((*playerList)->next != NULL && *playerList != removablePlayer){
+//        *playerList = (Player*) (*playerList)->next;
+//    }
+//    // Kiemelés
+//    Player *backNeighbour = (Player *) (*playerList)->back;
+//    Player *nextNeighbour = (Player *) (*playerList)->next;
+//    backNeighbour->next = (struct Player *) nextNeighbour;
+//    nextNeighbour->back = (struct Player *)  backNeighbour;
+
+
+    //Visszaléptetés a lista elejére
+//    while((*playerList)->back != NULL){
+//        *playerList = (Player*) (*playerList)->back;
+//    }
 }
+
 void player_PrintPlayerList(Player *playerList, int numOfPlayers, int selectedPlayerIndex, Point start){
     int currentIndex = 0;
     //ClearScreenSection(0, 8, 60, 19, COL_RESET);
@@ -81,8 +125,9 @@ void player_PrintPlayerList(Player *playerList, int numOfPlayers, int selectedPl
 
 Player* player_GetSelectedPlayer(Player *playerList, int selectedPlayer){
     for (int i = 0; i < selectedPlayer; i++){
-        Player *temp = (Player*) playerList->next;
-        playerList = temp;
+//        Player *temp = (Player*) playerList->next;
+//        playerList = temp;
+        playerList = (Player*) playerList->next;
     }
     return playerList;
 }

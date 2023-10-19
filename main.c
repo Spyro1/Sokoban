@@ -37,11 +37,11 @@ int main() {
 
 
     //    Debugmalloc
-    econio_clrscr();
-    econio_gotoxy(0,0);
-    econio_textbackground(COL_RESET);
-    econio_textcolor(COL_RED);
-    debugmalloc_dump();
+//    econio_clrscr();
+//    econio_gotoxy(0,0);
+//    econio_textbackground(COL_RESET);
+//    econio_textcolor(COL_RED);
+//    debugmalloc_dump();
      // Free up allocated memory
 
     // Debug after Free
@@ -56,7 +56,7 @@ int main() {
 
 void MainScreen(Player **currentPlayer, char *selectedLevelFileName){
 
-#pragma region FŐCÍM_KIÍRÁSA
+    #pragma region FŐCÍM_KIÍRÁSA
     // CÍM Kiírása
     econio_textcolor(COL_LIGHTBLUE);
     printf("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n");
@@ -74,7 +74,7 @@ void MainScreen(Player **currentPlayer, char *selectedLevelFileName){
     econio_gotoxy(16,20); printf("↑    ");
     econio_gotoxy(3,21); printf("Navigálás: ← ↓ →  ↲");
 
-#pragma endregion FŐCÍM_KIÍRÁSA
+    #pragma endregion FŐCÍM_KIÍRÁSA
 
     // Menü Változók
     int key = -1;
@@ -87,7 +87,7 @@ void MainScreen(Player **currentPlayer, char *selectedLevelFileName){
     int selectedLevel = 0;
     char **levelFileNames; // String array
     Player *PlayerList = NULL;
-    enum State { exitApp, chosePlayer, choseLevel, startLvl};
+    enum State { exitApp, chosePlayer, choseLevel, startLvl, addedNewPlayer};
     enum State state = chosePlayer;
 
     econio_rawmode();
@@ -105,7 +105,7 @@ void MainScreen(Player **currentPlayer, char *selectedLevelFileName){
             case KEY_ENTER:
                 if (state == exitApp && option == 0) { runMenu = false; }
                 if (state < startLvl) state++; // Módváltás
-                if (state == startLvl)  runMenu = false; //.... Pálya kiválasztása, játék indítása;
+                //if (state == startLvl)  runMenu = false; //.... Pálya kiválasztása, játék indítása;
                 displayFirst = true;
                 option = 0;
                 break;
@@ -183,27 +183,37 @@ void MainScreen(Player **currentPlayer, char *selectedLevelFileName){
                     player_ReadTxtFile(&PlayerList, &numOfPlayers);
                 }
                 player_PrintPlayerList(PlayerList, numOfPlayers, selectedPlayer, (Point) {_x, _y});
-                //econio_gotoxy(0,18);
-                //debugmalloc_dump();
                 break;
             case choseLevel:
                 _x = 22; _y = 9;
-                if (displayFirst){
-                    displayFirst = false;
-                    ClearScrBellow();
-                    econio_gotoxy(_x+10,_y-1);
-                    econio_textcolor(COL_LIGHTCYAN);
-                    printf("SZINTEK:");
-                    econio_gotoxy(0,_y);
-                    FreeLevelList(&levelFileNames,numOfLevels);
-                    ReadDirectoryLevelNames("./levels/", &levelFileNames, &numOfLevels);
-                    // Jump to currentPlayer
-                    *currentPlayer = player_GetSelectedPlayer(PlayerList, selectedPlayer);
-                    selectedLevel = (*currentPlayer)->completedLevels-1;
+                if (selectedPlayer == 0){
+
                 }
-                PrintLevels(levelFileNames, numOfLevels, selectedLevel, (*currentPlayer)->completedLevels, (Point) {_x+9, _y});
+                else {
+                    if (displayFirst){
+                        displayFirst = false;
+                        ClearScrBellow();
+                        econio_gotoxy(_x+10,_y-1);
+                        econio_textcolor(COL_LIGHTCYAN);
+                        printf("SZINTEK:");
+                        econio_gotoxy(0,_y);
+                        FreeLevelList(&levelFileNames,numOfLevels);
+                        ReadDirectoryLevelNames("./levels/", &levelFileNames, &numOfLevels);
+                        // Jump to currentPlayer
+                        *currentPlayer = player_GetSelectedPlayer(PlayerList, selectedPlayer);
+                        selectedLevel = (*currentPlayer)->completedLevels-1;
+                    }
+                    PrintLevels(levelFileNames, numOfLevels, selectedLevel, (*currentPlayer)->completedLevels, (Point) {_x+9, _y});
+                }
                 break;
             case startLvl:
+                if (selectedPlayer == 0){ // Új játékos felvétele
+                    ////
+                }
+                else{ // Létező játékos
+                    runMenu = false;
+                    strcpy(selectedLevelFileName, levelFileNames[selectedLevel]);
+                }
                 break;
         }
         #pragma endregion Képernyőre_írás_mód_szerint
