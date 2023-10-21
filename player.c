@@ -8,7 +8,7 @@
 #include <dirent.h>
 #include <string.h>
 
-int const nameLenght = 21;
+
 
 void player_ReadTxtFile(Player **playerList, int *numOfPlayers) {
     *numOfPlayers = 0;
