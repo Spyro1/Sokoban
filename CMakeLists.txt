@@ -15,4 +15,6 @@ add_executable(sokoban2 main.c
         debugmalloc.h
         player.c
         player.h
+        level.c
+        level.h
 )

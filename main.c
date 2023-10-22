@@ -9,35 +9,43 @@
 #include "datatypes.h"
 #include "player.h"
 #include "game.h"
+#include "level.h"
 #ifdef _WIN32
     #include <windows.h>
 #endif
 
+/** Feladatok
+ * KÉSZ: MainScreen-ben a visszakapott paraméter legyen a selectedLevelFileName helyett a levelFileNameList, hogy lehessen választani és továbbl éptetni a szinteket a játék során.
+ * Level függvények modulosítása, hogy csak a main fgv maradjon
+ * XSB fájl beolvasása **map-be
+ * Új játékos hozzáadása, név megadása, listához hozzáfűzése és visszaadása
+ * Player struct átírása, hogy megfeleljen a feladatkiírásnak
+ * */
 
 int main() {
     #ifdef _WIN32
         SetConsoleOutputCP(CP_UTF8);
     #endif
 
-    // == Változók ==
-    Point playerPos; // A Játékos poziciója
-
     // Főképernyő kiiratása és Szint választás
-    int selectedPlayer = 0;
-    int selectedLevel = 0;
-    Player *currentPlayer = NULL;
-    char selectedLevelFileName[50];
+    int selectedLevel = 0; // A menüben kiválasztott szint indexe
+    int numOfLevels; // Dinamikus levelList tömb hossza
+    char **levelList; // Dinamikus tömb lesz
+    Player currentPlayer; // A menüben kiválasztott játékos
+
     // Főképernyő meghívása
-    MainScreen(&currentPlayer, selectedLevelFileName);
-    // Valamiért nem adja kivela a currentPlayer az értékét.
-    printf("Játékos: %s, Szint: %s\n", currentPlayer->name, selectedLevelFileName);
-    StartGame(currentPlayer, selectedLevelFileName);
+    MainScreen(&currentPlayer, &levelList, &numOfLevels, &selectedLevel);
+    // Játék inicializálása
+    Init(&currentPlayer, levelList, numOfLevels, selectedLevel);
+
+
+    // Lefoglalt levelLista felszabadítása
+    FreeLevelList(&levelList, &numOfLevels);
+    debugmalloc_log_file("debugmalloc.txt");
     return 0;
 }
 
-
-
-void MainScreen(Player **currentPlayer, char selectedLevelFileName[]){
+void MainScreen(Player *currentPlayer, char ***levelList, int *numOfLevels, int *selectedLevel){
 
     #pragma region FŐCÍM_KIÍRÁSA
     // CÍM Kiírása
@@ -45,10 +53,10 @@ void MainScreen(Player **currentPlayer, char selectedLevelFileName[]){
     printf("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n");
     econio_textcolor(COL_CYAN);
     printf("       ███████  ██████  ██   ██  ██████  ██████   █████  ███    ██ \n"
-           "       ██      ██    ██ ██  ██  ██    ██ ██   ██ ██   ██ ████   ██ \n"
-           "       ███████ ██    ██ █████   ██    ██ ██████  ███████ ██ ██  ██ \n"
-           "            ██ ██    ██ ██  ██  ██    ██ ██   ██ ██   ██ ██  ██ ██ \n"
-           "       ███████  ██████  ██   ██  ██████  ██████  ██   ██ ██   ████ \n");
+                 "       ██      ██    ██ ██  ██  ██    ██ ██   ██ ██   ██ ████   ██ \n"
+                 "       ███████ ██    ██ █████   ██    ██ ██████  ███████ ██ ██  ██ \n"
+                 "            ██ ██    ██ ██  ██  ██    ██ ██   ██ ██   ██ ██  ██ ██ \n"
+                 "       ███████  ██████  ██   ██  ██████  ██████  ██   ██ ██   ████ \n");
     econio_textcolor(COL_LIGHTBLUE);
     printf("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n");
     //econio_textbackground(COL_RESET);
@@ -59,26 +67,30 @@ void MainScreen(Player **currentPlayer, char selectedLevelFileName[]){
 
     #pragma endregion FŐCÍM_KIÍRÁSA
 
+    // Paraméterek inicializálása
+    *numOfLevels = 0;
+    *selectedLevel = 0;
+    *levelList = NULL;
+    currentPlayer = NULL;
     // Menü Változók
     int key = -1;
     bool displayFirst = true;
     bool runMenu = true;
     int option = 0;
     int numOfPlayers = 0;
-    int numOfLevels = 0;
     int selectedPlayer = 0;
-    int selectedLevel = 0;
     char **levelFileNames = NULL; // String array
     Player *PlayerList = NULL;
+    Player returnerPlayer;
     char newPlayerName[21];
     enum State { exitApp, chosePlayer, choseLevel, startLvl, addedNewPlayer};
     enum State state = chosePlayer;
 
     econio_rawmode();
-    // Nehézség kiválasztása
+    // Menü futtatása
     while(runMenu){
 
-        #pragma region Lenyomot_ billentyű_kiértékelése
+        #pragma region Lenyomott_billentyű_kiértékelése
         switch (key){
             case KEY_ESCAPE:
             case KEY_BACKSPACE:
@@ -103,13 +115,13 @@ void MainScreen(Player **currentPlayer, char selectedLevelFileName[]){
                 if (state == chosePlayer && selectedPlayer > 0){
                     selectedPlayer--;
                 }
-                if (state == choseLevel && selectedLevel > 0) selectedLevel--;
+                if (state == choseLevel && *selectedLevel > 0) (*selectedLevel)--;
                 break;
             case KEY_DOWN:
                 if (state == chosePlayer && selectedPlayer < numOfPlayers-1){
                     selectedPlayer++;
                 }
-                if (state == choseLevel && selectedLevel < (*currentPlayer)->completedLevels-1) selectedLevel++;
+                if (state == choseLevel && *selectedLevel < currentPlayer->completedLevels-1) (*selectedLevel)++;
                 break;
         }
         #pragma endregion Lenyomot_ billentyű_kiértékelése
@@ -171,6 +183,7 @@ void MainScreen(Player **currentPlayer, char selectedLevelFileName[]){
                 break;
             case choseLevel:
                 _x = 22; _y = 9;
+                // Új játékos felvétele
                 if (selectedPlayer == 0){
                     if (displayFirst){
                         // Kiiratás inicializálása
@@ -191,45 +204,47 @@ void MainScreen(Player **currentPlayer, char selectedLevelFileName[]){
                         econio_rawmode();
                     }
                 }
+                // Választott játékos szint válaszátsa
                 else {
                     if (displayFirst){
                         // Kiiratás inicializálása
                         displayFirst = false;
                         ClearScrBellow();
-                        FreeLevelList(&levelFileNames,numOfLevels);
+                        FreeLevelList(&levelFileNames, numOfLevels);
                         econio_gotoxy(_x+10,_y-1);
                         econio_textcolor(COL_LIGHTCYAN);
                         // Alcím kiírása
                         printf("SZINTEK:");
                         //econio_gotoxy(0,_y);
                         // Szintek beolvasása
-                        ReadDirectoryLevelNames("./levels/", &levelFileNames, &numOfLevels);
+                        ReadDirectoryLevelNames("./levels/", &levelFileNames, numOfLevels);
                         // currentPlayer Kiválasztása a láncolt Listából selectedPlayer alapján
-                        *currentPlayer = player_GetSelectedPlayer(PlayerList, selectedPlayer);
-                        selectedLevel = (*currentPlayer)->completedLevels-1;
+                        currentPlayer = player_GetSelectedPlayer(PlayerList, selectedPlayer);
+                        *selectedLevel = currentPlayer->completedLevels-1;
                     }
-                    PrintLevels(levelFileNames, numOfLevels, selectedLevel, (*currentPlayer)->completedLevels, (Point) {_x+9, _y});
+                    PrintLevels(levelFileNames, *numOfLevels, *selectedLevel, currentPlayer->completedLevels, (Point) {_x+9, _y});
                 }
                 break;
             case startLvl:
                 runMenu = false;
-                strcpy(selectedLevelFileName, levelFileNames[selectedLevel]);
+                returnerPlayer = *currentPlayer;    // Player kimentése
+                *levelList = levelFileNames; // Level lista átcímzése
+                //strcpy(selectedLevelFileName, levelFileNames[selectedLevel]);
+                break;
+            case addedNewPlayer:
                 break;
         }
         #pragma endregion Képernyőre_írás_mód_szerint
+
         if (!(state == choseLevel && selectedPlayer ==0) ) econio_gotoxy(0,0); // Kurzor bal felső sarokba
         if (runMenu) key = econio_getch(); // Billentyűlenyomásra vár, ha fut a menü
     }
 
-    debugmalloc_log_file("MainScreenEndBeforeFree.txt");
     // Free dinamikus tömbök
-    FreeLevelList(&levelFileNames,numOfLevels);
-    player_FreePlayerList(&PlayerList);
-
-    // Utána:
-    debugmalloc_log_file("MainScreenEndAfterFree.txt");
-    econio_normalmode();
+    player_FreePlayerList(&PlayerList); // Player lista felszabadítása
+    *currentPlayer = returnerPlayer; // Kifelé menő paraméter megadása a segéd változóból
 }
+
 void ClearScrBellow(){
     ClearScreenSection(0, 8, 70, 20, COL_RESET);
 }
@@ -245,62 +260,5 @@ void ClearScreenSection(int x1, int y1, int x2, int y2, EconioColor bgColor){
     }
 }
 
-void ReadDirectoryLevelNames(char directory[], char **levelList[], int *numOfFiles){
-    DIR *folder = opendir(directory);
-    struct dirent *dir;
-    int count = 0;
-    if(folder == NULL){
-        printf("Nem lehet megnyitni a fájlt\n");
-        perror("Unable to read directory");
-    }
-    while((dir=readdir(folder)))
-    {
-        if (dir->d_name[0] != '.'){
-            count++;
-            //printf("File %3d: %s\n", files, dir->d_name);
-        }
-    }
-    rewinddir(folder);
-    int i = 0;
-    char **fileList = (char**) malloc(count * sizeof(char*));
-    while((dir=readdir(folder)))
-    {
-        if (dir->d_name[0] != '.'){
-            //printf("%d: %s\n",i, dir->d_name);
-            fileList[i] = (char*) malloc(strlen(dir->d_name)+1);
-            strcpy(fileList[i],dir->d_name);
-            i++;
-        }
-    }
-    *levelList = fileList;
-    *numOfFiles = count;
-    closedir(folder);
-}
-void FreeLevelList(char ***levelList, int numOfLevels){
-    if (*levelList != NULL){
-        for(int i = 0; i < numOfLevels; i++)
-        {
-            free((*levelList)[i]);
-        }
-        free(*levelList);
-    }
-}
-void PrintLevels(char **levelList, int numOfLevels, int selectedLevel, int maxLevels, Point start){
-    int currentIndex = 0;
-    while(currentIndex < maxLevels && currentIndex < numOfLevels) {
-        econio_gotoxy(start.x, start.y + currentIndex);
-        if (currentIndex == selectedLevel){
-            econio_textcolor(COL_BLUE);
-            econio_textbackground(COL_LIGHTCYAN);
-        }
-        else {
-            econio_textcolor(COL_LIGHTCYAN);
-            econio_textbackground(COL_RESET);
-        }
-        printf("%s", levelList[currentIndex]);
-        currentIndex++;
-        econio_textbackground(COL_RESET);
-    }
-}
 
 

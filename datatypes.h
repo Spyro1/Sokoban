@@ -4,7 +4,7 @@
 #define nameLenght 21
 // == Adatstruktúrák ==
 
-typedef enum celltype { PLAYER, AIR, WALL, BOX, TARGET, EMPTY } CellType;
+typedef enum celltype { EMPTY, PLAYER, PLAYERONTARGET, BOX, BOXONTARGET, TARGET, WALL  } CellType;
 
 typedef struct position{
     int x, y;
