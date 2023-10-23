@@ -16,29 +16,42 @@
 
 
 void Init(Player *player, char *levelList[], int numOfLevels, int selectedLevel){
+    char **map; // Ez lesz a dinamikus tömb ami a pályát tárolja
+    Size mapSize;
+    //econio_clrscr();
+    //debugmalloc_dump();
+    // Új játék létrehozása
+    NewGame(player, &map, mapSize,levelList[selectedLevel]);
 
-    char **map; // = (char*)malloc(totalHeight * totalWidth * sizeof(char)); // Ez lesz a dinamikus tömb ami a pályát tárolja
+    // Free map
+    FreeAllocatedMemoryFromMap(&map);
 
 }
-void NewGame(Player *player, char ***map, char levelName[]){
-    ReadXSBFile(levelName, map);
+void NewGame(Player *player, char ***map, Size mapSize, char levelName[]){
+    ReadXSBFile(levelName, map, &mapSize);
+    econio_rawmode();
+    PrintSimpleMap(*map, mapSize);
+    econio_getch();
 }
-void StartGame(Player *player, char ***map){
+void StartGame(Player *player, char ***map, Size mapSize){
 
 }
 
-void PrintMap(char const **map, int width, int height){
-    for(int x = 0; x < width; x++){
-        for(int y = 0; y < height; y++){
+void PrintSimpleMap(char **map, Size size){
+    for(int y = 0; y < size.height; y++){
+        for(int x = 0; x < size.width; x++){
             printf("%c", map[y][x]);
         }
         printf("\n");
     }
 }
+void PrintStyledMap(char **map, Size size, Point corner){
 
-void ReadXSBFile(char filename[], char ***map){
-    int lines = 0, columns = 0;
+}
 
+void ReadXSBFile(char filename[], char ***map, Size *mapSize){
+    *mapSize = (Size) { 0, 0};
+    int k = 0;
     char directory[200] = "./levels/"; // Mappa
     strcat(directory, filename); // Mappa és fájlnév egyesítése
     FILE* fp = fopen(directory, "r"); // Fájl megnyitása
@@ -47,16 +60,43 @@ void ReadXSBFile(char filename[], char ***map){
         return;
     }
     // Sorok és oszlopok megszámlálása
-    char line[maxLineLenght] = {0}; // Beolvasott sor a line stringbe megy
-    while(fgets(line, maxLineLenght, fp)){ // Sor beolvasása
-        lines++; // Ha sikeres, a sorokat egyel növeljük
-        if (strlen(line) > columns) columns = (int)strlen(line) + 1; // oszlopok száma maximális legyen
+    char line[maxReadLineLenght] = {0}; // Beolvasott sor a line stringbe megy
+
+    while(fgets(line, maxReadLineLenght, fp)){ // Sor beolvasása
+        // Ha sikeres, a sorokat egyel növeljük
+        mapSize->height++;
+        // oszlopok száma elhető legagyobb legyen, hogy minden sor elfréjen majd
+        if (strlen(line)-1 > mapSize->width) mapSize->width = (int)strlen(line)-1;
     }
     rewind(fp);
+    //fclose(fp);
+    //fp = fopen(directory, "r"); // Fájl megnyitása
+    //debugmalloc_dump();
+    // Tömb foglalása
+    FreeAllocatedMemoryFromMap(map);
+    AllocateMemoryToMap(map, mapSize);
 
-    //    char **newmap;
-    while(fgets(line, maxLineLenght, fp)){
-
+    // Tömbbe olvasás
+    while(fgets(line, maxReadLineLenght, fp)){
+        strcpy((*map)[k], line);
+        k++;
     }
     fclose(fp);
+}
+
+void AllocateMemoryToMap(char ***map, Size *mapSize){
+    char **newMap;
+    newMap = (char**) malloc(mapSize->height * sizeof(char*)); // itt a hiba
+    if (newMap == NULL) { perror("Nem sikerült memóriaterületet foglalni newMap-nek"); return; }
+    newMap[0] = (char*) malloc((mapSize->height * mapSize->width) * sizeof(char));
+    for (int y = 1; y < mapSize->height; y++){
+        newMap[y] = newMap[0] + y * mapSize->width;
+    }
+    *map = newMap;
+}
+void FreeAllocatedMemoryFromMap(char ***map){
+    if (*map != NULL) {
+        free((*map)[0]);
+        free(*map);
+    }
 }

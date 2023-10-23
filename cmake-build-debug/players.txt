@@ -1,4 +1,4 @@
-Matyika;1;1;1
-Gaboca;15;11;23
+Sándor;1;1;1
+Mátyas;15;11;23
 Nagymami;2;15;13
-Janoska;8;13;18
+Jánoska;8;13;18

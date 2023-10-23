@@ -17,9 +17,10 @@
 /** Feladatok
  * KÉSZ: MainScreen-ben a visszakapott paraméter legyen a selectedLevelFileName helyett a levelFileNameList, hogy lehessen választani és továbbl éptetni a szinteket a játék során.
  * Level függvények modulosítása, hogy csak a main fgv maradjon
- * XSB fájl beolvasása **map-be
+ * KÉSZ: XSB fájl beolvasása **map-be
  * Új játékos hozzáadása, név megadása, listához hozzáfűzése és visszaadása
  * Player struct átírása, hogy megfeleljen a feladatkiírásnak
+ * Teljes Menü átalakítása a specifikációnak megfellően
  * */
 
 int main() {
@@ -34,7 +35,13 @@ int main() {
     Player currentPlayer; // A menüben kiválasztott játékos
 
     // Főképernyő meghívása
-    MainScreen(&currentPlayer, &levelList, &numOfLevels, &selectedLevel);
+    //MainScreen(&currentPlayer, &levelList, &numOfLevels, &selectedLevel);
+    // Próba
+    currentPlayer = (Player) {"Marci", 3};
+    ReadDirectoryLevelNames("./levels/", &levelList, &numOfLevels);
+    selectedLevel = currentPlayer.completedLevels-1;
+    // Próba
+
     // Játék inicializálása
     Init(&currentPlayer, levelList, numOfLevels, selectedLevel);
 
@@ -42,6 +49,7 @@ int main() {
     // Lefoglalt levelLista felszabadítása
     FreeLevelList(&levelList, &numOfLevels);
     debugmalloc_log_file("debugmalloc.txt");
+    scanf("%s");
     return 0;
 }
 
@@ -211,15 +219,16 @@ void MainScreen(Player *currentPlayer, char ***levelList, int *numOfLevels, int 
                         displayFirst = false;
                         ClearScrBellow();
                         FreeLevelList(&levelFileNames, numOfLevels);
-                        econio_gotoxy(_x+10,_y-1);
+                        //int h = ((int)strlen(currentPlayer->name))/2;
+                        econio_gotoxy(_x-1 ,_y-1);
                         econio_textcolor(COL_LIGHTCYAN);
-                        // Alcím kiírása
-                        printf("SZINTEK:");
-                        //econio_gotoxy(0,_y);
-                        // Szintek beolvasása
-                        ReadDirectoryLevelNames("./levels/", &levelFileNames, numOfLevels);
                         // currentPlayer Kiválasztása a láncolt Listából selectedPlayer alapján
                         currentPlayer = player_GetSelectedPlayer(PlayerList, selectedPlayer);
+                        // Alcím kiírása
+                        printf("%s TELJESÍTETT SZINTJEI:", currentPlayer->name);
+                        // printf("SZINTEK:");
+                        // Szintek beolvasása
+                        ReadDirectoryLevelNames("./levels/", &levelFileNames, numOfLevels);
                         *selectedLevel = currentPlayer->completedLevels-1;
                     }
                     PrintLevels(levelFileNames, *numOfLevels, *selectedLevel, currentPlayer->completedLevels, (Point) {_x+9, _y});

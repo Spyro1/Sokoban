@@ -18,10 +18,10 @@ void player_ReadTxtFile(Player **playerList, int *numOfPlayers) {
         printf("Nem lehet megnyitni a fájlt\n");
     }
     else {
-        char inputLine[30], name[nameLenght];
+        char inputLine[maxReadLineLenght], name[nameLenght];
         int completedLevels, totalMoves, averageMoves;
 
-        while (fgets(inputLine, 30, fp)) {
+        while (fgets(inputLine, maxReadLineLenght, fp)) {
             // %20 helyére a (int const) nameLenght értékét mindig
             if (sscanf(inputLine, "%21[^;];%d;%d;%d", name, &completedLevels,&totalMoves,&averageMoves) == 4){
                 player_AddPlayer(player_MakePlayer(name, completedLevels, totalMoves, averageMoves), playerList, numOfPlayers);
