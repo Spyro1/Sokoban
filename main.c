@@ -49,7 +49,7 @@ int main() {
     // Lefoglalt levelLista felszabadítása
     FreeLevelList(&levelList, &numOfLevels);
     debugmalloc_log_file("debugmalloc.txt");
-    scanf("%s");
+    //scanf("%s");
     return 0;
 }
 

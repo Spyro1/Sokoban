@@ -5,20 +5,22 @@
 #include "econio.h"
 #include "player.h"
 
-/* == Konstansok == */
 
-/*char chrPlayer[] = "◉", //◎,
-        chrPlyerOnTarget[] = "◉",
-        chrWall[] = "█",
-        chrTarget[] = "◈",
-        chrBox[] = "▢", //◾"//"◽""⊠",
-        chrBoxOnTarget[] = "▣";
-int  colorPlayer = COL_CYAN,
-          colorPlayerOnTarget = COL_BLUE,
-          colorBox = COL_BROWN,
-          colorBoxOnTarget = COL_LIGHTGREEN,
-          colorWall = COL_LIGHTGRAY,
-          colorTarget = COL_RED;*/
+/* == Konstansok == */
+// Karakterek
+#define chrWall "█"
+#define chrPlayer "¤"
+#define chrTarget " "
+#define chrBox "▢"
+
+// Színek
+#define clrWall COL_DARKGRAY
+#define clrPlayer COL_CYAN
+#define clrPlayerOnTarget COL_RED
+#define clrTarget COL_RED
+#define clrBox COL_BROWN
+#define clrBoxOnTarget COL_GREEN
+
 
 void Init(Player *player, char *levelList[], int numOfLevels, int selectedLevel);
 
@@ -28,9 +30,12 @@ void StartGame(Player *player, char ***map, Size mapSize);
 
 void ReadXSBFile(char filename[], char ***map, Size *mapSize);
 
+char* ConvertInputLineToCellType(char line[]);
+
 void PrintSimpleMap(char **map, Size size);
 
 void PrintStyledMap(char **map, Size size, Point corner);
+void PrintPosition(char **map, Point pos, Point corner);
 
 void AllocateMemoryToMap(char ***map, Size *mapSize);
 

@@ -6,7 +6,7 @@
 #define maxFileNameLenght 100
 // == Adatstruktúrák ==
 
-typedef enum celltype { EMPTY, PLAYER, PLAYERONTARGET, BOX, BOXONTARGET, TARGET, WALL  } CellType;
+typedef enum celltype { null, EMPTY, WALL, TARGET, PLAYER, PLAYERONTARGET, BOX, BOXONTARGET  } CellType;
 
 typedef struct position{
     int x, y;

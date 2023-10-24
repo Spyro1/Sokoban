@@ -30,7 +30,8 @@ void Init(Player *player, char *levelList[], int numOfLevels, int selectedLevel)
 void NewGame(Player *player, char ***map, Size mapSize, char levelName[]){
     ReadXSBFile(levelName, map, &mapSize);
     econio_rawmode();
-    PrintSimpleMap(*map, mapSize);
+    //PrintSimpleMap(*map, mapSize);
+    PrintStyledMap(*map,mapSize,(Point) {5,5});
     econio_getch();
 }
 void StartGame(Player *player, char ***map, Size mapSize){
@@ -40,15 +41,52 @@ void StartGame(Player *player, char ***map, Size mapSize){
 void PrintSimpleMap(char **map, Size size){
     for(int y = 0; y < size.height; y++){
         for(int x = 0; x < size.width; x++){
-            printf("%c", map[y][x]);
+            printf("%d", map[y][x]);
         }
         printf("\n");
     }
 }
 void PrintStyledMap(char **map, Size size, Point corner){
-
+    for(int y = 0; y < size.height; y++){
+        for(int x = 0; x < size.width; x++){
+            PrintPosition(map, (Point) {x,y}, corner);
+        }
+    }
 }
-
+void PrintPosition(char **map, Point pos, Point corner){
+    econio_gotoxy(corner.x + pos.x, corner.y + pos.y);
+    econio_textbackground(COL_RESET);
+    econio_textcolor(COL_RESET);
+    switch(map[pos.y][pos.x]){
+        case WALL:
+            econio_textcolor(clrWall);
+            printf("%s", chrWall);
+            break;
+        case TARGET:
+            econio_textbackground(clrTarget);
+            printf("%s", chrTarget);
+            break;
+        case PLAYER:
+            econio_textcolor(clrPlayer);
+            printf("%s", chrPlayer);
+            break;
+        case PLAYERONTARGET:
+            econio_textcolor(clrPlayerOnTarget);
+            econio_textbackground(clrTarget);
+            printf("%s", chrPlayer);
+            break;
+        case BOX:
+            econio_textcolor(clrBox);
+            printf("%s", chrBox);
+            break;
+        case BOXONTARGET:
+            econio_textcolor(clrBoxOnTarget);
+            econio_textbackground(clrTarget);
+            printf("%s", chrWall);
+            break;
+        default: printf(" "); break;
+    }
+}
 void ReadXSBFile(char filename[], char ***map, Size *mapSize){
     *mapSize = (Size) { 0, 0};
     int k = 0;
@@ -78,12 +116,32 @@ void ReadXSBFile(char filename[], char ***map, Size *mapSize){
 
     // Tömbbe olvasás
     while(fgets(line, maxReadLineLenght, fp)){
-        strcpy((*map)[k], line);
+        char* converted = ConvertInputLineToCellType(line);
+        strcpy((*map)[k], converted);
         k++;
     }
     fclose(fp);
 }
-
+char* ConvertInputLineToCellType(char line[]){
+    int lenght = (int)strlen(line);
+    //char converted[maxReadLineLenght] = {0};
+    int k = 0;
+    for(int i = 0; i < lenght && line[i] != '\n' && line[i] != '\0'; i++){
+        switch(line[i]){
+            case ' ': line[k] = EMPTY; break;
+            case '#': line[k] = WALL; break;
+            case '.': line[k] = TARGET; break;
+            case '@': line[k] = PLAYER; break;
+            case '+': line[k] = PLAYERONTARGET; break;
+            case '$': line[k] = BOX; break;
+            case '*': line[k] = BOXONTARGET; break;
+            default:  line[k] = null;
+        }
+        k++;
+    }
+    line[k] = '\0';
+    return line;
+}
 void AllocateMemoryToMap(char ***map, Size *mapSize){
     char **newMap;
     newMap = (char**) malloc(mapSize->height * sizeof(char*)); // itt a hiba
