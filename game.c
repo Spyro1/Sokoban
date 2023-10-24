@@ -16,13 +16,12 @@
 
 
 void Init(Player *player, char *levelList[], int numOfLevels, int selectedLevel){
-    char **map; // Ez lesz a dinamikus tömb ami a pályát tárolja
-    Size mapSize;
-    //econio_clrscr();
-    //debugmalloc_dump();
+    // Fő változók deklarálása
+    char **map; // Pálya
+    Size mapSize; // Pálya mérete
+
     // Új játék létrehozása
     NewGame(player, &map, mapSize,levelList[selectedLevel]);
-
     // Free map
     FreeAllocatedMemoryFromMap(&map);
 
@@ -38,6 +37,9 @@ void StartGame(Player *player, char ***map, Size mapSize){
 
 }
 
+//void Step(int key)
+
+// Konzolra Írás
 void PrintSimpleMap(char **map, Size size){
     for(int y = 0; y < size.height; y++){
         for(int x = 0; x < size.width; x++){
@@ -63,7 +65,7 @@ void PrintPosition(char **map, Point pos, Point corner){
             printf("%s", chrWall);
             break;
         case TARGET:
-            econio_textbackground(clrTarget);
+            econio_textcolor(clrTarget);
             printf("%s", chrTarget);
             break;
         case PLAYER:
@@ -81,12 +83,14 @@ void PrintPosition(char **map, Point pos, Point corner){
             break;
         case BOXONTARGET:
             econio_textcolor(clrBoxOnTarget);
-            econio_textbackground(clrTarget);
-            printf("%s", chrWall);
+            //econio_textbackground(clrTarget);
+            printf("%s", chrBox);
             break;
         default: printf(" "); break;
     }
 }
+
+// INIT: Játék előkészítéséhez szükséges függvények
 void ReadXSBFile(char filename[], char ***map, Size *mapSize){
     *mapSize = (Size) { 0, 0};
     int k = 0;

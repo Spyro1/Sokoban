@@ -9,15 +9,15 @@
 /* == Konstansok == */
 // Karakterek
 #define chrWall "█"
-#define chrPlayer "¤"
-#define chrTarget " "
-#define chrBox "▢"
+#define chrPlayer "☻" //◯
+#define chrTarget "◻"
+#define chrBox "◼" //▩◼⛝
 
 // Színek
 #define clrWall COL_DARKGRAY
 #define clrPlayer COL_CYAN
 #define clrPlayerOnTarget COL_RED
-#define clrTarget COL_RED
+#define clrTarget COL_LIGHTRED
 #define clrBox COL_BROWN
 #define clrBoxOnTarget COL_GREEN
 
