@@ -21,29 +21,27 @@
 #define clrBox COL_BROWN
 #define clrBoxOnTarget COL_GREEN
 
-Point const up = {0, -1};
-Point const down = {0, 1};
-Point const left = {-1, 0};
-Point const right = {1, 0};
+
+
 
 void Init(Player *player, char *levelList[], int numOfLevels, int selectedLevel);
 
 void NewGame(Player *player, char ***map, Size mapSize, char levelName[]);
 
-void StartGame(Player *player, char ***map, Size mapSize, Point playerPosition, Point *boxPositions, Point *targetPositions);
+void StartGame(Player *player, char ***map, Size mapSize, Point playerPosition, Point *boxPositions, Point *targetPositions, int boxCount);
 
 bool CheckWin(char **map, Size mapSize);
 
-void Move(char ***map, Size mapSize, Point *playerPosition, Point **boxPositions, Point *targetPositions, Point direction);
+bool Move(char ***map, Size mapSize, Point *currentPosition, Point **boxPositions, Point *targetPositions, int boxCount, Point direction);
 
-void ReadXSBFile(char filename[], char ***map, Size *mapSize, Point *playerPosition, Point **boxPositions, Point **targetPositions);
+void ReadXSBFile(char filename[], char ***map, Size *mapSize, Point *playerPosition, Point **boxPositions, Point **targetPositions, int *boxCount);
 
 char* ConvertInputLineToCellType(char line[]);
 
 void PrintSimpleMap(char **map, Size size);
 
-void PrintStyledMap(char **map, Size size, Point corner);
-void PrintPosition(char **map, Point pos, Point corner);
+void PrintStyledMap(char **map, Size size);
+void PrintPosition(char **map, Point pos);
 
 void AllocateMemoryToMap(char ***map, Size *mapSize);
 void AllocateDynamicArray(Point **newArray, int lenght);

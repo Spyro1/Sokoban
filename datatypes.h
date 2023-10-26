@@ -1,5 +1,6 @@
 #ifndef SOKOBAN2_DATATYPES_H
 #define SOKOBAN2_DATATYPES_H
+#include <stdbool.h>
 
 #define nameLenght 21
 #define maxReadLineLenght 200
@@ -33,5 +34,7 @@ typedef struct player {
 Point AddPoints(Point a, Point b);
 
 Point SubPoints(Point a, Point b);
+
+bool EqualToPoint(Point a, Point b);
 
 #endif //SOKOBAN2_DATATYPES_H

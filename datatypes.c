@@ -7,3 +7,6 @@ Point AddPoints(Point a, Point b){
 Point SubPoints(Point a, Point b){
     return (Point) {a.x - b.x, a.y - b.y};
 }
+bool EqualToPoint(Point a, Point b){
+    return  a.x == b.x && a.y == b.y;
+}

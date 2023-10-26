@@ -37,9 +37,12 @@ int main() {
     // Főképernyő meghívása
     //MainScreen(&currentPlayer, &levelList, &numOfLevels, &selectedLevel);
     // Próba
-    currentPlayer = (Player) {"Marci", 2};
+    currentPlayer = (Player) {"Marci", 4};
     ReadDirectoryLevelNames("./levels/", &levelList, &numOfLevels);
-    selectedLevel = currentPlayer.completedLevels-1;
+    if (currentPlayer.completedLevels > 0){
+        selectedLevel = currentPlayer.completedLevels-1;
+    }
+    else perror("Nem elfogadhato a player szintje.");
     // Próba
 
     // Játék inicializálása
