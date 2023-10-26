@@ -3,7 +3,7 @@
 
 #define nameLenght 21
 #define maxReadLineLenght 200
-#define maxFileNameLenght 100
+#define maxFileNameLenght 200
 // == Adatstruktúrák ==
 
 typedef enum celltype { null, EMPTY, WALL, TARGET, PLAYER, PLAYERONTARGET, BOX, BOXONTARGET  } CellType;
@@ -14,11 +14,10 @@ typedef struct position{
 typedef struct size{
     int width, height;
 } Size;
-
-typedef struct cell{
-    Point pos;
-    CellType type;
-} Cell;
+typedef struct celldata{
+    enum celltype cell;
+    int count;
+} CellData;
 
 typedef struct player {
     char name[nameLenght];

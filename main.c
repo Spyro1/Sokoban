@@ -55,7 +55,7 @@ int main() {
 
 void MainScreen(Player *currentPlayer, char ***levelList, int *numOfLevels, int *selectedLevel){
 
-    #pragma region FŐCÍM_KIÍRÁSA
+    //#pragma region FŐCÍM_KIÍRÁSA
     // CÍM Kiírása
     econio_textcolor(COL_LIGHTBLUE);
     printf("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n");
@@ -73,7 +73,7 @@ void MainScreen(Player *currentPlayer, char ***levelList, int *numOfLevels, int 
     econio_gotoxy(16,21); printf("↑    ⌫");
     econio_gotoxy(3,22); printf("Navigálás: ← ↓ →  ↲");
 
-    #pragma endregion FŐCÍM_KIÍRÁSA
+    //#pragma endregion FŐCÍM_KIÍRÁSA
 
     // Paraméterek inicializálása
     *numOfLevels = 0;
@@ -98,7 +98,7 @@ void MainScreen(Player *currentPlayer, char ***levelList, int *numOfLevels, int 
     // Menü futtatása
     while(runMenu){
 
-        #pragma region Lenyomott_billentyű_kiértékelése
+//        #pragma region Lenyomott_billentyű_kiértékelése
         switch (key){
             case KEY_ESCAPE:
             case KEY_BACKSPACE:
@@ -132,9 +132,9 @@ void MainScreen(Player *currentPlayer, char ***levelList, int *numOfLevels, int 
                 if (state == choseLevel && *selectedLevel < currentPlayer->completedLevels-1) (*selectedLevel)++;
                 break;
         }
-        #pragma endregion Lenyomot_ billentyű_kiértékelése
+//        #pragma endregion Lenyomot_ billentyű_kiértékelése
 
-        #pragma region Képernyőre_írás_mód_szerint
+  //      #pragma region Képernyőre_írás_mód_szerint
         int _x, _y;
         switch (state) {
             case exitApp:
@@ -243,7 +243,7 @@ void MainScreen(Player *currentPlayer, char ***levelList, int *numOfLevels, int 
             case addedNewPlayer:
                 break;
         }
-        #pragma endregion Képernyőre_írás_mód_szerint
+//        #pragma endregion Képernyőre_írás_mód_szerint
 
         if (!(state == choseLevel && selectedPlayer ==0) ) econio_gotoxy(0,0); // Kurzor bal felső sarokba
         if (runMenu) key = econio_getch(); // Billentyűlenyomásra vár, ha fut a menü

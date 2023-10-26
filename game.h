@@ -26,9 +26,11 @@ void Init(Player *player, char *levelList[], int numOfLevels, int selectedLevel)
 
 void NewGame(Player *player, char ***map, Size mapSize, char levelName[]);
 
-void StartGame(Player *player, char ***map, Size mapSize);
+void StartGame(Player *player, char ***map, Size mapSize, Point playerPosition, Point *boxPositions);
 
-void ReadXSBFile(char filename[], char ***map, Size *mapSize);
+bool CheckWin(char **map, Size mapSize);
+
+void ReadXSBFile(char filename[], char ***map, Size *mapSize, Point *playerPosition, Point **boxPositions);
 
 char* ConvertInputLineToCellType(char line[]);
 
@@ -38,7 +40,8 @@ void PrintStyledMap(char **map, Size size, Point corner);
 void PrintPosition(char **map, Point pos, Point corner);
 
 void AllocateMemoryToMap(char ***map, Size *mapSize);
-
+void AllocateMemoryToBoxPositions(Point **boxPositions, int lenght);
 void FreeAllocatedMemoryFromMap(char ***map);
+void FreeAllocatedMemoryFromBoxPositions(Point **boxPositions);
 
 #endif //GITIGNORE_GAME_H
