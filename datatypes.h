@@ -10,6 +10,7 @@ typedef enum celltype { null, EMPTY, WALL, TARGET, PLAYER, PLAYERONTARGET, BOX, 
 
 typedef struct position{
     int x, y;
+    struct Point *next;
 } Point;
 typedef struct size{
     int width, height;
@@ -27,5 +28,10 @@ typedef struct player {
     struct Player *next;//, *back;
 } Player;
 
+// Functions
+
+Point AddPoints(Point a, Point b);
+
+Point SubPoints(Point a, Point b);
 
 #endif //SOKOBAN2_DATATYPES_H
