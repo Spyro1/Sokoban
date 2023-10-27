@@ -28,7 +28,7 @@ void Init(Player *player, char *levelList[], int numOfLevels, int selectedLevel)
 
 void NewGame(Player *player, char ***map, Size mapSize, char levelName[]);
 
-void StartGame(Player *player, char ***map, Size mapSize, Point playerPosition, Point *boxPositions, Point *targetPositions, int boxCount);
+void StartGame(Player *player, char ***map, Size mapSize, char levelName[]);
 
 bool CheckWin(char **map, Size mapSize);
 
