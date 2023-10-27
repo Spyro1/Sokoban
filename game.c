@@ -55,25 +55,25 @@ void StartGame(Player *player, char ***map, Size mapSize, char levelName[]){
     // Steps->next = NULL;
     // Játék Ciklusa
     while (runGame && !CheckWin(*map, mapSize)){
-        // Wait for input
+        //
         key = econio_getch();
         // Evaluate input
         switch (key){
-            case KEY_ESCAPE:
-            case KEY_BACKSPACE:
-                // Kilépés
-                exitMenu = !exitMenu;
-                break;
-            case KEY_ENTER:
-                if (exitMenu){
-                    if (option == 0){ runGame = false;}
-                    else {
-                        exitMenu = false;
-                        econio_clrscr();
-                        PrintStyledMap(map,mapSize);
-                    }
-                }
-                break;
+//            case KEY_ESCAPE:
+//            case KEY_BACKSPACE:
+//                // Kilépés
+//                exitMenu = !exitMenu;
+//                break;
+//            case KEY_ENTER:
+//                if (exitMenu){
+//                    if (option == 0){ runGame = false;}
+//                    else {
+//                        exitMenu = false;
+//                        econio_clrscr();
+//                        PrintStyledMap(map,mapSize);
+//                    }
+//                }
+//                break;
             case KEY_UP:
                 if (Move(map, mapSize, &playerPosition, &boxPositions, targetPositions, boxCount, up)){
                     playerCanMove = true;
@@ -116,7 +116,7 @@ void StartGame(Player *player, char ***map, Size mapSize, char levelName[]){
                 econio_gotoxy(_x, _y+1);
                 printf("╔════════════════════════╗\n");
                 econio_gotoxy(_x, _y+2);
-                printf("║    BIZTOSAN KILÉPSZ?   ║\n");
+                printf("║   KILÉPSZ A JÁTÉKBÓL?  ║\n");
                 econio_gotoxy(_x, _y+3);
                 printf("║                        ║\n");
                 econio_gotoxy(_x, _y+4);
@@ -150,16 +150,15 @@ void StartGame(Player *player, char ***map, Size mapSize, char levelName[]){
                 //  Mező elhagyása
                 char *lastCell = &(*map)[playerPosition.y][playerPosition.x]; // Az elhagyandó mező pointere
                 if (*lastCell == PLAYER) *lastCell = EMPTY;
-                else if (*lastCell == PLAYERONTARGET) *lastCell = TARGET;
+                else /*if (*lastCell == PLAYERONTARGET)*/ *lastCell = TARGET;
                 PrintPosition(*map, playerPosition);
                 // Új mezőre lépés
-
                 Point destinationPoint = AddPoints(playerPosition, direction);
                 char *destinationCell = &(*map)[destinationPoint.y][destinationPoint.x]; // A lépendő mezőre mutató pointer
                 if (*destinationCell == TARGET) *destinationCell = PLAYERONTARGET;
                 else if (*destinationCell == EMPTY) *destinationCell = PLAYER;
                 playerPosition = destinationPoint;
-                PrintPosition(*map, playerPosition);
+                PrintPosition(*map, destinationPoint);
             }
             // Draw input to console
         }
@@ -202,11 +201,15 @@ bool Move(char ***map, Size mapSize, Point *currentPosition, Point **boxPosition
             if (*boxDestinationCell == EMPTY || *boxDestinationCell == TARGET){
                 int i = 0;
                 while (!EqualToPoint((*boxPositions)[i],destinationPoint)){ i++; } // Aktuális helyen lévő doboz megkeresése
-                // Doboz Új mezőre léptetése
-                if (*destinationCell == TARGET) *destinationCell = BOXONTARGET;
-                else *destinationCell = BOX;
-                *boxPositions[i] = destinationPoint;
+                // Régi mező elhagyása
+                if (*destinationCell == BOXONTARGET) *destinationCell = TARGET;
+                else /*if (*destinationCell == BOX)*/ *destinationCell = EMPTY;
                 PrintPosition(*map, destinationPoint);
+                // Doboz Új mezőre léptetése
+                if (*boxDestinationCell == TARGET) *boxDestinationCell = BOXONTARGET;
+                else *boxDestinationCell = BOX;
+                (*boxPositions)[i] = boxDestinationPoint;
+                PrintPosition(*map, boxDestinationPoint);
                 return true;
             }
             else return false;
@@ -251,7 +254,6 @@ void PrintPosition(char **map, Point pos){
             break;
         case PLAYERONTARGET:
             econio_textcolor(clrPlayerOnTarget);
-            econio_textbackground(clrTarget);
             printf("%s", chrPlayer);
             break;
         case BOX:

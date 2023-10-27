@@ -37,7 +37,7 @@ int main() {
     // Főképernyő meghívása
     //MainScreen(&currentPlayer, &levelList, &numOfLevels, &selectedLevel);
     // Próba
-    currentPlayer = (Player) {"Marci", 14};
+    currentPlayer = (Player) {"Marci", 7};
     ReadDirectoryLevelNames("./levels/", &levelList, &numOfLevels);
     if (currentPlayer.completedLevels > 0){
         selectedLevel = currentPlayer.completedLevels-1;
