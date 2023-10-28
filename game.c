@@ -59,21 +59,21 @@ void StartGame(Player *player, char ***map, Size mapSize, char levelName[]){
         key = econio_getch();
         // Evaluate input
         switch (key){
-//            case KEY_ESCAPE:
-//            case KEY_BACKSPACE:
-//                // Kilépés
-//                exitMenu = !exitMenu;
-//                break;
-//            case KEY_ENTER:
-//                if (exitMenu){
-//                    if (option == 0){ runGame = false;}
-//                    else {
-//                        exitMenu = false;
-//                        econio_clrscr();
-//                        PrintStyledMap(map,mapSize);
-//                    }
-//                }
-//                break;
+            case KEY_ESCAPE:
+            case KEY_BACKSPACE:
+                // Kilépés
+                exitMenu = !exitMenu;
+                break;
+            case KEY_ENTER:
+                if (exitMenu){
+                    if (option == 0){ runGame = false;}
+                    else {
+                        exitMenu = false;
+                        econio_clrscr();
+                        PrintStyledMap(*map,mapSize);
+                    }
+                }
+                break;
             case KEY_UP:
                 if (Move(map, mapSize, &playerPosition, &boxPositions, targetPositions, boxCount, up)){
                     playerCanMove = true;
