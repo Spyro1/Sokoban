@@ -18,45 +18,52 @@ void player_ReadTxtFile(Player **playerList, int *numOfPlayers) {
         printf("Nem lehet megnyitni a fájlt\n");
     }
     else {
-        char inputLine[maxReadLineLenght], name[nameLenght];
-        int completedLevels, totalMoves, averageMoves;
+        char inputLine[maxReadLineLenght], name[nameLenght], inputRest[maxReadLineLenght];
+        int completedLevels;
+        int *levelMoves;
 
         while (fgets(inputLine, maxReadLineLenght, fp)) {
             // %20 helyére a (int const) nameLenght értékét mindig
-            if (sscanf(inputLine, "%21[^;];%d;%d;%d", name, &completedLevels,&totalMoves,&averageMoves) == 4){
-                player_AddPlayer(player_MakePlayer(name, completedLevels, totalMoves, averageMoves), playerList, numOfPlayers);
+            if (sscanf(inputLine, "%20[^;];%d;%s[^\n]", name, &completedLevels, inputRest) == 3){
+                levelMoves = (int*) malloc(completedLevels * sizeof(int)); // Memóriafoglalás
+                player_AddPlayer(player_MakePlayer(name, completedLevels, levelMoves), playerList, numOfPlayers);
             }
         }
     }
     fclose(fp);
     // New Player
-    player_AddPlayer(player_MakePlayer("Új Játékos", 0, 0,0), playerList, numOfPlayers);
+    //player_AddPlayer(player_MakePlayer("Új Játékos", 0, ), playerList, numOfPlayers);
 }
 
 void player_FreePlayerList(Player **playerList){
     while (*playerList != NULL) {
         Player *temp = (Player*) (*playerList)->next;
+        free((*playerList)->levelMoves);
         free(*playerList);
         *playerList = temp;
     }
 }
 
-Player *player_MakePlayer(char name[], int completedLevels, int totalMoves, int averageMoves){
+Player *player_MakePlayer(char name[], int completedLevels, const int *levelMoves){
     Player *uj = (Player *) malloc(sizeof(Player));
     strcpy(uj->name, name);
     uj->completedLevels = completedLevels;
-    uj->totalMoves = totalMoves;
-    uj->averageMoves = averageMoves;
+    for (int i = 0; i < completedLevels; i++){
+        uj->levelMoves[i] = levelMoves[i];
+    }
     uj->next = NULL;
     //uj->back = NULL;
     return uj;
 }
 
-void player_AddPlayer(Player *newPlayer, Player **playerList, int *numOfPlayers){
-    //if (*playerList != NULL) (*playerList)->back = (struct Player*) newPlayer;
-    newPlayer->next = (struct Player*) *playerList;
-    //newPlayer->back = NULL;
-    *playerList = newPlayer;
+void player_AddPlayer(Player *newPlayer, Player **playerListHead, int *numOfPlayers){
+    if (*playerListHead == NULL){
+
+    }
+    Player *mover = *playerListHead;
+
+    newPlayer->next = (struct Player*) *playerListHead;
+    *playerListHead = newPlayer;
     (*numOfPlayers)++;
 }
 
@@ -102,21 +109,16 @@ void player_RemovePlayer(Player *removablePlayer, Player **playerList, int *numO
 //    }
 }
 
-void player_PrintPlayerList(Player *playerList, int numOfPlayers, int selectedPlayerIndex, Point start){
+void player_PrintPlayerList(Player *playerList, int selectedPlayerIndex, Point center){
     int currentIndex = 0;
     //ClearScreenSection(0, 8, 60, 19, COL_RESET);
     while(playerList != NULL){
-        econio_gotoxy(start.x, start.y + currentIndex);
-        if (currentIndex == selectedPlayerIndex){
-            econio_textcolor(COL_BLUE);
-            econio_textbackground(COL_LIGHTCYAN);
-        }
-        else {
-            econio_textcolor(COL_LIGHTCYAN);
-            econio_textbackground(COL_RESET);
-        }
-        if (playerList->completedLevels == 0) printf("                  + %s +                  ", playerList->name);
-        else printf("%20s,  Szint: %2d, Átlag: %2d  lépés", playerList->name, playerList->completedLevels, playerList->averageMoves);
+        char *text = NULL;
+        sprintf(text,"%20s, Szint: %2d", playerList->name, playerList->completedLevels);
+        if (currentIndex == selectedPlayerIndex)
+            printfbc(text,center.x - (int)strlen(text),center.y + currentIndex, activeForeColor, activeBgColor);
+        else
+            printfc(text,center.x - (int)strlen(text),center.y + currentIndex, baseForeColor);
         playerList = (Player*) playerList->next;
         currentIndex++;
         econio_textbackground(COL_RESET);

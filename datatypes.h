@@ -3,7 +3,7 @@
 #include <stdbool.h>
 
 #define nameLenght 21
-#define maxReadLineLenght 200
+#define maxReadLineLenght 400 // 20 karakter név, 3karakter szint szám,
 #define maxFileNameLenght 200
 // == Adatstruktúrák ==
 
@@ -23,9 +23,8 @@ typedef struct celldata{
 
 typedef struct player {
     char name[nameLenght];
-    int completedLevels,
-            totalMoves,
-            averageMoves;
+    int completedLevels;
+    int *levelMoves;
     struct Player *next;//, *back;
 } Player;
 

@@ -14,13 +14,13 @@
 
 void player_ReadTxtFile(Player **playerList, int *numOfPlayers);
 
-void player_AddPlayer(Player *newPlayer, Player **playerList, int *numOfPlayers);
+void player_AddPlayer(Player *newPlayer, Player **playerListHead, int *numOfPlayers);
 
-Player *player_MakePlayer(char name[], int completedLevels, int totalMoves, int averageMoves);
+Player *player_MakePlayer(char name[], int completedLevels, const int *levelMoves);
 
 void player_FreePlayerList(Player **playerList);
 
-void player_PrintPlayerList(Player *playerList, int numOfPlayers, int selectedPlayerIndex, Point start);
+void player_PrintPlayerList(Player *playerList, int selectedPlayerIndex, Point start);
 
 Player* player_GetSelectedPlayer(Player *playerList, int selectedPlayer);
 
