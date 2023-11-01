@@ -23,7 +23,7 @@ typedef struct celldata{
 
 typedef struct player {
     char name[nameLenght];
-    int completedLevels;
+    int numOfCompletedLevels;
     int *levelMoves;
     struct Player *next;//, *back;
 } Player;

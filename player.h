@@ -9,19 +9,27 @@
 #include <dirent.h>
 #include <string.h>
 
-
+#define playerDataPath "./players.txt"
 
 
 void player_ReadTxtFile(Player **playerList, int *numOfPlayers);
 
-void player_AddPlayer(Player *newPlayer, Player **playerListHead, int *numOfPlayers);
-
-Player *player_MakePlayer(char name[], int completedLevels, const int *levelMoves);
+void player_WriteTxtFile(Player *playerListHead, int numOfPlayers);
 
 void player_FreePlayerList(Player **playerList);
+
+void player_FreePlayerNode(Player **playerNode);
+
+Player *player_MakePlayer(char name[], int numOfLevels, int *levelMoves);
+
+void player_AddPlayerToEnd(Player *newPlayer, Player **playerListHead, int *numOfPlayers);
+
+bool player_RemovePlayer(Player *removablePlayer, Player **playerListHead, int *numOfPlayers);
 
 void player_PrintPlayerList(Player *playerList, int selectedPlayerIndex, Point start);
 
 Player* player_GetSelectedPlayer(Player *playerList, int selectedPlayer);
+
+int player_GetIndexOfPlayer(Player *playerListHead, char name[]);
 
 #endif //SOKOBAN2_PLAYER_H

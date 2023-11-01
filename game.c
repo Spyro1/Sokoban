@@ -289,7 +289,7 @@ void ReadXSBFile(char filename[], char ***map, Size *mapSize, Point *playerPosit
     while(fgets(line, maxReadLineLenght, fp)){ // Sor beolvasása
         // Ha sikeres, a sorokat egyel növeljük
         mapSize->height++;
-        // oszlopok száma elhető legagyobb legyen, hogy minden sor elfréjen majd
+        // oszlopok száma lehető legagyobb legyen, hogy minden sor elfréjen majd
         if (strlen(line)-1 > mapSize->width) mapSize->width = (int)strlen(line)-1;
 
         // Karakter pozíciók meghatározása

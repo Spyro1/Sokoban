@@ -1,4 +1,6 @@
-Sándor;1;1;1
-Mátyas;15;11;23
-Nagymami;2;15;13
-Jánoska;8;13;18
+Sanyi;2;1;2
+Marci;2;1263225675;1263225675
+Lacika;5;1;2;3;4;5
+Lacii;0
+Mir;0
+;0
