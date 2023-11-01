@@ -10,17 +10,15 @@
 #include "player.h"
 #include "game.h"
 #include "level.h"
-//#ifdef _WIN32
 #include <windows.h>
-//#endif
 
 /** Feladatok
  * KÉSZ: MainScreen-ben a visszakapott paraméter legyen a selectedLevelFileName helyett a levelFileNameList, hogy lehessen választani és továbbl éptetni a szinteket a játék során.
  * Level függvények modulosítása, hogy csak a main fgv maradjon
  * KÉSZ: XSB fájl beolvasása **map-be
- * Új játékos hozzáadása, név megadása, listához hozzáfűzése és visszaadása
- * Player struct átírása, hogy megfeleljen a feladatkiírásnak
- * Teljes Menü átalakítása a specifikációnak megfellően
+ * KÉSZ: Új játékos hozzáadása, név megadása, listához hozzáfűzése és visszaadása
+ * KSÉZ: Player struct átírása, hogy megfeleljen a feladatkiírásnak
+ * KÉSZ: Teljes Menü átalakítása a specifikációnak megfellően
  * MENÜ:
  * - ÚJ JÁTÉKOS
  *      - max 20 karakter
@@ -33,24 +31,15 @@
  * */
 
 int main() {
-    // Encoding beállítások
-//    #ifdef _WIN32
-        //SetConsoleOutputCP(CP_UTF8);
         SetConsoleCP(CP_UTF8);
         SetConsoleOutputCP(CP_UTF8);
-//    #endif
-//    setlocale(LC_ALL, "");
-//    fwide(stdout, 1);
-//    fputwc(L'\uFEFF', stdout);
 
     // Főképernyő kiiratása és Szint választás
     int selectedLevel = 0; // A menüben kiválasztott szint indexe
     int numOfLevels; // Dinamikus levelList tömb hossza
-    char **levelList; // Dinamikus tömb lesz
     Player currentPlayer; // A menüben kiválasztott játékos
 
-    // Szint Mappa beolvasása
-    ReadDirectoryLevelNames("./levels/", &levelList, &numOfLevels);
+
     // Főképernyő meghívása
     MainScreen(&currentPlayer, numOfLevels, &selectedLevel);
     // Próba
@@ -65,47 +54,29 @@ int main() {
 //    Init(&currentPlayer, levelList, numOfLevels, selectedLevel);
 //    printf("\n\nJáték Fut!\n\n");
 //
-    // Lefoglalt levelLista felszabadítása
-    FreeLevelList(&levelList, &numOfLevels);
+
     debugmalloc_log_file("debugmalloc.txt");
-//    debugmalloc_dump();
-//    fgetc(stdin);
-//    char t[1];
-//    scanf("%c", t);
     return 0;
 }
 
 void MainScreen(Player *currentPlayer, int numOfLevels, int *selectedLevel){
 
     // FŐCÍM_KIÍRÁSA
-    // CÍM Kiírása
-    econio_textcolor(COL_LIGHTBLUE);
-    printf("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n");
-    econio_textcolor(COL_CYAN);
-    printf("       ███████  ██████  ██   ██  ██████  ██████   █████  ███    ██ \n"
-           "       ██      ██    ██ ██  ██  ██    ██ ██   ██ ██   ██ ████   ██ \n"
-           "       ███████ ██    ██ █████   ██    ██ ██████  ███████ ██ ██  ██ \n"
-           "            ██ ██    ██ ██  ██  ██    ██ ██   ██ ██   ██ ██  ██ ██ \n"
-           "       ███████  ██████  ██   ██  ██████  ██████  ██   ██ ██   ████ \n");
-    econio_textcolor(COL_LIGHTBLUE);
-    printf("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n");
-    const int center = 36;
-    // Navigáiós Gombok kiiratása ak épernyő aljára
-    econio_textcolor(COL_LIGHTCYAN);
-    econio_gotoxy(16,21); printf("↑    ⌫ ");
-    econio_gotoxy(3,22); printf("Navigálás: ← ↓ →  ↲");
+    PrintTitle();
 
     // Konstansok a kiiratáshoz
+    const int center = 36;
 
     const char strNewPlayer[] = "ÚJ JÁTÉKOS";
     const char strChosePlayer[] = "JÁTÉKOS VÁLASZTÁS";
     const char strRankList[] = "DICSŐSÉGLISTA";
     const char strExitApp[] = "KILÉPÉS";
-
+    Point p = {center, 9};
     // Paraméterek inicializálása
     currentPlayer = NULL;
     *selectedLevel = 0;
     // Menü Változók
+    char **levelList = NULL; // Dinamikus tömb lesz
     int key = -1;
     bool displayFirst = true;
     bool runMenu = true;
@@ -122,6 +93,8 @@ void MainScreen(Player *currentPlayer, int numOfLevels, int *selectedLevel){
     enum State state = mainMenu;
 
     econio_rawmode();
+
+
     // Menü futtatása
     while(runMenu){
         prevOption = option;
@@ -132,20 +105,30 @@ void MainScreen(Player *currentPlayer, int numOfLevels, int *selectedLevel){
                 if (state == mainMenu) state = exitApp;
                 else state = mainMenu;
                 // Reset Menü
-                displayFirst = true;
-                option = 0;
-                selectedPlayer = 0;
+                ResetMenuVars(&displayFirst, &option, &selectedPlayer);
                 break;
             case KEY_ENTER:
-                if (state == exitApp && option == 1) runMenu = false; // Kilépés a menüből
-                else if (state == exitApp) state = mainMenu;
+                if      (state == exitApp && option == 1) runMenu = false; // Kilépés a menüből
+                else if (state == exitApp) {
+                    state = mainMenu;
+                    ResetMenuVars(&displayFirst, &option, &selectedPlayer);
+                }
                 else if (state == mainMenu){
                     state = mainMenu + 1 + option;
+                    ResetMenuVars(&displayFirst, &option, &selectedPlayer);
+                }
+                else if (state == chosePlayer && currentPlayer != NULL){
+                    // Előkészítés
+                    // Szint Mappa beolvasása
+                    ReadDirectoryLevelNames("./levels/", &levelList, &numOfLevels);
+                    while(Init(currentPlayer, levelList, numOfLevels, *selectedLevel)) {
+//                        econio_clrscr();
+//                        PrintTitle();
+                        *selectedLevel = currentPlayer->numOfCompletedLevels;
+                    }
+                    econio_clrscr();
                 }
                 // Reset Menü
-                displayFirst = true;
-                option = 0;
-                selectedPlayer = 0;
                 break;
             case KEY_RIGHT:
                 if (state == exitApp && option == 0)
@@ -164,14 +147,14 @@ void MainScreen(Player *currentPlayer, int numOfLevels, int *selectedLevel){
             case KEY_DOWN:
                 if (state == mainMenu && option < exitApp-1)
                     option++;
-                else if (state == chosePlayer && selectedPlayer < numOfPlayers)
+                else if (state == chosePlayer && selectedPlayer < numOfPlayers-1)
                     selectedPlayer++;
                 break;
             default: break;
         }
 
         // Képernyőre_írás_mód_szerint
-        Point p = {center, 9};
+
         switch (state) {
             case exitApp:
                 p = (Point) {22, 9};
@@ -278,72 +261,52 @@ void MainScreen(Player *currentPlayer, int numOfLevels, int *selectedLevel){
                     player_ReadTxtFile(&PlayerList, &numOfPlayers);
                 }
                 player_PrintPlayerList(PlayerList, selectedPlayer, (Point) {p.x,p.y+1} );
+                currentPlayer = player_GetSelectedPlayer(PlayerList, selectedPlayer);
+                if (currentPlayer != NULL) *selectedLevel = currentPlayer->numOfCompletedLevels;
                 break;
 
             case rankList:
                 if (displayFirst){
                     displayFirst = false;
                     ClearScrBellow();
-                    printfc("Dicsőséglista", 12, 9, COL_CYAN);
+                    p = (Point) {12,p.y};
+//                    printfc("Dicsőséglista", p.x, p.y, COL_CYAN);
+                    player_ReadTxtFile(&PlayerList, &numOfPlayers);
+                    PrintRankList(PlayerList, numOfPlayers, p);
                 }
                 break;
             default: break;
         }
 
-
-//        if (!(state == choseLevel && selectedPlayer ==0) ) econio_gotoxy(0,0); // Kurzor bal felső sarokba
         if (runMenu && !displayFirst) key = econio_getch(); // Billentyűlenyomásra vár, ha fut a menü
-        //if (!runMenu) returnerPlayer = *currentPlayer; // Player kimentése
     }
-
-    // Free dinamikus tömbök
+    // Játékosok adatainak mentése
+    player_WriteTxtFile(PlayerList, numOfPlayers);
+    // Játékosok listájának felszabadítása
     player_FreePlayerList(&PlayerList); // Player lista felszabadítása
-    //*currentPlayer = returnerPlayer; // Kifelé menő paraméter megadása a segéd változóból
+    // Lefoglalt levelLista felszabadítása
+    FreeLevelList(&levelList, &numOfLevels);
 }
 
-void ClearScrBellow(){
-    ClearScreenSection(0, 8, 73, 22, COL_RESET);
-}
-void ClearScreenSection(int x1, int y1, int x2, int y2, EconioColor bgColor){
-    econio_gotoxy(x1,y1);
-    econio_textcolor(COL_RESET);
-    econio_textbackground(bgColor);
-    for (int i = 0; i < y2-y1; i++){
-        for(int j = 0; j < x2-x1; j++){
-            printf(" ");
-        }
-        econio_gotoxy(x1,y1+i);
-    }
-}
-void print(char const str[], int x, int y){
-    econio_textbackground(COL_RESET);
-    econio_gotoxy(x,y);
-    printf("%s", str);
-}
-void printfc(char const str[], int x, int y, EconioColor foreColor){
-    econio_textbackground(COL_RESET);
-    econio_gotoxy(x,y);
-    econio_textcolor(foreColor);
-    printf("%s", str);
-}
-void printfbc(char const str[], int x, int y, EconioColor foreColor, EconioColor bgColor){
-    econio_textbackground(COL_RESET);
-    econio_gotoxy(x,y);
-    econio_textcolor(foreColor);
-    econio_textbackground(bgColor);
-    printf("%s", str);
-    econio_textbackground(COL_RESET);
+void ResetMenuVars(bool *displayFirst, int *option, int *selectedPlayer) {
+    *displayFirst = true;
+    *option = 0;
+    *selectedPlayer = 0;
 }
 
-int* Split(char *text, char splitter, int count){
-    int *newArray = (int*) malloc(count * sizeof(int));
-    char* helper;
-    strcpy(helper,text);
-    int item;
-    for (int i = 0; i < count; ++i) {
-        sscanf(helper,"%d;%s[\n]", &item, helper);
-        newArray[i] = item;
-    }
-    return newArray;
+void PrintTitle(){
+    // CÍM Kiírása
+    econio_textcolor(COL_LIGHTBLUE);
+    printf("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n");
+    econio_textcolor(COL_CYAN);
+    printf("       ███████  ██████  ██   ██  ██████  ██████   █████  ███    ██ \n"
+           "       ██      ██    ██ ██  ██  ██    ██ ██   ██ ██   ██ ████   ██ \n"
+           "       ███████ ██    ██ █████   ██    ██ ██████  ███████ ██ ██  ██ \n"
+           "            ██ ██    ██ ██  ██  ██    ██ ██   ██ ██   ██ ██  ██ ██ \n"
+           "       ███████  ██████  ██   ██  ██████  ██████  ██   ██ ██   ████ \n");
+    econio_textcolor(COL_LIGHTBLUE);
+    printf("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n");
+    // Navigáiós Gombok kiiratása ak épernyő aljára
+    printfc(             "↑    ⌫", 16, 21,COL_LIGHTCYAN);
+    printfc("Navigálás: ← ↓ →  ↲", 3 , 22,COL_LIGHTCYAN);
 }
-

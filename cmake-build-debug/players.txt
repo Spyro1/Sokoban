@@ -1,6 +1,2 @@
-Sanyi;2;1;2
-Marci;2;1263225675;1263225675
-Lacika;5;1;2;3;4;5
-Lacii;0
-Mir;0
-;0
+Marci;2;1;1
+Nagypapa;3;1;2;3

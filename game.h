@@ -24,11 +24,9 @@
 
 
 
-void Init(Player *player, char *levelList[], int numOfLevels, int selectedLevel);
+bool Init(Player *player, char *levelList[], int numOfLevels, int selectedLevel);
 
-void NewGame(Player *player, char ***map, Size mapSize, char levelName[]);
-
-void StartGame(Player *player, char ***map, Size mapSize, char levelName[]);
+bool StartGame(Player *player, char levelName[]);
 
 bool CheckWin(char **map, Size mapSize);
 
@@ -46,6 +44,6 @@ void PrintPosition(char **map, Point pos);
 void AllocateMemoryToMap(char ***map, Size *mapSize);
 void AllocateDynamicArray(Point **newArray, int lenght);
 void FreeAllocatedMemoryFromMap(char ***map);
-void FreeDynamicArray(Point **boxPositions);
+void FreeDynamicArray(Point **dynamicArray);
 
 #endif //GITIGNORE_GAME_H

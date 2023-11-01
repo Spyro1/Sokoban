@@ -21,13 +21,13 @@ void player_ReadTxtFile(Player **playerList, int *numOfPlayers) {
         player_FreePlayerList(playerList); // Ha van lefoglalva már, akkor felszabadítja a listát
         char inputLine[maxReadLineLenght], name[nameLenght], inputRest[maxReadLineLenght];
         int completedLevels;
-        int *levelMoves;
+        int *levelMoves = NULL;
         int i;
         while (fgets(inputLine, maxReadLineLenght, fp)) {
             // %20 helyére a (int const) nameLenght értékét mindig
             int args = sscanf(inputLine, "%20[^;];%d;%s[^\0]", name, &completedLevels, inputRest);
             if (args == 3){
-                levelMoves = (int*) malloc(completedLevels * sizeof(int)); // Memóriafoglalás
+                levelMoves = (int*) malloc((completedLevels+1) * sizeof(int)); // Memóriafoglalás
                 if (levelMoves == NULL){
                     perror("Nem sikerult memorit foglalni a beolvasott player.txt soranak levelMoves tombjenek.");
                 }
@@ -56,7 +56,11 @@ void player_ReadTxtFile(Player **playerList, int *numOfPlayers) {
                 player_AddPlayerToEnd(player_MakePlayer(name, completedLevels, levelMoves), playerList, numOfPlayers);
             }
             else if (args == 2){
-                player_AddPlayerToEnd(player_MakePlayer(name, completedLevels, NULL), playerList, numOfPlayers);
+                levelMoves = (int*) malloc((completedLevels+1) * sizeof(int)); // Memóriafoglalás
+                player_AddPlayerToEnd(player_MakePlayer(name, completedLevels, levelMoves), playerList, numOfPlayers);
+            }
+            else if (*playerList == NULL) {
+                return;
             }
             else{
                 perror("Hiba a player.txt beolvasasanal, nem megfelelo bemenet!");
@@ -115,7 +119,7 @@ Player *player_MakePlayer(char name[], int numOfLevels, int *levelMoves){
         return NULL;
     }
     // Adatok átadása
-    strcpy(uj->name, name); // Név
+    strcpy( uj->name, name); // Név
     uj->numOfCompletedLevels = numOfLevels; // Teljesített szintek Száma
     uj->levelMoves = levelMoves;
     uj->next = NULL;
@@ -170,6 +174,9 @@ bool player_RemovePlayer(Player *removablePlayer, Player **playerListHead, int *
 void player_PrintPlayerList(Player *playerList, int selectedPlayerIndex, Point center){
     int currentIndex = 0;
     //ClearScreenSection(0, 8, 60, 19, COL_RESET);
+    if (playerList == NULL){
+        printfc("Nincs egy játékos sem még.", center.x - (int)strlen("Nincs egy játékos sem még.")/2,center.y + currentIndex, baseForeColor );
+    }
     while(playerList != NULL){
         char text[maxReadLineLenght];
         sprintf(text,"%s, Szint: %d", playerList->name, playerList->numOfCompletedLevels);
@@ -180,6 +187,51 @@ void player_PrintPlayerList(Player *playerList, int selectedPlayerIndex, Point c
         playerList = (Player*) playerList->next;
         currentIndex++;
     }
+
+}
+void PrintRankList(Player *playerList, int numOfPlayer, Point p){
+    Player *mover = playerList;
+    int *spaces = (int*) malloc(numOfPlayer * sizeof(int));
+    int indent = 8;
+    int line = 0, prevline = 0;
+    int namelenght = 0;
+    printfc("╔═══════╦═",p.x, p.y, baseForeColor);
+    printfc("║ Szint ║ ",p.x, p.y+1, baseForeColor);
+    printfc("╠═══════╬═ ",p.x, p.y+2, baseForeColor);
+    char text[nameLenght+5], helper[nameLenght];
+    while (mover != NULL){
+        line = 2;
+        namelenght = (int) strlen(mover->name);
+        for(int i = 0; i < namelenght + 1; i++) printfc("═", p.x+indent+i+2, p.y, baseForeColor);
+        sprintf(text, "║ %s ║", mover->name); // Eltolás még eggyel nagypapa sornál
+        printfc("╦", p.x+namelenght+indent+3, p.y, baseForeColor);
+        printfc(text, p.x+indent, p.y+1, baseForeColor);
+        for(int i = 0; i < namelenght + 1; i++) printfc("═", p.x+indent+i+2, p.y+2, baseForeColor);
+        printfc("╬", p.x+namelenght+indent+3, p.y+2, baseForeColor);
+        // Szint számának kiiratása
+        line++;
+        for (int i = 0; i < mover->numOfCompletedLevels; ++i) {
+            sprintf(text, "║ %3d.  ║", i+1);
+            printfc(text, p.x, p.y+i+3, baseForeColor);
+            strcpy(text, "║ %");
+            sprintf(helper, "%d\0", namelenght-2);
+            strcat(text, helper);
+            strcat(text,"dl  ║\0");
+            sprintf(text, text, mover->levelMoves[i]);// Nagypapa sprnál hiba itt
+            printfc(text, p.x+indent, p.y+i+3, baseForeColor);
+            line++;
+        }
+        indent += 2 + namelenght;
+        mover = (Player *) mover->next;
+        prevline = line > prevline ? line : prevline;
+    }
+
+    printfc("╚═══════╩═",p.x,p.y+line,COL_CYAN);
+    for(int i = 0; i < namelenght + 1; i++) printfc("═", p.x+10+i, p.y+line, baseForeColor);
+    print("╗", p.x+indent+2, p.y);
+    for(int i = 1; i < line; i++) printfc("║", p.x+indent+2, p.y+i, baseForeColor);
+    print("╝", p.x+indent+2, p.y+line);
+    free(spaces);
 }
 
 Player* player_GetSelectedPlayer(Player *playerList, int selectedPlayer){

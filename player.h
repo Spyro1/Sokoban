@@ -28,6 +28,8 @@ bool player_RemovePlayer(Player *removablePlayer, Player **playerListHead, int *
 
 void player_PrintPlayerList(Player *playerList, int selectedPlayerIndex, Point start);
 
+void PrintRankList(Player *playerList, int numOfPlayer, Point p);
+
 Player* player_GetSelectedPlayer(Player *playerList, int selectedPlayer);
 
 int player_GetIndexOfPlayer(Player *playerListHead, char name[]);
