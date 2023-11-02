@@ -97,6 +97,7 @@ void MainScreen(Player *currentPlayer, int numOfLevels, int *selectedLevel){
 
     // Menü futtatása
     while(runMenu){
+        p = (Point) {center, 9};
         prevOption = option;
         // Lenyomott_billentyű_kiértékelése
         switch (key){
