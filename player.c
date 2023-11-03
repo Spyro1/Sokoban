@@ -73,8 +73,8 @@ void player_ReadTxtFile(Player **playerList, int *numOfPlayers) {
         }
     }
     fclose(fp);
-    // New Player
-    //player_AddPlayerToEnd(player_MakePlayer("Új Játékos", 0, ), playerList, numOfPlayers);
+
+    // Ide még kell a rendezés név szerint
 }
 
 void player_WriteTxtFile(Player *playerListHead, int numOfPlayers){

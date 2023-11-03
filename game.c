@@ -20,10 +20,10 @@ Point const left = {-1, 0};
 Point const right = {1, 0};
 Point const corner = {25, 9};
 
-bool Init(Player *player, char *levelList[], int numOfLevels, int selectedLevel){
+bool Init(Player *player, char **levelList, int numOfLevels){
     // Új játék létrehozása
     ClearScrBellow();
-    return StartGame(player, levelList[selectedLevel]);
+    return StartGame(player, levelList[player->numOfCompletedLevels]);
 }
 bool StartGame(Player *player, char levelName[]){
     // Fő változók deklarálása
@@ -390,7 +390,7 @@ void AllocateDynamicArray(Point **newArray, int lenght){
 void FreeAllocatedMemoryFromMap(char ***map){
     if (*map != NULL) {
         if ((*map)[0] != NULL)
-            free(**map); // Itt  valamiért felszabadításkor a 369. sorról  hiba van túlindexelés
+            free((*map)[0]); // Itt  valamiért felszabadításkor a 370. sorról  hiba van túlindexelés
         free(*map);
     }
 }

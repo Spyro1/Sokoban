@@ -12,7 +12,7 @@
 
 
 //Függvények
-void MainScreen(Player *currentPlayer, int numOfLevels, int *selectedLevel);
+void MainScreen();
 
 void ResetMenuVars(bool *displayFirst, int *option, int *selectedPlayer);
 

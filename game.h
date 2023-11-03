@@ -10,8 +10,8 @@
 // Karakterek
 #define chrWall "█"
 #define chrPlayer "☻" //◯
-#define chrTarget "◻"
-#define chrBox "◼" //▩◼⛝
+#define chrTarget "◻" // "◻□◼
+#define chrBox "◼" //▩◼⛝ //  ▩◼⛝ ◻□◼
 
 // Színek
 #define clrWall COL_DARKGRAY
@@ -24,7 +24,7 @@
 
 
 
-bool Init(Player *player, char *levelList[], int numOfLevels, int selectedLevel);
+bool Init(Player *player, char **levelList, int numOfLevels);
 
 bool StartGame(Player *player, char levelName[]);
 
