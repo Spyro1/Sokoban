@@ -40,20 +40,15 @@ int main() {
     // MainScreen(&currentPlayer, numOfLevels, &selectedLevel);
 
     // == TESZT == : Csak a játék indításához uncoment-eld ezt a részt TESZT END kommentig
-    // Változók deklarálása
-    int selectedLevel = 0; // A menüben kiválasztott szint indexe
-    int numOfLevels; // A beolvasott szintek száma a ./levels/ mappából, levelList tömb hossza
-    Player currentPlayer; // A menüben kiválasztott játékost tartalmazza
-    char **levelList; // A szintek fájlneveit tartalmazza a ./levels/ mappából, dinamikus string tömb
-    // Szintek beolvasása a ./levels/ mappából
-    ReadDirectoryLevelNames("./levels/", &levelList, &numOfLevels);
-    currentPlayer = (Player) {"Marci", 1};
-    if (currentPlayer.numOfCompletedLevels > 0){
-        selectedLevel = currentPlayer.numOfCompletedLevels-1;
-    }
-    else perror("Nem elfogadhato a player szintje.");
-    // Játék inicializálása
-    Init(&currentPlayer, levelList, numOfLevels, selectedLevel);
+        // Változók deklarálása
+        int numOfLevels; // A beolvasott szintek száma a ./levels/ mappából, levelList tömb hossza
+        Player currentPlayer; // A menüben kiválasztott játékost tartalmazza
+        char **levelList; // A szintek fájlneveit tartalmazza a ./levels/ mappából, dinamikus string tömb
+        // Szintek beolvasása a ./levels/ mappából
+        ReadDirectoryLevelNames("./levels/", &levelList, &numOfLevels);
+        currentPlayer = (Player) {"Marci", 1};
+        // Játék inicializálása
+        Init(&currentPlayer, levelList, numOfLevels);
     // == TESZT END ==
 
     // Debugmalloc loggolása fájlba
