@@ -1,4 +1,4 @@
-Kolos;0
-Marci;1;1
-Lina;3;1;1;30
-Nagypapa;3;1;2;34
+Marci;4;30;1;1;10
+Linamina;1;34
+Sanyika;0
+Mamika;2;32;1

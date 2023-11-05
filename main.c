@@ -37,18 +37,18 @@ int main() {
 
     // Főmenü meghívása
     // Csak a játék indításához kommenteld a következő sort
-    // MainScreen(&currentPlayer, numOfLevels, &selectedLevel);
+     MainScreen();
 
     // == TESZT == : Csak a játék indításához uncoment-eld ezt a részt TESZT END kommentig
-        // Változók deklarálása
-        int numOfLevels; // A beolvasott szintek száma a ./levels/ mappából, levelList tömb hossza
-        Player currentPlayer; // A menüben kiválasztott játékost tartalmazza
-        char **levelList; // A szintek fájlneveit tartalmazza a ./levels/ mappából, dinamikus string tömb
-        // Szintek beolvasása a ./levels/ mappából
-        ReadDirectoryLevelNames("./levels/", &levelList, &numOfLevels);
-        currentPlayer = (Player) {"Marci", 1};
-        // Játék inicializálása
-        Init(&currentPlayer, levelList, numOfLevels);
+//        // Változók deklarálása
+//        int numOfLevels; // A beolvasott szintek száma a ./levels/ mappából, levelList tömb hossza
+//        Player currentPlayer; // A menüben kiválasztott játékost tartalmazza
+//        char **levelList; // A szintek fájlneveit tartalmazza a ./levels/ mappából, dinamikus string tömb
+//        // Szintek beolvasása a ./levels/ mappából
+//        ReadDirectoryLevelNames("./levels/", &levelList, &numOfLevels);
+//        currentPlayer = (Player) {"Marci", 1};
+//        // Játék inicializálása
+//        Init(&currentPlayer, levelList, numOfLevels);
     // == TESZT END ==
 
     // Debugmalloc loggolása fájlba
@@ -123,11 +123,11 @@ void MainScreen(){
                     // Szint Mappa beolvasása
                     ReadDirectoryLevelNames("./levels/", &levelList, &numOfLevels);
                     // Játék indítása
-                    while(Init(currentPlayer, levelList, numOfLevels)) {
+                    while(Init(currentPlayer, levelList)) {
                         // Nem kell ide semmi, addig fut, amíg a játékból ki nem lépnek
                         // vagy nem teljesíti az összes szintet a játékos
                     }
-                    //econio_clrscr();
+                    ResetMenuVars(&displayFirst, &option, &selectedPlayer);
                 }
                 break;
             // Navigációk a menüben

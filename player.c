@@ -7,6 +7,7 @@
 #include "player.h"
 #include <dirent.h>
 #include <string.h>
+#include "statistics.h"
 
 
 
@@ -19,33 +20,37 @@ void player_ReadTxtFile(Player **playerList, int *numOfPlayers) {
     }
     else {
         player_FreePlayerList(playerList); // Ha van lefoglalva már, akkor felszabadítja a listát
-        char inputLine[maxReadLineLenght], name[nameLenght], inputRest[maxReadLineLenght];
+        char inputLine[maxLineLenght], name[nameLenght], inputRest[maxLineLenght];
         int completedLevels;
-        int *levelMoves = NULL;
+        int stepCount;
+        Statistics *statsListHead = NULL;
         int i;
-        while (fgets(inputLine, maxReadLineLenght, fp)) {
+        while (fgets(inputLine, maxLineLenght, fp)) {
             // %20 helyére a (int const) nameLenght értékét mindig
-            int args = sscanf(inputLine, "%20[^;];%d;%s[^\0]", name, &completedLevels, inputRest);
+            int args = sscanf(inputLine, "%20[^;];%d;%s[^\n]", name, &completedLevels, inputRest);
             if (args == 3){
-                levelMoves = (int*) malloc((completedLevels+1) * sizeof(int)); // Memóriafoglalás
-                if (levelMoves == NULL){
-                    perror("Nem sikerult memorit foglalni a beolvasott player.txt soranak levelMoves tombjenek.");
-                }
-                else{
+                //levelMoves = (int*) malloc((completedLevels+1) * sizeof(int)); // Memóriafoglalás
+//                if (levelMoves == NULL){
+//                    perror("Nem sikerult memorit foglalni a beolvasott player.txt soranak levelMoves tombjenek.");
+//                }
+//                else{
                     int actualNumOfCompletedLevels = completedLevels;
                     for(i = 0; i < completedLevels-1; i++){
-                        if (sscanf(inputRest, "%d;%s[^\n]", &levelMoves[i], inputRest) != 2){
+                        if (sscanf(inputRest, "%d;%s[^\n]", &stepCount, inputRest) == 2)
+                            AddLevelStatistics(stepCount, &statsListHead);
+                        else
                             actualNumOfCompletedLevels--;
-                        }
+
                     }
-                    sscanf(inputRest, "%d", &levelMoves[i]);
+                    sscanf(inputRest, "%d", &stepCount);
+                    AddLevelStatistics(stepCount, &statsListHead);
                     completedLevels = actualNumOfCompletedLevels;
-                }
-                player_AddPlayerToEnd(player_MakePlayer(name, completedLevels, levelMoves), playerList, numOfPlayers);
+//                }
+                player_AddPlayerToEnd(player_MakePlayer(name, completedLevels, statsListHead), playerList, numOfPlayers);
             }
             else if (args == 2){
-                levelMoves = (int*) malloc((completedLevels+1) * sizeof(int)); // Memóriafoglalás
-                player_AddPlayerToEnd(player_MakePlayer(name, completedLevels, levelMoves), playerList, numOfPlayers);
+                //levelMoves = (int*) malloc((completedLevels+1) * sizeof(int)); // Memóriafoglalás
+                player_AddPlayerToEnd(player_MakePlayer(name, completedLevels, statsListHead), playerList, numOfPlayers);
             }
             else if (*playerList == NULL) {
                 return;
@@ -67,11 +72,12 @@ void player_WriteTxtFile(Player *playerListHead, int numOfPlayers){
         return;
     }
     // irandó Sor létrehozása
-    char printer[maxReadLineLenght];
+    char printer[maxLineLenght];
     for(Player *mover = playerListHead; mover != NULL; mover = (Player *) mover->next){ // Listán végigjáró ciklus
         sprintf(printer,"%s;%d", mover->name, mover->numOfCompletedLevels);
-        for(int i = 0; i < mover->numOfCompletedLevels; i++){
-            sprintf(printer, "%s;%d", printer, mover->levelMoves[i]); // Sorhoz fűzés
+        for (Statistics* stat = (Statistics *) mover->levelStats; stat != NULL; stat = (Statistics *) stat->next){
+            sprintf(printer, "%s;%d", printer, stat->stepCount); // Sorhoz fűzés
+
         }
         fprintf(fp, "%s\n", printer); // Fájlba írás
     }
@@ -88,13 +94,13 @@ void player_FreePlayerList(Player **playerList){
 }
 void player_FreePlayerNode(Player **playerNode){
     if (*playerNode != NULL){
-        if ((*playerNode)->levelMoves != NULL)
-            free((*playerNode)->levelMoves);
+        if ((*playerNode)->levelStats != NULL)
+            free((*playerNode)->levelStats);
         free(*playerNode);
     }
 }
 
-Player *player_MakePlayer(char name[], int numOfLevels, int *levelMoves){
+Player *player_MakePlayer(char name[], int numOfLevels, Statistics *statsListHead){
     // Memóriafoglalás
     Player *uj = (Player *) malloc(sizeof(Player));
     if (uj == NULL){
@@ -104,7 +110,7 @@ Player *player_MakePlayer(char name[], int numOfLevels, int *levelMoves){
     // Adatok átadása
     strcpy( uj->name, name); // Név
     uj->numOfCompletedLevels = numOfLevels; // Teljesített szintek Száma
-    uj->levelMoves = levelMoves; // Lépések száma szintenként
+    uj->levelStats = (struct Statistics *) statsListHead; // Lépések száma szintenként
     uj->next = NULL;
     return uj;
 }
@@ -156,7 +162,7 @@ void player_PrintPlayerList(Player *playerList, int selectedPlayerIndex, Point c
         printfc("Nincs egy játékos sem még.", center.x - (int)strlen("Nincs egy játékos sem még.")/2,center.y + currentIndex, baseForeColor );
     }
     while(playerList != NULL){
-        char text[maxReadLineLenght];
+        char text[maxLineLenght];
         sprintf(text,"%s, Szint: %d", playerList->name, playerList->numOfCompletedLevels);
         if (currentIndex == selectedPlayerIndex)
             printfbc(text,center.x - (int)strlen(text)/2,center.y + currentIndex, activeForeColor, activeBgColor);
@@ -188,7 +194,8 @@ void PrintRankList(Player *playerList, int numOfPlayer, Point p){
         for(int i = 0; i < lenght + 2; i++) printfc("═╬", p.x + indent + i + 1, p.y + 2, baseForeColor);
         // Szint számának kiiratása
         line++;
-        for (int i = 0; i < mover->numOfCompletedLevels; ++i) {
+        int i = 0;
+        for (Statistics* stat = (Statistics *) mover->levelStats; stat != NULL; stat = (Statistics *) stat->next){
             // Szint sorszámának kiírása
             sprintf(text, "║ %3d.  ║", i+1);
             printfc(text, p.x, p.y+i+3, baseForeColor);
@@ -197,9 +204,10 @@ void PrintRankList(Player *playerList, int numOfPlayer, Point p){
             sprintf(helper, "%d\0", lenght - 2);
             strcat(text, helper);
             strcat(text,"dl  ║\0");
-            sprintf(helper, text, mover->levelMoves[i]);// Nagypapa sprnál hiba itt
+            sprintf(helper, text, stat->stepCount);// Nagypapa sprnál hiba itt
             printfc(helper, p.x+indent, p.y+i+3, baseForeColor);
             line++;
+            i++;
         }
         spaces[playerindex++] = lenght;
         indent += 3 + lenght;

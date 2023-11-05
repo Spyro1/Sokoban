@@ -17,4 +17,8 @@ add_executable(sokoban2 main.c
         player.h
         level.c
         level.h
+        move.c
+        move.h
+        statistics.c
+        statistics.h
 )

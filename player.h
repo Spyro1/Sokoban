@@ -20,7 +20,7 @@ void player_FreePlayerList(Player **playerList);
 
 void player_FreePlayerNode(Player **playerNode);
 
-Player *player_MakePlayer(char name[], int numOfLevels, int *levelMoves);
+Player *player_MakePlayer(char name[], int numOfLevels, Statistics *statsListHead);
 
 void player_AddPlayerToEnd(Player *newPlayer, Player **playerListHead, int *numOfPlayers);
 

@@ -4,11 +4,11 @@
 #include "econio.h"
 
 #define nameLenght 21
-#define maxReadLineLenght 400 // 20 karakter név, 3karakter szint szám,
+#define maxLineLenght 400 // 20 karakter név, 3karakter szint szám,
 #define maxFileNameLenght 200
 // == Adatstruktúrák ==
 
-typedef enum celltype { null = '0', EMPTY = '_', WALL = 'W', TARGET = 'T', PLAYER = 'P', PLAYERONTARGET = 'p', BOX = 'B', BOXONTARGET = 'b'  } CellType;
+typedef enum celltype { null, EMPTY, WALL, TARGET, PLAYER, PLAYERONTARGET, BOX, BOXONTARGET } CellType;
 
 typedef struct position{
     int x, y;
@@ -17,17 +17,25 @@ typedef struct position{
 typedef struct size{
     int width, height;
 } Size;
-typedef struct celldata{
-    enum celltype cell;
-    int count;
-} CellData;
+
+typedef struct move{
+    Point from;
+    Point to;
+    struct Move *next;
+} Move;
+
+typedef struct statistic{
+    int stepCount;
+    struct Statistics *next;
+} Statistics;
 
 typedef struct player {
     char name[nameLenght];
     int numOfCompletedLevels;
-    int *levelMoves;
-    struct Player *next;//, *back;
+    struct Statistics *levelStats;
+    struct Player *next;
 } Player;
+
 
 // Functions
 
