@@ -54,6 +54,15 @@ bool CheckWin(CellType **map, Size mapSize);
  * @return Logikai: IGAZ, ha el tud mozdulni a játékos az adott irányba, HAMIS, ha nem lehetséges a lépés
  */
 bool MovePlayer(CellType ***map, Point *currentPosition, Point **boxPositions, Point direction);
+/**
+ *
+ * @param map
+ * @param currentPosition
+ * @param boxPositions
+ * @param moveListHead
+ * @return
+ */
+bool UndoMove(CellType ***map, Point *currentPosition, Point **boxPositions, Move **moveListHead);
 
 // == BEOLVASÁS ==
 /**
