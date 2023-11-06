@@ -10,7 +10,9 @@
 #include "player.h"
 #include "game.h"
 #include "level.h"
-#include <windows.h>
+#ifdef _WIN32
+    #include <windows.h>
+#endif
 
 /** Feladatok
  * KÉSZ: MainScreen-ben a visszakapott paraméter legyen a selectedLevelFileName helyett a levelFileNameList, hogy lehessen választani és továbbl éptetni a szinteket a játék során.
@@ -32,8 +34,10 @@
 
 int main() {
     // Karakter kódolás beállítása
-    SetConsoleCP(CP_UTF8);
-    SetConsoleOutputCP(CP_UTF8);
+    #ifdef _WIN32
+        SetConsoleCP(CP_UTF8);
+        SetConsoleOutputCP(CP_UTF8);
+    #endif
 
     // Főmenü meghívása
     // Csak a játék indításához kommenteld a következő sort
@@ -127,6 +131,7 @@ void MainScreen(){
                         // Nem kell ide semmi, addig fut, amíg a játékból ki nem lépnek
                         // vagy nem teljesíti az összes szintet a játékos
                     }
+                    player_WriteTxtFile(playerListHead, numOfPlayers);
                     ResetMenuVars(&displayFirst, &option, &selectedPlayer);
                 }
                 break;
@@ -310,6 +315,6 @@ void PrintTitle(){
     econio_textcolor(COL_LIGHTBLUE);
     printf("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n");
     // Navigáiós Gombok kiiratása ak épernyő aljára
-    printfc(             "↑    ⌫", 16, 21,COL_LIGHTCYAN);
-    printfc("Navigálás: ← ↓ →  ↲", 3 , 22,COL_LIGHTCYAN);
+//    printfc(             "↑    ⌫", 16, 24,COL_LIGHTCYAN);
+//    printfc("Navigálás: ← ↓ →  ↲", 3 , 25,COL_LIGHTCYAN);
 }

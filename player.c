@@ -23,9 +23,9 @@ void player_ReadTxtFile(Player **playerList, int *numOfPlayers) {
         char inputLine[maxLineLenght], name[nameLenght], inputRest[maxLineLenght];
         int completedLevels;
         int stepCount;
-        Statistics *statsListHead = NULL;
         int i;
         while (fgets(inputLine, maxLineLenght, fp)) {
+            Statistics *statsListHead = NULL;
             // %20 helyére a (int const) nameLenght értékét mindig
             int args = sscanf(inputLine, "%20[^;];%d;%s[^\n]", name, &completedLevels, inputRest);
             if (args == 3){
@@ -95,7 +95,8 @@ void player_FreePlayerList(Player **playerList){
 void player_FreePlayerNode(Player **playerNode){
     if (*playerNode != NULL){
         if ((*playerNode)->levelStats != NULL)
-            free((*playerNode)->levelStats);
+            FreeStisticsList(&((*playerNode)->levelStats));
+//            free((*playerNode)->levelStats);
         free(*playerNode);
     }
 }
@@ -217,8 +218,11 @@ void PrintRankList(Player *playerList, int numOfPlayer, Point p){
 
     printfc("╚═══════╩═",p.x,p.y+maxline,baseForeColor);
     indent = 9;
+//    for(int s = 0; s < numOfPlayer; s++){
+//    }
     for(int j = 0; j < numOfPlayer; j++){
         for(int i = 0; i < spaces[j] + 2; i++) printfc("═╩", p.x + indent + i, p.y + maxline, baseForeColor);
+        for(int k = 3; k < maxline; k++) printfc("║", p.x+indent-1, p.y+k, baseForeColor);
         indent += spaces[j] + 3;
     }
     print("╗", p.x+indent-1, p.y);

@@ -8,6 +8,7 @@
 #include "econio.h"
 #include "datatypes.h"
 #include "move.h"
+#include "statistics.h"
 
 
 Point const up =  {0, -1};
@@ -173,10 +174,8 @@ bool StartGame(Player *player, char levelName[]){
     FreeDynamicArray(&targetPositions);     // Célmező tömb felszabadítása
 
     if (runGame) { // A játékos teljesítete a szintet, mert a CheckWin feltétel léptette kia ciklusból
-//        realloc(player->levelMoves, (player->numOfCompletedLevels+1) * sizeof(int)); // Nem tudja növeln ia méretet valamiért
-//        player->levelMoves[player->numOfCompletedLevels] = numOfMoves;
+        AddLevelStatistics(numOfMoves, (Statistics **) &(player->levelStats));
         (player->numOfCompletedLevels)++;
-
         return true; // Következő szint
     }
     else{
@@ -285,13 +284,21 @@ void PrintPosition(CellType **map, Point pos){
 }
 void PrintStatsAndNav(Size mapSize, int numOfSteps, int level){
     char printer[maxLineLenght];
+    Point p = {corner.x + mapSize.width + 3, corner.y};
 
-    sprintf(printer, "Szint: %d", level);
-    printfc(printer, corner.x + mapSize.width + 3, corner.y, baseForeColor);
-    sprintf(printer, "Lépés: %d", numOfSteps);
-    printfc(printer, corner.x + mapSize.width + 3, corner.y+1, baseForeColor);
-    printfc("[V] : Visszalépés", corner.x + mapSize.width + 3, corner.y + 3, baseForeColor);
-    printfc("[R] : Szint reset", corner.x + mapSize.width + 3, corner.y + 4, baseForeColor);
+
+    if (level == 0) {
+        printfc("Szint: Tutorial", p.x, p.y, baseForeColor);
+
+    }
+    else{
+        sprintf(printer, "Szint: %d", level);
+        printfc(printer, p.x, p.y, baseForeColor);
+        sprintf(printer, "Lépés: %d", numOfSteps);
+        printfc(printer, p.x, p.y+1, baseForeColor);
+        printfc("[V] : Visszalépés", p.x, p.y + 3, baseForeColor);
+        printfc("[R] : Szint reset", p.x, p.y + 4, baseForeColor);
+    }
 }
 
 
