@@ -4,7 +4,7 @@
 
 void AddLevelStatistics(int stepCount, Statistics **statsListHead);
 
-void FreeStisticsList(Statistics **statsListHead);
+void FreeStatisticsList(Statistics **statsListHead);
 
 void FreeStatNode(Statistics **statNode);
 

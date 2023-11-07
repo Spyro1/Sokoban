@@ -3,9 +3,9 @@
 #include <stdio.h>
 #include <string.h>
 #include "datatypes.h"
-#include "econio.h"
+#include "../libraries/econio.h"
 #include "main.h"
-#include "debugmalloc.h"
+#include "../libraries/debugmalloc.h"
 #include <dirent.h>
 #include <string.h>
 

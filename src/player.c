@@ -1,13 +1,11 @@
 #include <stdio.h>
 #include <string.h>
-#include "datatypes.h"
-#include "econio.h"
-#include "main.h"
-#include "debugmalloc.h"
-#include "player.h"
-#include <dirent.h>
 #include <string.h>
-#include "statistics.h"
+#include "../libraries/debugmalloc.h"
+#include "../libraries/econio.h"
+#include "../headers/player.h"
+#include "../headers/statistics.h"
+#include "../headers/datatypes.h"
 
 
 
@@ -95,7 +93,7 @@ void player_FreePlayerList(Player **playerList){
 void player_FreePlayerNode(Player **playerNode){
     if (*playerNode != NULL){
         if ((*playerNode)->levelStats != NULL)
-            FreeStisticsList(&((*playerNode)->levelStats));
+            FreeStatisticsList((Statistics **) &((*playerNode)->levelStats));
 //            free((*playerNode)->levelStats);
         free(*playerNode);
     }

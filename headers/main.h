@@ -2,7 +2,7 @@
 #define SOKOBAN2_MAIN_H
 
 #include <stdlib.h>
-#include "econio.h"
+#include "../libraries/econio.h"
 #include "datatypes.h"
 // Konstansok
 #define activeForeColor COL_LIGHTCYAN

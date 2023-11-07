@@ -1,6 +1,6 @@
-#include "statistics.h"
-#include "debugmalloc.h"
-#include "datatypes.h"
+#include "../headers/statistics.h"
+#include "../libraries/debugmalloc.h"
+#include "../headers/datatypes.h"
 
 void AddLevelStatistics(int stepCount, Statistics **statsListHead){
     // Új statisztika létrehozása
@@ -38,7 +38,7 @@ void AddLevelStatistics(int stepCount, Statistics **statsListHead){
 //    return (Move){-1,-1,NULL,-1,-1,NULL};
 //}
 
-void FreeStisticsList(Statistics **statsListHead){
+void FreeStatisticsList(Statistics **statsListHead){
     Statistics *temp;
     while (*statsListHead != NULL){
         temp = (Statistics*) (*statsListHead)->next;

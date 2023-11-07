@@ -1,8 +1,7 @@
 #ifndef GITIGNORE_GAME_H
 #define GITIGNORE_GAME_H
-
+#include "../libraries/econio.h"
 #include "datatypes.h"
-#include "econio.h"
 #include "player.h"
 
 

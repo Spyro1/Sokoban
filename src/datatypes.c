@@ -1,6 +1,6 @@
-#include "debugmalloc.h"
-#include "datatypes.h"
-#include "econio.h"
+#include "../libraries/debugmalloc.h"
+#include "../libraries/econio.h"
+#include "../headers/datatypes.h"
 
 Point AddPoints(Point a, Point b){
     return (Point) {a.x + b.x, a.y + b.y};

@@ -2,7 +2,7 @@
 #define SOKOBAN2_LEVEL_H
 
 #include <stdlib.h>
-#include "econio.h"
+#include "../libraries/econio.h"
 #include "datatypes.h"
 
 void ReadDirectoryLevelNames(char directory[], char **levelList[], int *numOfFiles);

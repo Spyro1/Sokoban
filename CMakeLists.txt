@@ -3,22 +3,22 @@ project(sokoban2 C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(sokoban2 main.c
-        econio.c
-        econio.h
-        datatypes.c
-        datatypes.h
-        game.c
-        main.h
-        game.c
-        game.h
-        debugmalloc.h
-        player.c
-        player.h
-        level.c
-        level.h
-        move.c
-        move.h
-        statistics.c
-        statistics.h
+add_executable(sokoban2 src/main.c
+        libraries/econio.c
+        libraries/econio.h
+        src/datatypes.c
+        headers/datatypes.h
+        src/game.c
+        headers/main.h
+        src/game.c
+        headers/game.h
+        libraries/debugmalloc.h
+        src/player.c
+        headers/player.h
+        src/level.c
+        headers/level.h
+        src/move.c
+        headers/move.h
+        src/statistics.c
+        headers/statistics.h
 )

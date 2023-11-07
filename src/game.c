@@ -1,15 +1,13 @@
-#include "debugmalloc.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
-#include "game.h"
 #include <string.h>
-#include "main.h"
-#include "econio.h"
-#include "datatypes.h"
-#include "move.h"
-#include "statistics.h"
-
+#include <stdbool.h>
+#include "../libraries/debugmalloc.h"
+#include "../libraries/econio.h"
+#include "../headers/datatypes.h"
+#include "../headers/game.h"
+#include "../headers/move.h"
+#include "../headers/statistics.h"
 
 Point const up =  {0, -1};
 Point const down = {0, 1};

@@ -1,7 +1,7 @@
 #ifndef SOKOBAN2_DATATYPES_H
 #define SOKOBAN2_DATATYPES_H
 #include <stdbool.h>
-#include "econio.h"
+#include "../libraries/econio.h"
 
 #define nameLenght 21 // A játékos nevének maximális hossza
 #define maxLineLenght 400

@@ -1,8 +1,8 @@
 #ifndef SOKOBAN2_MOVE_H
 #define SOKOBAN2_MOVE_H
 
-#include "datatypes.h"
 #include <stdbool.h>
+#include "datatypes.h"
 
 
 Move* MakeMove(Point stepfrom, Point stepTo, bool boxPushed);

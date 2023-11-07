@@ -1,6 +1,6 @@
-#include "move.h"
-#include "debugmalloc.h"
-#include "datatypes.h"
+#include "../libraries/debugmalloc.h"
+#include "../headers/datatypes.h"
+#include "../headers/move.h"
 
 Move* MakeMove(Point stepfrom, Point stepTo, bool boxPushed){
     Move *newMove = (Move*) malloc(sizeof(Move));

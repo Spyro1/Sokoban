@@ -1,15 +1,13 @@
-#include "debugmalloc.h"
 #include <stdio.h>
-#include <stdlib.h>
 #include <stdbool.h>
-#include <dirent.h>
 #include <string.h>
-#include "main.h"
-#include "econio.h"
-#include "datatypes.h"
-#include "player.h"
-#include "game.h"
-#include "level.h"
+#include "../libraries/debugmalloc.h"
+#include "../libraries/econio.h"
+#include "../headers/main.h"
+#include "../headers/datatypes.h"
+#include "../headers/player.h"
+#include "../headers/game.h"
+#include "../headers/level.h"
 #ifdef _WIN32
     #include <windows.h>
 #endif
