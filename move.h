@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 
-Move* MakeMove(Point stepfrom, Point stepTo);
+Move* MakeMove(Point stepfrom, Point stepTo, bool boxPushed);
 void AddMove(Move *newMove, Move **moveListHead);
 Move RemoveMove(Move **moveListHead);
 void FreeMoveList(Move **statsListHead);

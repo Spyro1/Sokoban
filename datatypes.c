@@ -45,3 +45,17 @@ void printfbc(char const str[], int x, int y, EconioColor foreColor, EconioColor
     printf("%s", str);
     econio_textbackground(COL_RESET);
 }
+//int StringLenght(const char *str){
+//    int lenght = 0;
+//    while (str[lenght] != '\0'){
+//        switch (str) {
+//            case "á":
+//            case "é":
+//                lenght +=2;
+//                break;
+//            default:
+//                lenght++;
+//                break;
+//        }
+//    }
+//}

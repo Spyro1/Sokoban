@@ -105,12 +105,12 @@ bool StartGame(Player *player, char levelName[]){
                 break;
             case 'V':
             case 'v':
-                // Visszalépés
-                if (UndoMove(&map,&playerPosition,&boxPositions,&PlayerMovesListHead)){
-                    numOfMoves++;
-                    // PRINT STATS
-                    PrintStatsAndNav(mapSize, numOfMoves, player->numOfCompletedLevels);
-                }
+                // Visszalépés - Fejlesztés alatt
+//                if (UndoMove(&map,&playerPosition,&boxPositions,&PlayerMovesListHead)){
+//                    numOfMoves++;
+//                    // PRINT STATS
+//                    PrintStatsAndNav(mapSize, numOfMoves, player->numOfCompletedLevels);
+//                }
 
                 break;
             case 'R':
@@ -154,14 +154,19 @@ bool StartGame(Player *player, char levelName[]){
                 //  Mező elhagyása
                 CellType *lastCell = &map[playerPosition.y][playerPosition.x]; // Az elhagyandó mező pointere
                 if (*lastCell == PLAYER) *lastCell = EMPTY;
-                else /*if (*lastCell == PLAYERONTARGET)*/ *lastCell = TARGET;
+                else *lastCell = TARGET;
                 PrintPosition(map, playerPosition);
+
                 // Új mezőre lépés
                 Point destinationPoint = AddPoints(playerPosition, direction);
                 CellType *destinationCell = &map[destinationPoint.y][destinationPoint.x]; // A lépendő mezőre mutató pointer
                 if (*destinationCell == TARGET) *destinationCell = PLAYERONTARGET;
                 else if (*destinationCell == EMPTY) *destinationCell = PLAYER;
-                AddMove(MakeMove(playerPosition, destinationPoint), &PlayerMovesListHead);
+
+                // Eltolt e dobozt
+                Point boxDestinationPoint = AddPoints(destinationPoint, direction);
+                CellType *boxDestinationCell =  &(map[boxDestinationPoint.y][boxDestinationPoint.x]);
+                AddMove(MakeMove(playerPosition, destinationPoint, *boxDestinationCell == BOX || *boxDestinationCell == BOXONTARGET), &PlayerMovesListHead);
                 numOfMoves++;
                 playerPosition = destinationPoint;
                 PrintPosition(map, destinationPoint);
@@ -254,23 +259,26 @@ bool UndoMove(CellType ***map, Point *currentPosition, Point **boxPositions, Mov
             *FromCell = PLAYERONTARGET;
         else
             *FromCell = PLAYER;
-        if (*BoxCell == BOX){
-            *BoxCell = EMPTY;
-            int i = 0;
-            while (!EqualToPoint((*boxPositions)[i],boxPosition)){ i++; } // Aktuális helyen lévő doboz megkeresése
-            (*boxPositions)[i] = lastMove.to;
-            PrintPosition(*map,boxPosition);
-            if (*ToCell == PLAYERONTARGET) *ToCell = BOXONTARGET;
-            else *ToCell = BOX;
-        }
-        else if (*BoxCell == BOXONTARGET){
-            *BoxCell = TARGET;
-            int i = 0;
-            while (!EqualToPoint((*boxPositions)[i],boxPosition)){ i++; } // Aktuális helyen lévő doboz megkeresése
-            (*boxPositions)[i] = lastMove.to;
-            PrintPosition(*map,boxPosition);
-            if (*ToCell == PLAYERONTARGET) *ToCell = BOXONTARGET;
-            else *ToCell = BOX;
+        if (lastMove.boxPushed){
+            if (*BoxCell == BOX){
+                *BoxCell = EMPTY;
+                int i = 0;
+                while (!EqualToPoint((*boxPositions)[i],boxPosition)){ i++; } // Aktuális helyen lévő doboz megkeresése
+                (*boxPositions)[i] = lastMove.to;
+                PrintPosition(*map,boxPosition);
+                if (*ToCell == PLAYERONTARGET) *ToCell = BOXONTARGET;
+                else *ToCell = BOX;
+            }
+            else if (*BoxCell == BOXONTARGET) {
+                *BoxCell = TARGET;
+                int i = 0;
+                while (!EqualToPoint((*boxPositions)[i],
+                                     boxPosition)) { i++; } // Aktuális helyen lévő doboz megkeresése
+                (*boxPositions)[i] = lastMove.to;
+                PrintPosition(*map, boxPosition);
+                if (*ToCell == PLAYERONTARGET) *ToCell = BOXONTARGET;
+                else *ToCell = BOX;
+            }
         }
         else{
             if (*ToCell == PLAYERONTARGET) *ToCell = TARGET;
@@ -340,12 +348,24 @@ void PrintStatsAndNav(Size mapSize, int numOfSteps, int level){
     Point p = {corner.x + mapSize.width + 3, corner.y};
 
     if (level == 0) {
+        int i = 2;
         printfc("Szint: Tutorial", p.x, p.y, baseForeColor);
-        printfc("Mozgáshoz használd", p.x, p.y+2, baseForeColor);
-        printfc("a kurzor billentyűket.", p.x, p.y+3, baseForeColor);
-        printfc("A célod, hogy a barna", p.x, p.y+4, baseForeColor);
-        printfc("dobozokat a helyükre told. ", p.x, p.y+5, baseForeColor);
-        printfc("Sok sikert!", p.x, p.y+6, baseForeColor);
+        printfc("Mozgáshoz használd", p.x, p.y+i++, baseForeColor);
+        printfc("a kurzor billentyűket.", p.x, p.y+i++, baseForeColor);
+        printfc("A célod, hogy a barna", p.x, p.y+i++, baseForeColor);
+        printfc("dobozokat a helyükre told. ", p.x, p.y+i++, baseForeColor);
+
+        sprintf(printer, "Fal: %s", chrWall);
+        printfc(printer, p.x, p.y+i++, clrWall);
+        sprintf(printer, "Játékos: %s", chrPlayer);
+        printfc(printer, p.x, p.y+i++, clrPlayer);
+        sprintf(printer, "Doboz: %s", chrBox);
+        printfc(printer, p.x, p.y+i++, clrBox);
+        sprintf(printer, "Doboz a helyén: %s", chrBox);
+        printfc(printer, p.x, p.y+i++, clrBoxOnTarget);
+        sprintf(printer, "Célmező: %s", chrTarget);
+        printfc(printer, p.x, p.y+i++, clrTarget);
+        printfc("Jó játékot!", p.x, p.y+i++, baseForeColor);
     }
     else{
         sprintf(printer, "Szint: %d", level);

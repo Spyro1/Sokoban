@@ -55,11 +55,12 @@ bool CheckWin(CellType **map, Size mapSize);
  */
 bool MovePlayer(CellType ***map, Point *currentPosition, Point **boxPositions, Point direction);
 /**
- *
- * @param map
- * @param currentPosition
- * @param boxPositions
- * @param moveListHead
+ * Visszavonja a játékos előző lépést. Egészen addig fut le sikeresen,
+ * amíg a moveList-ben volt elem, azaz meglépett lépés.
+ * @param map A pályát leíró 2D-s dinamikus mátrix (cím szerint)
+ * @param currentPosition A játékos aktuális koordinátája a pályán (map-en) (cím szerint)
+ * @param boxPositions A dobozok koordinátáinak dinamikus tömbje cím szerint átadva (cím szerint)
+ * @param moveListHead A játékos lépéseit eltároló láncolt lista cím szerint átadva (cím szerint)
  * @return
  */
 bool UndoMove(CellType ***map, Point *currentPosition, Point **boxPositions, Move **moveListHead);
