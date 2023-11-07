@@ -50,9 +50,10 @@ bool CheckWin(CellType **map, Size mapSize);
  * @param currentPosition A játékos aktuális koordinátája a pályán (map-en) (cím szerint)
  * @param boxPositions A dobozok koordinátáinak dinamikus tömbje cím szerint átadva (cím szerint)
  * @param direction A játékos elmozdulásvektora
+ * @param movesListHead A játékos lépéseit eltároló láncolt lista cím szerint átadva (cím szerint)
  * @return Logikai: IGAZ, ha el tud mozdulni a játékos az adott irányba, HAMIS, ha nem lehetséges a lépés
  */
-bool MovePlayer(CellType ***map, Point *currentPosition, Point **boxPositions, Point direction);
+bool MovePlayer(CellType ***map, Point *currentPosition, Point **boxPositions, Point direction, Move **movesListHead);
 /**
  * Visszavonja a játékos előző lépést. Egészen addig fut le sikeresen,
  * amíg a moveList-ben volt elem, azaz meglépett lépés.

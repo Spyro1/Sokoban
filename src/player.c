@@ -188,7 +188,7 @@ void PrintRankList(Player *playerList, int numOfPlayer, Point p){
         lenght = (int) strlen(mover->name);
         // Fejléc kiiratása
         for(int i = 0; i < lenght + 2; i++) printfc("═╦", p.x + indent + i + 1, p.y, baseForeColor);
-        sprintf(text, "║ %s ║", mover->name); // Eltolás még eggyel nagypapa sornál
+        sprintf(text, "║ %s ", mover->name); // Eltolás még eggyel nagypapa sornál
         printfc(text, p.x+indent, p.y+1, baseForeColor);
         for(int i = 0; i < lenght + 2; i++) printfc("═╬", p.x + indent + i + 1, p.y + 2, baseForeColor);
         // Szint számának kiiratása
@@ -224,6 +224,7 @@ void PrintRankList(Player *playerList, int numOfPlayer, Point p){
         indent += spaces[j] + 3;
     }
     print("╗", p.x+indent-1, p.y);
+    print("║", p.x+indent-1, p.y+1);
     print("╣", p.x+indent-1, p.y+2);
     for(int i = 3; i < maxline; i++) printfc("║", p.x+indent-1, p.y+i, baseForeColor);
     print("╝", p.x+indent-1, p.y+maxline);
