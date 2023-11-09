@@ -129,24 +129,6 @@ bool StartGame(Player *player, char levelName[]){
         // Kiírás
         if (exitMenu){
             WarningWindow("KILÉPSZ A JÁTÉKBÓL?", p, option, &displayFirst, COL_RED, COL_WHITE, COL_LIGHTRED);
-//            int _x = 25, _y = 8;
-//            if (displayFirst) {
-//                displayFirst = false;
-//                ClearScrBellow();
-//                printfc("╔════════════════════════╗", _x, _y+1, COL_RED);
-//                printfc("║   KILÉPSZ A JÁTÉKBÓL?  ║", _x, _y+2, COL_RED);
-//                printfc("║                        ║", _x, _y+3, COL_RED);
-//                printfc("║    NEM        IGEN     ║", _x, _y+4, COL_RED);
-//                printfc("╚════════════════════════╝", _x, _y+5, COL_RED);
-//            }
-//            if (option == 0) {
-//                printfbc("NEM", _x+5, _y+4, COL_WHITE, COL_LIGHTRED);
-//                printfbc("IGEN", _x+16, _y+4, COL_RED, COL_RESET);
-//            }
-//            else {
-//                printfbc("NEM", _x+5, _y+4, COL_RED, COL_RESET);
-//                printfbc("IGEN", _x+16, _y+4, COL_WHITE, COL_LIGHTRED);
-//            }
         }
     }
     // Játék során használt memóriaterületek felszababadítása

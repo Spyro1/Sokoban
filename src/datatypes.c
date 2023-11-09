@@ -15,6 +15,9 @@ bool EqualToPoint(Point a, Point b){
 void ClearScrBellow(){
     ClearScreenSection(0, 8, 73, 23, COL_RESET);
 }
+void ClearScrLines(int lines){
+    ClearScreenSection(0, 8, 8+lines, 23, COL_RESET);
+}
 void ClearScreenSection(int x1, int y1, int x2, int y2, EconioColor bgColor){
     econio_gotoxy(x1,y1);
     econio_textcolor(COL_RESET);

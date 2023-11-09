@@ -155,10 +155,12 @@ void MainScreen(){
                 break;
             case 'E':
             case 'e':
+            case KEY_F2:
                 // Játékos név szerkesztlse
                 break;
             case 'D':
             case 'd':
+            case KEY_DELETE:
                 state = deletePlayer;
                 ResetMenuVars(&displayFirst, &option, &selectedPlayer);
                 // Játékos eltávolítása
@@ -172,6 +174,7 @@ void MainScreen(){
                 // Ha fut a menü
                 if (runMenu){
                     WarningWindow("BIZTOSAN KILÉPSZ?", p, option, &displayFirst, COL_RED, COL_WHITE, COL_LIGHTRED);
+                    linesPrinter = 6;
                 }
                 else {
                     // Leíállítás kiírása
@@ -220,6 +223,7 @@ void MainScreen(){
                         break;
                     default: break;
                 }
+                linesPrinter = 4;
                 break;
             case newPlayer: // Új játékos felvétele
                  if (displayFirst){
@@ -267,9 +271,11 @@ void MainScreen(){
                 player_PrintPlayerList(playerListHead, selectedPlayer, (Point) {p.x, p.y + 1} );
                 // Kijelölt játékos a currentPlayerbe rakása, hogy a játék indítható legyen
                 currentPlayer = player_GetSelectedPlayer(playerListHead, selectedPlayer);
+                linesPrinter = numOfPlayers + 1;
                 break;
             case deletePlayer:
                 WarningWindow("BIZTOSAN TÖRLÖD?", p, option, &displayFirst, baseForeColor, activeForeColor, activeBgColor);
+                linesPrinter = 6;
                 break;
             case rankList: // Dicsőséglista kiiratása
                 if (displayFirst){
