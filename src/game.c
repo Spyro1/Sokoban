@@ -24,6 +24,12 @@ bool StartGame(Player *player, char levelName[]){
     // Fő változók deklarálása
     CellType **map = NULL; // Pálya
     Size mapSize; // Pálya mérete
+
+    // Konstansok a kiiratáshoz
+    const int center = 36; // Képernyő közepe a cím szerint
+    const int maxDisplayLines = 10;
+    Point p = {center, 9}; // A kiiratás középpontja a cím alatt
+
     // Játék inicializálása
     Point playerPosition;
     Point *boxPositions = NULL;
@@ -46,6 +52,7 @@ bool StartGame(Player *player, char levelName[]){
     while (runGame && !CheckWin(map, mapSize)){
         // Billentyűlenyomás érzékelése
         key = econio_getch();
+        p = (Point) {center, 9};
         // Lenyomott billentyű kiértékelése
         switch (key){
             case KEY_ESCAPE:
@@ -121,24 +128,25 @@ bool StartGame(Player *player, char levelName[]){
         }
         // Kiírás
         if (exitMenu){
-            int _x = 25, _y = 8;
-            if (displayFirst) {
-                displayFirst = false;
-                ClearScrBellow();
-                printfc("╔════════════════════════╗", _x, _y+1, COL_RED);
-                printfc("║   KILÉPSZ A JÁTÉKBÓL?  ║", _x, _y+2, COL_RED);
-                printfc("║                        ║", _x, _y+3, COL_RED);
-                printfc("║    NEM        IGEN     ║", _x, _y+4, COL_RED);
-                printfc("╚════════════════════════╝", _x, _y+5, COL_RED);
-            }
-            if (option == 0) {
-                printfbc("NEM", _x+5, _y+4, COL_WHITE, COL_LIGHTRED);
-                printfbc("IGEN", _x+16, _y+4, COL_RED, COL_RESET);
-            }
-            else {
-                printfbc("NEM", _x+5, _y+4, COL_RED, COL_RESET);
-                printfbc("IGEN", _x+16, _y+4, COL_WHITE, COL_LIGHTRED);
-            }
+            WarningWindow("KILÉPSZ A JÁTÉKBÓL?", p, option, &displayFirst, COL_RED, COL_WHITE, COL_LIGHTRED);
+//            int _x = 25, _y = 8;
+//            if (displayFirst) {
+//                displayFirst = false;
+//                ClearScrBellow();
+//                printfc("╔════════════════════════╗", _x, _y+1, COL_RED);
+//                printfc("║   KILÉPSZ A JÁTÉKBÓL?  ║", _x, _y+2, COL_RED);
+//                printfc("║                        ║", _x, _y+3, COL_RED);
+//                printfc("║    NEM        IGEN     ║", _x, _y+4, COL_RED);
+//                printfc("╚════════════════════════╝", _x, _y+5, COL_RED);
+//            }
+//            if (option == 0) {
+//                printfbc("NEM", _x+5, _y+4, COL_WHITE, COL_LIGHTRED);
+//                printfbc("IGEN", _x+16, _y+4, COL_RED, COL_RESET);
+//            }
+//            else {
+//                printfbc("NEM", _x+5, _y+4, COL_RED, COL_RESET);
+//                printfbc("IGEN", _x+16, _y+4, COL_WHITE, COL_LIGHTRED);
+//            }
         }
     }
     // Játék során használt memóriaterületek felszababadítása
@@ -185,7 +193,7 @@ bool MovePlayer(CellType ***map, Point *currentPosition, Point **boxPositions, P
             if (*destinationCell == TARGET) *destinationCell = PLAYERONTARGET;
             else if (*destinationCell == EMPTY) *destinationCell = PLAYER;
             // Lépés eltárolása
-            AddMove(MakeMove(*currentPosition, destinationPoint, false), movesListHead);
+            AddMoveToList(CreateMove(*currentPosition, destinationPoint, false), movesListHead);
             *currentPosition = destinationPoint;
             PrintPosition(*map, destinationPoint);
 
@@ -219,7 +227,7 @@ bool MovePlayer(CellType ***map, Point *currentPosition, Point **boxPositions, P
                 if (*destinationCell == TARGET) *destinationCell = PLAYERONTARGET;
                 else if (*destinationCell == EMPTY) *destinationCell = PLAYER;
                 // Lépés eltárolása
-                AddMove(MakeMove(*currentPosition, destinationPoint, true), movesListHead);
+                AddMoveToList(CreateMove(*currentPosition, destinationPoint, true), movesListHead);
                 *currentPosition = destinationPoint;
                 PrintPosition(*map, destinationPoint);
                 return true;
@@ -234,7 +242,7 @@ bool MovePlayer(CellType ***map, Point *currentPosition, Point **boxPositions, P
 bool UndoMove(CellType ***map, Point *currentPosition, Point **boxPositions, Move **moveListHead){
     // Ha volt már elmozdulás
     if (*moveListHead != NULL){
-        Move lastMove = RemoveMove(moveListHead);
+        Move lastMove = RemoveMoveFromList(moveListHead);
         Point moveDirection = SubPoints(lastMove.to, lastMove.from);
 //        Point undoDirection = SubPoints(lastMove.from, lastMove.to);
         Point boxPosition = AddPoints(lastMove.to, moveDirection);
@@ -396,6 +404,7 @@ void ReadXSBFile(char filename[], CellType ***map, Size *mapSize, Point *playerP
         for(int i = 0; line[i] != '\0'; i++){
             switch (line[i]) {
                 case '@':
+                case '+':
                     *playerPosition = (Point) {i, mapSize->height-1};
                     break;
                 case '$':

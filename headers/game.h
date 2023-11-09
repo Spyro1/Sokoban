@@ -5,7 +5,7 @@
 #include "player.h"
 
 
-/* == Konstansok == */
+// == Konstansok ==
 // Karakterek
 #define chrWall "█"
 #define chrPlayer "☻" //◯
@@ -42,7 +42,7 @@ bool StartGame(Player *player, char levelName[]);
  * @return Logikai: Igaz, ha minden doboz a helyére került; Hamis, ha van egy doboz is, ami nincs a helyén
  */
 bool CheckWin(CellType **map, Size mapSize);
-/**
+ /**
  * A játékos elmozdulását tesztelő függvény a direction irányba.
  * Ha lehetséges a lépés, akor igazat ad vissza, és ha doboz van a lépés irányában akkor a dobozt eltolja, és igazat ad vissza.
  * @param map A pályát leíró 2D-s dinamikus mátrix (cím szerint)

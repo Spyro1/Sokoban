@@ -13,7 +13,7 @@ bool EqualToPoint(Point a, Point b){
 }
 
 void ClearScrBellow(){
-    ClearScreenSection(0, 8, 73, 22, COL_RESET);
+    ClearScreenSection(0, 8, 73, 23, COL_RESET);
 }
 void ClearScreenSection(int x1, int y1, int x2, int y2, EconioColor bgColor){
     econio_gotoxy(x1,y1);
@@ -45,17 +45,11 @@ void printfbc(char const str[], int x, int y, EconioColor foreColor, EconioColor
     printf("%s", str);
     econio_textbackground(COL_RESET);
 }
-//int StringLenght(const char *str){
-//    int lenght = 0;
-//    while (str[lenght] != '\0'){
-//        switch (str) {
-//            case "á":
-//            case "é":
-//                lenght +=2;
-//                break;
-//            default:
-//                lenght++;
-//                break;
-//        }
-//    }
-//}
+
+int stringlenght(const char *s) {
+    int count = 0;
+    while (*s) {
+        count += (*s++ & 0xC0) != 0x80;
+    }
+    return count;
+}

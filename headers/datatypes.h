@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include "../libraries/econio.h"
 
-#define nameLenght 21 // A játékos nevének maximális hossza
+#define nameLenght 20 // A játékos nevének maximális hossza
 #define maxLineLenght 400
 #define maxFileNameLenght 200
 // == Adatstruktúrák ==
@@ -107,5 +107,7 @@ void printfc(char const str[], int x, int y, EconioColor foreColor);
  * @param bgColor A szöveg háttérszíne
  */
 void printfbc(char const str[], int x, int y, EconioColor foreColor, EconioColor bgColor);
+
+int stringlenght(const char *s);
 
 #endif //SOKOBAN2_DATATYPES_H

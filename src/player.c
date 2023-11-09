@@ -9,16 +9,17 @@
 
 
 
-void player_ReadTxtFile(Player **playerList, int *numOfPlayers) {
+void player_ReadTxtFile(Player **playerListHead, int *numOfPlayers) {
     *numOfPlayers = 0;
     FILE *fp;
     fp = fopen(playerDataPath, "r");
     if (fp == NULL) {
         printf("Nem lehet megnyitni a fájlt\n");
+        return;
     }
-    else {
-        player_FreePlayerList(playerList); // Ha van lefoglalva már, akkor felszabadítja a listát
-        char inputLine[maxLineLenght], name[nameLenght], inputRest[maxLineLenght];
+
+    player_FreePlayerList(playerListHead); // Ha van lefoglalva már, akkor felszabadítja a players listát
+        char inputLine[maxLineLenght], name[nameLenght*2], inputRest[maxLineLenght];
         int completedLevels;
         int stepCount;
         int i;
@@ -27,37 +28,31 @@ void player_ReadTxtFile(Player **playerList, int *numOfPlayers) {
             // %20 helyére a (int const) nameLenght értékét mindig
             int args = sscanf(inputLine, "%20[^;];%d;%s[^\n]", name, &completedLevels, inputRest);
             if (args == 3){
-                //levelMoves = (int*) malloc((completedLevels+1) * sizeof(int)); // Memóriafoglalás
-//                if (levelMoves == NULL){
-//                    perror("Nem sikerult memorit foglalni a beolvasott player.txt soranak levelMoves tombjenek.");
-//                }
-//                else{
-                    int actualNumOfCompletedLevels = completedLevels;
-                    for(i = 0; i < completedLevels-1; i++){
-                        if (sscanf(inputRest, "%d;%s[^\n]", &stepCount, inputRest) == 2)
-                            AddLevelStatistics(stepCount, &statsListHead);
-                        else
-                            actualNumOfCompletedLevels--;
-
-                    }
-                    sscanf(inputRest, "%d", &stepCount);
-                    AddLevelStatistics(stepCount, &statsListHead);
-                    completedLevels = actualNumOfCompletedLevels;
-//                }
-                player_AddPlayerToEnd(player_MakePlayer(name, completedLevels, statsListHead), playerList, numOfPlayers);
+                int actualNumOfCompletedLevels = completedLevels;
+                for(i = 0; i < completedLevels-1; i++){
+                    if (sscanf(inputRest, "%d;%s[^\n]", &stepCount, inputRest) == 2)
+                        AddLevelStatistics(stepCount, &statsListHead);
+                    else
+                        actualNumOfCompletedLevels--;
+                }
+                sscanf(inputRest, "%d", &stepCount);
+                AddLevelStatistics(stepCount, &statsListHead);
+                completedLevels = actualNumOfCompletedLevels;
+                //player_AddPlayerToEnd(player_MakePlayer(name, completedLevels, statsListHead), playerListHead, numOfPlayers);
+                player_AddPlayerInOrder(player_MakePlayer(name, completedLevels, statsListHead), playerListHead, numOfPlayers);
             }
             else if (args == 2){
-                //levelMoves = (int*) malloc((completedLevels+1) * sizeof(int)); // Memóriafoglalás
-                player_AddPlayerToEnd(player_MakePlayer(name, completedLevels, statsListHead), playerList, numOfPlayers);
+                //player_AddPlayerToEnd(player_MakePlayer(name, completedLevels, statsListHead), playerListHead, numOfPlayers);
+                player_AddPlayerInOrder(player_MakePlayer(name, completedLevels, statsListHead), playerListHead, numOfPlayers);
             }
-            else if (*playerList == NULL) {
+            else if (*playerListHead == NULL) {
                 return;
             }
             else{
                 perror("Hiba a player.txt beolvasasanal, nem megfelelo bemenet!");
             }
         }
-    }
+
     fclose(fp);
 
     // Ide még kell a rendezés név szerint
@@ -82,12 +77,12 @@ void player_WriteTxtFile(Player *playerListHead, int numOfPlayers){
     fclose(fp);
 }
 
-void player_FreePlayerList(Player **playerList){
+void player_FreePlayerList(Player **playerListHead){
     Player *temp;
-    while (*playerList != NULL) {
-        temp = (Player*) (*playerList)->next;
-        player_FreePlayerNode(playerList);
-        *playerList = temp;
+    while (*playerListHead != NULL) {
+        temp = (Player*) (*playerListHead)->next;
+        player_FreePlayerNode(playerListHead);
+        *playerListHead = temp;
     }
 }
 void player_FreePlayerNode(Player **playerNode){
@@ -127,7 +122,26 @@ void player_AddPlayerToEnd(Player *newPlayer, Player **playerListHead, int *numO
     }
     (*numOfPlayers)++;
 }
-
+void player_AddPlayerInOrder(Player *newPlayer, Player **playerListHead, int *numOfPlayers){
+    Player *prev = NULL;
+    Player *mover = *playerListHead;
+    // Hely keresése
+//    while (mover != NULL && strcmp(newPlayer->num, mover->name) > 0){
+    while (mover != NULL && newPlayer->numOfCompletedLevels > mover->numOfCompletedLevels){
+        prev = mover;
+        mover = (Player *) mover->next;
+    }
+    // Beszúrás
+    if (prev == NULL){
+        newPlayer->next = (struct Player *) *playerListHead;
+        *playerListHead = newPlayer;
+    }
+    else{
+        prev->next = (struct Player *) newPlayer;
+        newPlayer->next = (struct Player *) mover;
+    }
+    (*numOfPlayers)++;
+}
 bool player_RemovePlayer(Player *removablePlayer, Player **playerListHead, int *numOfPlayers){
     // A Lista elejének eltárolása
     Player *temp = *playerListHead, *prev;
@@ -185,7 +199,8 @@ void PrintRankList(Player *playerList, int numOfPlayer, Point p){
     char text[nameLenght+5], helper[nameLenght+5];
     while (mover != NULL){
         line = 2;
-        lenght = (int) strlen(mover->name);
+        lenght = (int) stringlenght(mover->name);
+//        lenght = (int) strlen(mover->name);
         // Fejléc kiiratása
         for(int i = 0; i < lenght + 2; i++) printfc("═╦", p.x + indent + i + 1, p.y, baseForeColor);
         sprintf(text, "║ %s ", mover->name); // Eltolás még eggyel nagypapa sornál
@@ -231,12 +246,12 @@ void PrintRankList(Player *playerList, int numOfPlayer, Point p){
     free(spaces);
 }
 
-Player* player_GetSelectedPlayer(Player *playerList, int selectedPlayer){
-    if (playerList != NULL){
+Player* player_GetSelectedPlayer(Player *playerListHead, int selectedPlayer){
+    if (playerListHead != NULL){
         for (int i = 0; i < selectedPlayer; i++){
-            playerList = (Player*) playerList->next;
+            playerListHead = (Player*) playerListHead->next;
         }
-        return playerList;
+        return playerListHead;
     }
     else{
         return NULL;

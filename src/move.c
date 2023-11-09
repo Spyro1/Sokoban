@@ -2,7 +2,7 @@
 #include "../headers/datatypes.h"
 #include "../headers/move.h"
 
-Move* MakeMove(Point stepfrom, Point stepTo, bool boxPushed){
+Move* CreateMove(Point stepfrom, Point stepTo, bool boxPushed){
     Move *newMove = (Move*) malloc(sizeof(Move));
     if (newMove == NULL){
         perror("Nem sikerult az uj Move lepesnek memoriat foglalni.");
@@ -15,13 +15,13 @@ Move* MakeMove(Point stepfrom, Point stepTo, bool boxPushed){
     newMove->next = NULL;
     return newMove;
 }
-void AddMove(Move *newMove, Move **moveListHead){
+void AddMoveToList(Move *newMove, Move **moveListHead){
     // Lista elejére beszúrás
     newMove->next = (struct Move *) *moveListHead;
     *moveListHead = newMove;
 }
 
-Move RemoveMove(Move **moveListHead){
+Move RemoveMoveFromList(Move **moveListHead){
     if (*moveListHead != NULL){
         Move *temp = (Move*) (*moveListHead)->next;
         Move removed = **moveListHead;

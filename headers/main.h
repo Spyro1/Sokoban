@@ -28,4 +28,6 @@ void ResetMenuVars(bool *displayFirst, int *option, int *selectedPlayer);
  */
 void PrintTitle();
 
+void WarningWindow(const char* Message, Point p, int option, bool *displayFirst, EconioColor baseColor, EconioColor accentForeColor, EconioColor accentBgColor);
+
 #endif

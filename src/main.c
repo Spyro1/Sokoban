@@ -12,24 +12,6 @@
     #include <windows.h>
 #endif
 
-/** Feladatok
- * KÉSZ: MainScreen-ben a visszakapott paraméter legyen a selectedLevelFileName helyett a levelFileNameList, hogy lehessen választani és továbbl éptetni a szinteket a játék során.
- * Level függvények modulosítása, hogy csak a main fgv maradjon
- * KÉSZ: XSB fájl beolvasása **map-be
- * KÉSZ: Új játékos hozzáadása, név megadása, listához hozzáfűzése és visszaadása
- * KSÉZ: Player struct átírása, hogy megfeleljen a feladatkiírásnak
- * KÉSZ: Teljes Menü átalakítása a specifikációnak megfellően
- * MENÜ:
- * - ÚJ JÁTÉKOS
- *      - max 20 karakter
- * - JÁTÉKOS VÁLASZTÁS
- *      - Játékosok kilistázása (kurzorral léptetés)
- *      - Visszalép legalsó opció
- * - DICSŐSÉGLISTA
- *      - Táblázat kiírása
- * - KILÉPÉS #
- * */
-
 int main() {
     // Karakter kódolás beállítása
     #ifdef _WIN32
@@ -42,15 +24,16 @@ int main() {
      MainScreen();
 
     // == TESZT == : Csak a játék indításához uncoment-eld ezt a részt TESZT END kommentig
-//        // Változók deklarálása
-//        int numOfLevels; // A beolvasott szintek száma a ./levels/ mappából, levelList tömb hossza
-//        Player currentPlayer; // A menüben kiválasztott játékost tartalmazza
-//        char **levelList; // A szintek fájlneveit tartalmazza a ./levels/ mappából, dinamikus string tömb
-//        // Szintek beolvasása a ./levels/ mappából
-//        ReadDirectoryLevelNames("./levels/", &levelList, &numOfLevels);
-//        currentPlayer = (Player) {"Marci", 1};
-//        // Játék inicializálása
-//        Init(&currentPlayer, levelList, numOfLevels);
+        /*// Változók deklarálása
+        int numOfLevels; // A beolvasott szintek száma a ./levels/ mappából, levelList tömb hossza
+        Player currentPlayer; // A menüben kiválasztott játékost tartalmazza
+        char **levelList; // A szintek fájlneveit tartalmazza a ./levels/ mappából, dinamikus string tömb
+        // Szintek beolvasása a ./levels/ mappából
+        ReadDirectoryLevelNames("./levels/", &levelList, &numOfLevels);
+        currentPlayer = (Player) {"Marci", 0};
+        // Játék inicializálása
+        Init(&currentPlayer, levelList);
+        FreeLevelList(&levelList, &numOfLevels);*/
     // == TESZT END ==
 
     // Debugmalloc loggolása fájlba
@@ -63,10 +46,9 @@ void MainScreen(){
     // Főcím kiiratása "SOKOBAN"
     PrintTitle();
 
-    // Paraméterek inicializálása
-
     // Konstansok a kiiratáshoz
     const int center = 36; // Képernyő közepe a cím szerint
+    const int maxDisplayLines = 10;
     Point p = {center, 9}; // A kiiratás középpontja a cím alatt
 
     const char strNewPlayer[] = "ÚJ JÁTÉKOS";
@@ -88,12 +70,11 @@ void MainScreen(){
     int numOfPlayers = 0;           // A Játékosok száma a playerListHead lácnolt listába
     int selectedPlayer = 0;         // Az aktuálisan kiválasztott játékos indexe a láncolt listában és a menüben
 
-    Player *playerListHead = NULL;  // A Játékosok adatait tároló dinamikus láncolt lista
-    Player returnerPlayer;          //
-    char newPlayerName[nameLenght]; // Új játékos hozzáadásakor ebbe kerül a név
-    int newPlayerNameLenght = 0;    // Új játkos nevének hossza
+    Player *playerListHead = NULL;      // A Játékosok adatait tároló dinamikus láncolt lista
+    char newPlayerName[nameLenght*2];   // Új játékos hozzáadásakor ebbe kerül a név
+    int linesPrinter = 0;               // A konzolra írt sorok száma egyes kiiratásokor
     // A menü állapotait leíró enum
-    enum State { mainMenu, newPlayer, chosePlayer, rankList, exitApp };
+    enum State { mainMenu, newPlayer, chosePlayer, rankList, exitApp, deletePlayer };
     enum State state = mainMenu;    // Induláskor a főmenü jelenik meg
 
     econio_rawmode(); // Billentyűérzékelés bekapcsolása
@@ -107,39 +88,57 @@ void MainScreen(){
             case KEY_ESCAPE:
             case KEY_BACKSPACE:
                 if (state == mainMenu) state = exitApp;
+                else if (state == deletePlayer) state = chosePlayer;
                 else state = mainMenu;
                 // Reset Menü
                 ResetMenuVars(&displayFirst, &option, &selectedPlayer);
                 break;
             case KEY_ENTER:
-                if      (state == exitApp && option == 1) runMenu = false; // Kilépés a menüből
-                else if (state == exitApp) { // Viszzalépés a főmenübe
-                    state = mainMenu;
-                    ResetMenuVars(&displayFirst, &option, &selectedPlayer);
-                }
-                else if (state == mainMenu){
-                    state = mainMenu + 1 + option; // Főmenüből kijelölt opcióbaváltás
-                    ResetMenuVars(&displayFirst, &option, &selectedPlayer);
-                }
-                else if (state == chosePlayer && currentPlayer != NULL){
-                    // Szint Mappa beolvasása
-                    ReadDirectoryLevelNames("./levels/", &levelList, &numOfLevels);
-                    // Játék indítása
-                    while(Init(currentPlayer, levelList)) {
-                        // Nem kell ide semmi, addig fut, amíg a játékból ki nem lépnek
-                        // vagy nem teljesíti az összes szintet a játékos
-                    }
-                    player_WriteTxtFile(playerListHead, numOfPlayers);
-                    ResetMenuVars(&displayFirst, &option, &selectedPlayer);
+                switch (state) {
+                    case exitApp:
+                        if (option == 1)
+                            runMenu = false; // Kilépés a menüből
+                        else{
+                            // Viszzalépés a főmenübe
+                            state = mainMenu;
+                            ResetMenuVars(&displayFirst, &option, &selectedPlayer);
+                        }
+                        break;
+                    case mainMenu:
+                        state = mainMenu + 1 + option; // Főmenüből kijelölt opcióbaváltás
+                        ResetMenuVars(&displayFirst, &option, &selectedPlayer);
+                        break;
+                    case chosePlayer:
+                        if (currentPlayer != NULL){
+                            // Szint Mappa beolvasása
+                            ReadDirectoryLevelNames("./levels/", &levelList, &numOfLevels);
+                            // Játék indítása
+                            while(Init(currentPlayer, levelList)) {
+                                // Nem kell ide semmi, addig fut, amíg a játékból ki nem lépnek
+                                // vagy nem teljesíti az összes szintet a játékos
+                            }
+                            player_WriteTxtFile(playerListHead, numOfPlayers);
+                            ResetMenuVars(&displayFirst, &option, &selectedPlayer);
+                        }
+                        break;
+                    case deletePlayer:
+                        if (option == 1){
+                            player_RemovePlayer(currentPlayer,&playerListHead, &numOfPlayers);
+                            player_WriteTxtFile(playerListHead, numOfPlayers);
+                        }
+                        state = chosePlayer;
+                        ResetMenuVars(&displayFirst, &option, &selectedPlayer);
+                        break;
+                    default: break;
                 }
                 break;
             // Navigációk a menüben
             case KEY_RIGHT:
-                if (state == exitApp && option == 0)
+                if (state >= exitApp && option == 0)
                     option = 1; // IGEN/NEM választása a kilépésnél
                 break;
             case KEY_LEFT:
-                if (state == exitApp && option == 1)
+                if (state >= exitApp && option == 1)
                     option = 0; // IGEN/NEM választása a kilépésnél
                 break;
             case KEY_UP:
@@ -154,32 +153,25 @@ void MainScreen(){
                 else if (state == chosePlayer && selectedPlayer < numOfPlayers-1)
                     selectedPlayer++; // Lefele lépés a játékosneveken
                 break;
+            case 'E':
+            case 'e':
+                // Játékos név szerkesztlse
+                break;
+            case 'D':
+            case 'd':
+                state = deletePlayer;
+                ResetMenuVars(&displayFirst, &option, &selectedPlayer);
+                // Játékos eltávolítása
+                break;
             default: break;
         }
 
         // Képernyőre írás választott mód szerint
         switch (state) {
             case exitApp: // Kilépési ablak
-                p = (Point) {22, 9};
                 // Ha fut a menü
                 if (runMenu){
-                    if (displayFirst) {
-                        displayFirst = false;
-                        ClearScrBellow();
-                        printfc("╔════════════════════════╗", p.x,p.y+0,COL_RED);
-                        printfc("║    BIZTOSAN KILÉPSZ?   ║", p.x,p.y+1,COL_RED);
-                        printfc("║                        ║", p.x,p.y+2,COL_RED);
-                        printfc("║     NEM       IGEN     ║", p.x,p.y+3,COL_RED);
-                        printfc("╚════════════════════════╝", p.x,p.y+4,COL_RED);
-                    } // Kilépő ablak kiírása
-                    if (option == 0) {
-                        printfbc("NEM", p.x+6,p.y+3, COL_WHITE, COL_LIGHTRED);
-                        printfbc("IGEN", p.x+16,p.y+3, COL_RED, COL_RESET);
-                    }
-                    else {
-                        printfbc("NEM", p.x+6,p.y+3, COL_RED, COL_RESET);
-                        printfbc("IGEN", p.x+16,p.y+3, COL_WHITE, COL_LIGHTRED);
-                    }
+                    WarningWindow("BIZTOSAN KILÉPSZ?", p, option, &displayFirst, COL_RED, COL_WHITE, COL_LIGHTRED);
                 }
                 else {
                     // Leíállítás kiírása
@@ -237,19 +229,23 @@ void MainScreen(){
                     printfc("____________________", center-10, p.y+1, baseForeColor);
                     econio_gotoxy(center-10, p.y+1);
                     // Bemenet várása a felhasználótól
-                    fgets(newPlayerName, nameLenght, stdin);
+                    fgets(newPlayerName, nameLenght*2, stdin);
 
                     // Ha nem egy üres sort írt be, akkor eltároljuk az új játékost
                     // Ezen még kell finomítani a különböző hibaesetekre, pl üres sor
                     if (newPlayerName[0] != '\n'){
+                        // Új játékosnév lerövidítése
                         newPlayerName[strlen(newPlayerName)-1] = '\0';
+                        int realLenght = stringlenght(newPlayerName) < nameLenght ? stringlenght(newPlayerName) : nameLenght;
+                        strncpy(newPlayerName,newPlayerName,strlen(newPlayerName));
                         // Player Listába beolvasás fájlból
                         player_ReadTxtFile(&playerListHead, &numOfPlayers);
                         // Játékosnév tesztelése, hogy létezik e már az adatbázisban
                         int exists = player_GetIndexOfPlayer(playerListHead, newPlayerName);
                         if (exists == -1) {
                             // Új játékos hozzáaadása a láncolt listához
-                            player_AddPlayerToEnd(player_MakePlayer(newPlayerName,0,NULL), &playerListHead, &numOfPlayers);
+                            //player_AddPlayerToEnd(player_MakePlayer(newPlayerName,0,NULL), &playerListHead, &numOfPlayers);
+                            player_AddPlayerInOrder(player_MakePlayer(newPlayerName,0,NULL), &playerListHead, &numOfPlayers);
                             // Player Láncoltl ista fájlba mentése
                             player_WriteTxtFile(playerListHead, numOfPlayers);
                         }
@@ -271,6 +267,9 @@ void MainScreen(){
                 player_PrintPlayerList(playerListHead, selectedPlayer, (Point) {p.x, p.y + 1} );
                 // Kijelölt játékos a currentPlayerbe rakása, hogy a játék indítható legyen
                 currentPlayer = player_GetSelectedPlayer(playerListHead, selectedPlayer);
+                break;
+            case deletePlayer:
+                WarningWindow("BIZTOSAN TÖRLÖD?", p, option, &displayFirst, baseForeColor, activeForeColor, activeBgColor);
                 break;
             case rankList: // Dicsőséglista kiiratása
                 if (displayFirst){
@@ -315,4 +314,28 @@ void PrintTitle(){
     // Navigáiós Gombok kiiratása ak épernyő aljára
 //    printfc(             "↑    ⌫", 16, 24,COL_LIGHTCYAN);
 //    printfc("Navigálás: ← ↓ →  ↲", 3 , 25,COL_LIGHTCYAN);
+}
+void WarningWindow(const char* Message, Point p, int option, bool *displayFirst, EconioColor baseColor, EconioColor accentForeColor, EconioColor accentBgColor){
+    int windowWidth = 26;
+    if (*displayFirst) {
+        *displayFirst = false;
+        int i = 0;
+        ClearScrBellow();
+        printfc("╔════════════════════════╗", p.x-windowWidth/2,p.y+i++,baseColor);
+        printfc("║                        ║", p.x-windowWidth/2,p.y+i++,baseColor);
+        printfc("║", p.x-windowWidth/2,p.y+i,baseColor);
+        printfc(Message, p.x- stringlenght(Message)/2, p.y+i,baseColor);
+        printfc("║", p.x+windowWidth/2-1,p.y+i++,baseColor);
+        printfc("║                        ║", p.x-windowWidth/2,p.y+i++,baseColor);
+        printfc("║     NEM       IGEN     ║", p.x-windowWidth/2,p.y+i++,baseColor);
+        printfc("╚════════════════════════╝", p.x-windowWidth/2,p.y+i--,baseColor);
+    } // Kilépő ablak kiírása
+    if (option == 0) {
+        printfbc("NEM", p.x-windowWidth/2+6,p.y+4, accentForeColor, accentBgColor);
+        printfbc("IGEN", p.x-windowWidth/2+16,p.y+4, baseColor, COL_RESET);
+    }
+    else {
+        printfbc("NEM", p.x-windowWidth/2+6,p.y+4, baseColor, COL_RESET);
+        printfbc("IGEN", p.x-windowWidth/2+16,p.y+4, accentForeColor, accentBgColor);
+    }
 }
