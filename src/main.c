@@ -43,11 +43,13 @@ int main() {
 
 void MainScreen(){
 
+    int maxWidth = 72;
+    int maxHeight = 30;
     // Főcím kiiratása "SOKOBAN"
     PrintTitle();
 
     // Konstansok a kiiratáshoz
-    const int center = 36; // Képernyő közepe a cím szerint
+    const int center = maxWidth/2; // Képernyő közepe a cím szerint
     const int maxDisplayLines = 10;
     Point p = {center, 9}; // A kiiratás középpontja a cím alatt
 
@@ -233,15 +235,18 @@ void MainScreen(){
                     printfc("____________________", center-10, p.y+1, baseForeColor);
                     econio_gotoxy(center-10, p.y+1);
                     // Bemenet várása a felhasználótól
-                    fgets(newPlayerName, nameLenght*2, stdin);
+                    fgets(newPlayerName, nameLenght*2+1, stdin);
 
                     // Ha nem egy üres sort írt be, akkor eltároljuk az új játékost
                     // Ezen még kell finomítani a különböző hibaesetekre, pl üres sor
                     if (newPlayerName[0] != '\n'){
                         // Új játékosnév lerövidítése
                         newPlayerName[strlen(newPlayerName)-1] = '\0';
-                        int realLenght = stringlenght(newPlayerName) < nameLenght ? stringlenght(newPlayerName) : nameLenght;
-                        strncpy(newPlayerName,newPlayerName,strlen(newPlayerName));
+                        int numOfDisplayedCharacter = stringlenght(newPlayerName);
+                        int maxDisplayableCharacters= stringlenghtMax(newPlayerName, nameLenght);
+                        int realLenght = numOfDisplayedCharacter <= nameLenght ? strlen(newPlayerName) : maxDisplayableCharacters;
+                        newPlayerName[realLenght] = '\0';
+                        //strncpy(newPlayerName,newPlayerName,realLenght);
                         // Player Listába beolvasás fájlból
                         player_ReadTxtFile(&playerListHead, &numOfPlayers);
                         // Játékosnév tesztelése, hogy létezik e már az adatbázisban
@@ -281,9 +286,9 @@ void MainScreen(){
                 if (displayFirst){
                     displayFirst = false;
                     ClearScrBellow();
-                    p = (Point) {12,p.y};
+//                    p = (Point) {12,p.y};
                     player_ReadTxtFile(&playerListHead, &numOfPlayers);
-                    PrintRankList(playerListHead, numOfPlayers, p);
+                    PrintRankList(playerListHead, numOfPlayers, p, maxWidth, maxHeight);
                 }
                 break;
             default: break;

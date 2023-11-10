@@ -126,8 +126,9 @@ void player_AddPlayerInOrder(Player *newPlayer, Player **playerListHead, int *nu
     Player *prev = NULL;
     Player *mover = *playerListHead;
     // Hely keresése
-//    while (mover != NULL && strcmp(newPlayer->num, mover->name) > 0){
-    while (mover != NULL && newPlayer->numOfCompletedLevels > mover->numOfCompletedLevels){
+//    while (mover != NULL && strcmp(newPlayer->num, mover->name) > 0){ // ABCabccÁÉáé szerint rendetls
+//    while (mover != NULL && newPlayer->numOfCompletedLevels > mover->numOfCompletedLevels){ // Szint szerint rendezés
+    while (mover != NULL && stringlenght(newPlayer->name) > stringlenght(mover->name)){ // Névhossz szerint rendezés
         prev = mover;
         mover = (Player *) mover->next;
     }
@@ -172,77 +173,82 @@ void player_PrintPlayerList(Player *playerList, int selectedPlayerIndex, Point c
     int currentIndex = 0;
     //ClearScreenSection(0, 8, 60, 19, COL_RESET);
     if (playerList == NULL){
-        printfc("Nincs egy játékos sem még.", center.x - (int)strlen("Nincs egy játékos sem még.")/2,center.y + currentIndex, baseForeColor );
+        printfc("Nincs egy játékos sem még.", center.x - (int)stringlenght("Nincs egy játékos sem még.")/2,center.y + currentIndex, baseForeColor );
     }
     while(playerList != NULL){
         char text[maxLineLenght];
         sprintf(text,"%s, Szint: %d", playerList->name, playerList->numOfCompletedLevels);
         if (currentIndex == selectedPlayerIndex)
-            printfbc(text,center.x - (int)strlen(text)/2,center.y + currentIndex, activeForeColor, activeBgColor);
+            printfbc(text,center.x - (int)stringlenght(text)/2,center.y + currentIndex, activeForeColor, activeBgColor);
         else
-            printfc(text,center.x - (int)strlen(text)/2,center.y + currentIndex, baseForeColor);
+            printfc(text,center.x - (int)stringlenght(text)/2,center.y + currentIndex, baseForeColor);
         playerList = (Player*) playerList->next;
         currentIndex++;
     }
 
 }
-void PrintRankList(Player *playerList, int numOfPlayer, Point p){
+void PrintRankList(Player *playerList, int numOfPlayer, Point p, int maxWidth, int maxheight){
+    // Segéd változók
     Player *mover = playerList;
     int *spaces = (int*) malloc(numOfPlayer * sizeof(int));
-    int indent = 8;// ->║ Név ║
-    int line = 0, maxline = 0;
     int lenght = 0;
+    int firstindent = 7; // Szint->║ Név ║
+    int totalLenght = firstindent;
     int playerindex = 0;
-    printfc("╔═══════╦═",p.x, p.y, baseForeColor);
-    printfc("║ Szint ║ ",p.x, p.y+1, baseForeColor);
-    printfc("╠═══════╬═ ",p.x, p.y+2, baseForeColor);
-    char text[nameLenght+5], helper[nameLenght+5];
+    // Nevek hosszának megállapítása
     while (mover != NULL){
-        line = 2;
         lenght = (int) stringlenght(mover->name);
-//        lenght = (int) strlen(mover->name);
+        totalLenght += lenght + 3;
+        spaces[playerindex++] = lenght;
+        mover = (Player *) mover->next;
+    }
+    // Segédváltozók visszaállítása
+    p = (Point) {p.x - totalLenght/2, p.y};
+    mover = playerList;
+    playerindex = 0;
+    int line = 0, maxline = 0;
+    printfc(" Szint ┃ ",p.x, p.y + line++, baseForeColor);
+    printfc("━━━━━━━╋ ",p.x, p.y + line++, baseForeColor);
+    char text[nameLenght+5],
+         helper[nameLenght+5];
+    int indent = firstindent + 1;
+
+    // Player listán végigmegyünk
+    while (mover != NULL){
+        line = 0;
         // Fejléc kiiratása
-        for(int i = 0; i < lenght + 2; i++) printfc("═╦", p.x + indent + i + 1, p.y, baseForeColor);
-        sprintf(text, "║ %s ", mover->name); // Eltolás még eggyel nagypapa sornál
-        printfc(text, p.x+indent, p.y+1, baseForeColor);
-        for(int i = 0; i < lenght + 2; i++) printfc("═╬", p.x + indent + i + 1, p.y + 2, baseForeColor);
-        // Szint számának kiiratása
+        sprintf(text, "┃ %s ", mover->name);
+        printfc(text, p.x+indent-1, p.y+line++, baseForeColor);
+            for(int i = 0; i < spaces[playerindex] + 2; i++) printfc("━", p.x + indent + i, p.y + line, baseForeColor);
+            if (playerindex < numOfPlayer-1) printfc("╋", p.x + indent + + spaces[playerindex] + 2, p.y + line, baseForeColor);
         line++;
-        int i = 0;
+        // Szint számának kiiratása
+        int lvl = 1;
         for (Statistics* stat = (Statistics *) mover->levelStats; stat != NULL; stat = (Statistics *) stat->next){
             // Szint sorszámának kiírása
-            sprintf(text, "║ %3d.  ║", i+1);
-            printfc(text, p.x, p.y+i+3, baseForeColor);
+            sprintf(text, "  %3d. ┃", lvl);
+            printfc(text, p.x, p.y+line, baseForeColor);
             // Lépésszám kiratása
-            strcpy(text, "║ %");
-            sprintf(helper, "%d\0", lenght - 2);
+            strcpy(text, "%");
+            sprintf(helper, "%d\0", spaces[playerindex]);
             strcat(text, helper);
-            strcat(text,"dl  ║\0");
+            strcat(text,"dl\0");
             sprintf(helper, text, stat->stepCount);// Nagypapa sprnál hiba itt
-            printfc(helper, p.x+indent, p.y+i+3, baseForeColor);
+            printfc(helper, p.x+indent, p.y+line, baseForeColor);
             line++;
-            i++;
+            lvl++;
         }
-        spaces[playerindex++] = lenght;
-        indent += 3 + lenght;
         mover = (Player *) mover->next;
+        indent += 3 + spaces[playerindex++];
         maxline = line > maxline ? line : maxline;
     }
 
-    printfc("╚═══════╩═",p.x,p.y+maxline,baseForeColor);
-    indent = 9;
-//    for(int s = 0; s < numOfPlayer; s++){
-//    }
-    for(int j = 0; j < numOfPlayer; j++){
-        for(int i = 0; i < spaces[j] + 2; i++) printfc("═╩", p.x + indent + i, p.y + maxline, baseForeColor);
-        for(int k = 3; k < maxline; k++) printfc("║", p.x+indent-1, p.y+k, baseForeColor);
+    indent = firstindent + 1;
+    for(int j = 0; j < numOfPlayer-1; j++){
         indent += spaces[j] + 3;
+        for(int k = 2; k < maxline; k++) printfc("┃", p.x+indent-1, p.y+k, baseForeColor);
     }
-    print("╗", p.x+indent-1, p.y);
-    print("║", p.x+indent-1, p.y+1);
-    print("╣", p.x+indent-1, p.y+2);
-    for(int i = 3; i < maxline; i++) printfc("║", p.x+indent-1, p.y+i, baseForeColor);
-    print("╝", p.x+indent-1, p.y+maxline);
+//    for(int i = 2; i < maxline; i++) printfc("│", p.x+indent-1, p.y+i, baseForeColor);
     free(spaces);
 }
 

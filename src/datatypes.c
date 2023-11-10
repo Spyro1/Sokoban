@@ -56,3 +56,13 @@ int stringlenght(const char *s) {
     }
     return count;
 }
+
+int stringlenghtMax(const char *s, int max){
+    int count = 0;
+    int bytes = 0;
+    while (*s && count < max) {
+        count += (*s++ & 0xC0) != 0x80;
+        bytes++;
+    }
+    return bytes;
+}

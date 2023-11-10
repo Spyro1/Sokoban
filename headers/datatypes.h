@@ -109,5 +109,6 @@ void printfc(char const str[], int x, int y, EconioColor foreColor);
 void printfbc(char const str[], int x, int y, EconioColor foreColor, EconioColor bgColor);
 
 int stringlenght(const char *s);
+int stringlenghtMax(const char *s, int max);
 
 #endif //SOKOBAN2_DATATYPES_H
