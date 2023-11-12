@@ -57,6 +57,6 @@ int player_GetIndexOfPlayer(Player *playerListHead, char name[]);
 // == Kiíratás ==
 void player_PrintPlayerList(Player *playerList, int selectedPlayerIndex, Point start);
 
-void PrintRankList(Player *playerList, int numOfPlayer, Point p, int maxWidth, int maxheight);
+
 
 #endif //SOKOBAN2_PLAYER_H
