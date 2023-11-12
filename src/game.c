@@ -7,6 +7,7 @@
 #include "../headers/datatypes.h"
 #include "../headers/game.h"
 #include "../headers/move.h"
+#include "../headers/menu.h"
 #include "../headers/statistics.h"
 
 Point const up =  {0, -1};
@@ -419,13 +420,6 @@ void ReadXSBFile(char filename[], CellType ***map, Size *mapSize, Point *playerP
                 case '*': // Box on target
                     (*boxPositions)[boxindex++] = (Point) {i, k};
                     break;
-//                    (*boxPositions)[boxindex++] = (Point) {i, k};
-//                    (*targetPositions)[targetindex++] = (Point) {i, k};
-//                    break;
-//                case '+': // Player on target
-//                case '.': // Target
-//                    (*targetPositions)[targetindex++] = (Point) {i, k};
-//                    break;
             }
         }
 

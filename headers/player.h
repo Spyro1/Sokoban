@@ -4,7 +4,6 @@
 #include <string.h>
 #include "datatypes.h"
 #include "../libraries/econio.h"
-#include "main.h"
 #include "../libraries/debugmalloc.h"
 #include <dirent.h>
 #include <string.h>

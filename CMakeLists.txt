@@ -9,7 +9,6 @@ add_executable(sokoban2 src/main.c
         src/datatypes.c
         headers/datatypes.h
         src/game.c
-        headers/main.h
         src/game.c
         headers/game.h
         libraries/debugmalloc.h
@@ -21,4 +20,6 @@ add_executable(sokoban2 src/main.c
         headers/move.h
         src/statistics.c
         headers/statistics.h
+        src/menu.c
+        headers/menu.h
 )

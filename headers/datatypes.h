@@ -3,13 +3,20 @@
 #include <stdbool.h>
 #include "../libraries/econio.h"
 
+// Makrók
 #define nameLenght 20 // A játékos nevének maximális hossza
 #define maxLineLenght 400
 #define maxFileNameLenght 200
+
+#define activeForeColor COL_LIGHTCYAN
+#define activeBgColor COL_RESET
+#define baseForeColor COL_LIGHTBLUE
 // == Adatstruktúrák ==
 
 /* A pálya egyes mezőinek lehetséges értékei.\Értékek null, EMPTY, WALL, TARGET, PLAYER, PLAYERONTARGET, BOX, BOXONTARGET */
 typedef enum celltype { null, EMPTY, WALL, TARGET, PLAYER, PLAYERONTARGET, BOX, BOXONTARGET } CellType;
+
+typedef enum State { mainMenu, newPlayer, chosePlayer, rankList, exitApp, deletePlayer } State;
 
 /* Egy koordinátát eltároló struktúra, mely láncolt listába fűzhető (x,y,*next) */
 typedef struct position{
