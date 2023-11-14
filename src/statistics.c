@@ -47,7 +47,7 @@ void FreeStatisticsList(Statistics **statsListHead){
     }
 }
 void FreeStatNode(Statistics **statNode){
-    if (statNode != NULL){
+    if (*statNode != NULL){
         free(*statNode);
     }
 }

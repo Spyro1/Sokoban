@@ -16,7 +16,7 @@
 /* A pálya egyes mezőinek lehetséges értékei.\Értékek null, EMPTY, WALL, TARGET, PLAYER, PLAYERONTARGET, BOX, BOXONTARGET */
 typedef enum celltype { null, EMPTY, WALL, TARGET, PLAYER, PLAYERONTARGET, BOX, BOXONTARGET } CellType;
 /* A menü állapotait leíró enum */
-typedef enum State { mainMenu, newPlayer, chosePlayer, rankList, exitApp, deletePlayer } State;
+typedef enum State { mainMenu, newPlayer, chosePlayer, rankList, exitApp, deletePlayer, editPlayer } State;
 
 /* Egy koordinátát eltároló struktúra, mely láncolt listába fűzhető (x,y,*next) */
 typedef struct position{

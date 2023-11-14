@@ -128,7 +128,7 @@ void player_AddPlayerInOrder(Player *newPlayer, Player **playerListHead, int *nu
     // Hely keresése
 //    while (mover != NULL && strcmp(newPlayer->num, mover->name) > 0){ // ABCabccÁÉáé szerint rendetls
 //    while (mover != NULL && newPlayer->numOfCompletedLevels > mover->numOfCompletedLevels){ // Szint szerint rendezés
-    while (mover != NULL && stringlenght(newPlayer->name) > stringlenght(mover->name)){ // Névhossz szerint rendezés
+    while (mover != NULL && (stringlenght(newPlayer->name) > stringlenght(mover->name) || newPlayer->numOfCompletedLevels > mover->numOfCompletedLevels)) { // Névhossz szerint rendezés
         prev = mover;
         mover = (Player *) mover->next;
     }

@@ -28,7 +28,7 @@ bool StartGame(Player *player, char levelName[]){
 
     // Konstansok a kiiratáshoz
     const int center = 36; // Képernyő közepe a cím szerint
-    const int maxDisplayLines = 10;
+//    const int maxDisplayLines = 10;
     Point p = {center, 9}; // A kiiratás középpontja a cím alatt
 
     // Játék inicializálása
@@ -265,8 +265,6 @@ bool UndoMove(CellType ***map, Point *currentPosition, Point **boxPositions, Mov
             if (*ToCell == PLAYERONTARGET) *ToCell = TARGET;
             else *ToCell = EMPTY;
         }
-//        if (*ToCell == PLAYERONTARGET) *ToCell = (*BoxCell == TARGET) ? BOXONTARGET : BOX;
-//        else *ToCell = (*BoxCell == TARGET) ? TARGET : EMPTY;
         PrintPosition(*map,lastMove.from);
         PrintPosition(*map,lastMove.to);
         return true;
@@ -355,8 +353,8 @@ void PrintStatsAndNav(Size mapSize, int numOfSteps, int level){
         printfc(printer, p.x, p.y+i++, baseForeColor);
         i++;
         printfc("[V] : Visszalépés", p.x, p.y + i++, baseForeColor);
-        printfc("[R] : Szint reset", p.x, p.y + i++, baseForeColor);
-        printfc("[Esc] : Kilépés", p.x, p.y + i++, baseForeColor);
+        printfc("[R] : Szint újrakezése", p.x, p.y + i++, baseForeColor);
+        printfc("[Esc] : Kilépés/Mentés", p.x, p.y + i++, baseForeColor);
     }
 }
 
@@ -422,7 +420,6 @@ void ReadXSBFile(char filename[], CellType ***map, Size *mapSize, Point *playerP
                     break;
             }
         }
-
         k++;
     }
     fclose(fp); // Fájl bezárása
@@ -472,7 +469,7 @@ void AllocateDynamicArray(Point **newArray, int lenght){
 void FreeAllocatedMemoryFromMap(CellType ***map){
     if (*map != NULL) {
         if ((*map)[0] != NULL)
-            free((*map)[0]); // Itt  valamiért felszabadításkor a 370. sorról  hiba van túlindexelés
+            free((*map)[0]);
         free(*map);
     }
 }
