@@ -11,7 +11,7 @@
 #define strRankList "DICSŐSÉGLISTA"
 #define strExitApp "KILÉPÉS"
 
-#define waitms 700
+#define waitms 600
 #define maxDisplayLines 10
 
 
@@ -39,7 +39,7 @@ void PrintTitle();
  * @param numOfPlayers
  * @param levelList
  */
-void KeyPress(int key, State *state, bool *displayFirst, int *option, int *selectedPlayer, bool *runMenu, Player *currentPlayer, Player *playerListHead, int *numOfPlayers, char **levelList);
+void KeyPress(int key, State *state, bool *displayFirst, int *option, int *selectedPlayer, bool *runMenu, Player *currentPlayer, Player **playerListHead, int *numOfPlayers, char **levelList);
 
 void PrintExitWindow(bool runMenu, bool *displayFirst, int option, Point p);
 void PrintMainMenu(bool *displayFirst, int option, int prevOption, Point p);

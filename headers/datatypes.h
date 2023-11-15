@@ -49,7 +49,7 @@ typedef struct statistic{
  * levelStats: láncolt lista,
  * *next: következő elem)*/
 typedef struct player {
-    char name[nameLenght];
+    char name[nameLenght*2+1];
     int numOfCompletedLevels;
     struct Statistics *levelStats;
     struct Player *next;
@@ -117,5 +117,8 @@ void printfbc(char const str[], int x, int y, EconioColor foreColor, EconioColor
 
 int stringlenght(const char *s);
 int stringlenghtMax(const char *s, int max);
+
+bool isBlankString(const char* str);
+//char *cutAndFixString(const char *str);
 
 #endif //SOKOBAN2_DATATYPES_H

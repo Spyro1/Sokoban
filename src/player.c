@@ -19,24 +19,24 @@ void player_ReadTxtFile(Player **playerListHead, int *numOfPlayers) {
     }
 
     player_FreePlayerList(playerListHead); // Ha van lefoglalva már, akkor felszabadítja a players listát
-        char inputLine[maxLineLenght], name[nameLenght*2], inputRest[maxLineLenght];
+        char inputLine[maxLineLenght], name[nameLenght*2+1], inputRest[maxLineLenght];
         int completedLevels;
         int stepCount;
         int i;
         while (fgets(inputLine, maxLineLenght, fp)) {
             Statistics *statsListHead = NULL;
             // %20 helyére a (int const) nameLenght értékét mindig
-            int args = sscanf(inputLine, "%20[^;];%d;%s[^\n]", name, &completedLevels, inputRest);
+            int args = sscanf(inputLine, "%40[^;];%d;%s[^\n]", name, &completedLevels, inputRest);
             if (args == 3){
                 int actualNumOfCompletedLevels = completedLevels;
                 for(i = 0; i < completedLevels-1; i++){
                     if (sscanf(inputRest, "%d;%s[^\n]", &stepCount, inputRest) == 2)
-                        AddLevelStatistics(stepCount, &statsListHead);
+                        stats_AddLevelStatistics(stepCount, &statsListHead);
                     else
                         actualNumOfCompletedLevels--;
                 }
                 sscanf(inputRest, "%d", &stepCount);
-                AddLevelStatistics(stepCount, &statsListHead);
+                stats_AddLevelStatistics(stepCount, &statsListHead);
                 completedLevels = actualNumOfCompletedLevels;
                 //player_AddPlayerToEnd(player_MakePlayer(name, completedLevels, statsListHead), playerListHead, numOfPlayers);
                 player_AddPlayerInOrder(player_MakePlayer(name, completedLevels, statsListHead), playerListHead, numOfPlayers);
@@ -88,7 +88,7 @@ void player_FreePlayerList(Player **playerListHead){
 void player_FreePlayerNode(Player **playerNode){
     if (*playerNode != NULL){
         if ((*playerNode)->levelStats != NULL)
-            FreeStatisticsList((Statistics **) &((*playerNode)->levelStats));
+            stats_FreeStatisticsList((Statistics **) &((*playerNode)->levelStats));
 //            free((*playerNode)->levelStats);
         free(*playerNode);
     }
@@ -148,6 +148,7 @@ bool player_RemovePlayer(Player *removablePlayer, Player **playerListHead, int *
     Player *temp = *playerListHead, *prev;
     // Player Keresése
     // Ha az első elem a keresett
+    // STRCMPPPPP
     if (temp != NULL && temp->name == removablePlayer->name) {
         *playerListHead = (Player *) temp->next; // Első elem továbbléptetése
         player_FreePlayerNode(&temp); // Törlés

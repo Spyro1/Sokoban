@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include "../libraries/debugmalloc.h"
 #include "../libraries/econio.h"
 #include "../headers/datatypes.h"
@@ -66,3 +67,19 @@ int stringlenghtMax(const char *s, int max){
     }
     return bytes;
 }
+bool isBlankString(const char* str) {
+    while (*str != '\0') {
+        if (!isspace((unsigned char)*str)) {
+            return false; // Ha nem üres karatert talál, akkor kilép
+        }
+        str++;
+    }
+    return true; // Ha csak üres karaktert talált, akkor üres a string
+}
+//char *cutAndFixString(const char *str){
+//    char newstr[nameLenght*2+1];
+//    int i = 0;
+//    while(*str != '\0'){
+//        if (*str != ' ')
+//    }
+//}

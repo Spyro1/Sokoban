@@ -140,7 +140,7 @@ bool StartGame(Player *player, char levelName[]){
 
     if (runGame) { // A játékos teljesítete a szintet, mert a CheckWin feltétel léptette kia ciklusból
         if (player->numOfCompletedLevels > 0)
-            AddLevelStatistics(numOfMoves, (Statistics **) &(player->levelStats));
+            stats_AddLevelStatistics(numOfMoves, (Statistics **) &(player->levelStats));
         (player->numOfCompletedLevels)++;
         return true; // Következő szint
     }

@@ -2,7 +2,7 @@
 #include "../libraries/debugmalloc.h"
 #include "../headers/datatypes.h"
 
-void AddLevelStatistics(int stepCount, Statistics **statsListHead){
+void stats_AddLevelStatistics(int stepCount, Statistics **statsListHead){
     // Új statisztika létrehozása
     Statistics *newStat = (Statistics*) malloc(sizeof(Statistics));
     if (newStat == NULL){
@@ -38,15 +38,15 @@ void AddLevelStatistics(int stepCount, Statistics **statsListHead){
 //    return (Move){-1,-1,NULL,-1,-1,NULL};
 //}
 
-void FreeStatisticsList(Statistics **statsListHead){
+void stats_FreeStatisticsList(Statistics **statsListHead){
     Statistics *temp;
     while (*statsListHead != NULL){
         temp = (Statistics*) (*statsListHead)->next;
-        FreeStatNode(statsListHead);
+        stats_FreeStatNode(statsListHead);
         *statsListHead = temp;
     }
 }
-void FreeStatNode(Statistics **statNode){
+void stats_FreeStatNode(Statistics **statNode){
     if (*statNode != NULL){
         free(*statNode);
     }

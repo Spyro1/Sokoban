@@ -51,7 +51,7 @@ void MainScreen(){
         p = (Point) {center, 9};
         prevOption = option;
         // Lenyomott billentyű kiértékelése
-        KeyPress(key, &state, &displayFirst, &option, &selectedPlayer, &runMenu, currentPlayer, playerListHead, &numOfPlayers, levelList);
+        KeyPress(key, &state, &displayFirst, &option, &selectedPlayer, &runMenu, currentPlayer, &playerListHead, &numOfPlayers, levelList);
 
         // Képernyőre írás választott mód szerint
         switch (state) {
@@ -79,6 +79,8 @@ void MainScreen(){
             case editPlayer:
                 PrintNewPlayerSubMenu(&state, &playerListHead, &numOfPlayers, selectedPlayer, p);
                 linesPrinted = 4;
+                displayFirst = true;
+                key = -1;
                 break;
             case rankList: // Dicsőséglista kiiratása
                 PrintRankList(&displayFirst, playerListHead, &numOfPlayers, p, maxDisplayLines);
@@ -114,7 +116,7 @@ void PrintTitle(){
 //    printfc("Navigálás: ← ↓ →  ↲", 3 , 25,COL_LIGHTCYAN);
 }
 
-void KeyPress(int key, State *state, bool *displayFirst, int *option, int *selectedPlayer, bool *runMenu, Player *currentPlayer, Player *playerListHead, int *numOfPlayers, char **levelList){
+void KeyPress(int key, State *state, bool *displayFirst, int *option, int *selectedPlayer, bool *runMenu, Player *currentPlayer, Player **playerListHead, int *numOfPlayers, char **levelList){
     switch (key){
         case KEY_ESCAPE:
         case KEY_BACKSPACE:
@@ -146,14 +148,14 @@ void KeyPress(int key, State *state, bool *displayFirst, int *option, int *selec
                             // Nem kell ide semmi, addig fut, amíg a játékból ki nem lépnek
                             // vagy nem teljesíti az összes szintet a játékos
                         }
-                        player_WriteTxtFile(playerListHead, *numOfPlayers);
+                        player_WriteTxtFile(*playerListHead, *numOfPlayers);
                         ResetMenuVars(displayFirst, option, selectedPlayer);
                     }
                     break;
                 case deletePlayer:
                     if (*option == 1){
-                        player_RemovePlayer(currentPlayer,&playerListHead, numOfPlayers);
-                        player_WriteTxtFile(playerListHead, *numOfPlayers);
+                        player_RemovePlayer(currentPlayer,playerListHead, numOfPlayers);
+                        player_WriteTxtFile(*playerListHead, *numOfPlayers);
                     }
                     *state = chosePlayer;
                     ResetMenuVars(displayFirst, option, selectedPlayer);
@@ -260,7 +262,7 @@ void PrintMainMenu(bool *displayFirst, int option, int prevOption, Point p) {
 }
 
 void PrintNewPlayerSubMenu(State *state, Player **playerListHead, int *numOfPlayers, int selectedPlayer, Point p) {
-    char newPlayerName[nameLenght*2];   // Új játékos hozzáadásakor ebbe kerül a név
+    char newPlayerName[nameLenght*2+1];   // Új játékos hozzáadásakor ebbe kerül a név
     Player *editablePlayer;
     ClearScrBellow();
     // Alcím kiírása jáékos név kipontozása
@@ -274,9 +276,8 @@ void PrintNewPlayerSubMenu(State *state, Player **playerListHead, int *numOfPlay
     // Bemenet várása a felhasználótól
     fgets(newPlayerName, nameLenght*2+1, stdin);
 
-    // Ha nem egy üres sort írt be, akkor eltároljuk az új játékost
-    // Ezen még kell finomítani a különböző hibaesetekre, pl üres sor
-    if (newPlayerName[0] != '\n'){
+    // Bemenet kiértékelése
+    if (!isBlankString(newPlayerName)){
         // Új játékosnév lerövidítése
         newPlayerName[strlen(newPlayerName)-1] = '\0';
         int numOfDisplayedCharacter = stringlenght(newPlayerName);
