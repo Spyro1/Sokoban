@@ -19,13 +19,13 @@
 /**
  * A főmenüt futtató függvény. Egyszer hivandó meg a mainben
  */
-void MainScreen();
+void menu_MainScreen();
 
 
 /**
  * Kiirítja a főcímet a képernyő tetejére nagy betűkkel több sorosan
  */
-static void PrintTitle();
+static void menu_PrintTitle();
 /**
  * Kiértékeli a felhasználó által lenyomott billentyőt, és megváltoztatja a program állapotát aszerint
  * @param key A lenyomott billentyű kódja
@@ -39,7 +39,9 @@ static void PrintTitle();
  * @param numOfPlayers  A játékosok darabszáma (Cím szerint)
  * @param levelList A szintek fájlnevét tároló dinamikus string tömb
  */
-static void KeyPress(int key, State *state, bool *displayFirst, int *option, int *selectedPlayer, bool *runMenu, Player *currentPlayer, Player **playerListHead, int *numOfPlayers, char **levelList);
+static void menu_KeyPress(int key, State *state, bool *displayFirst, int *option, int *selectedPlayer, bool *runMenu, Player *currentPlayer, Player **playerListHead, int *numOfPlayers, char **levelList);
+
+static void menu_EvaluateState(int *key, State *state, bool runMenu, bool *displayFirst, int option, int prevOption, Player **playerListHead, Player **currentPlayer, int *numOfPlayers, int selectedPlayer, Point p, int *linesPrinted);
 /**
  *
  * @param runMenu
@@ -47,11 +49,11 @@ static void KeyPress(int key, State *state, bool *displayFirst, int *option, int
  * @param option
  * @param p
  */
-static void PrintExitWindow(bool runMenu, bool *displayFirst, int option, Point p);
-static void PrintMainMenu(bool *displayFirst, int option, int prevOption, Point p);
-static void PrintNewPlayerSubMenu(State *state, Player **playerListHead, int *numOfPlayers, int selectedPlayer, Point p);
-static void PrintPlayerSubMenu(bool *displayFirst, Player **playerListHead, int *numOfPlayers, Player **currentPlayer, int selectedPlayer, Point p );
-static void PrintRankList(bool *displayFirst, Player *playerListHead, int *numOfPlayers, Point p, int maxDisplayLvls);
+static void menu_PrintExitWindow(bool runMenu, bool *displayFirst, int option, Point p);
+static void menu_PrintMainMenu(bool *displayFirst, int option, int prevOption, Point p);
+static void menu_PrintNewPlayerSubMenu(State *state, Player **playerListHead, int *numOfPlayers, int selectedPlayer, Point p);
+static void menu_PrintPlayerSubMenu(bool *displayFirst, Player **playerListHead, int *numOfPlayers, Player **currentPlayer, int selectedPlayer, Point p );
+static void menu_PrintRankList(bool *displayFirst, Player *playerListHead, int *numOfPlayers, Point p, int maxDisplayLvls);
 
 /**
  * Visszaállítja a kezdőértékeket a menüben, ha menüpont váltás volt
@@ -59,7 +61,7 @@ static void PrintRankList(bool *displayFirst, Player *playerListHead, int *numOf
  * @param option A kiválasztott opciók változója
  * @param selectedPlayer A kiválasztott játékos indexének változója
  */
-static void ResetMenuVars(bool *displayFirst, int *option, int *selectedPlayer);
+static void menu_ResetMenuVars(bool *displayFirst, int *option, int *selectedPlayer);
 /**
  *
  * @param Message
@@ -70,7 +72,6 @@ static void ResetMenuVars(bool *displayFirst, int *option, int *selectedPlayer);
  * @param accentForeColor
  * @param accentBgColor
  */
-void WarningWindow(const char* Message, Point p, bool *displayFirst,int option,  EconioColor baseColor, EconioColor accentForeColor, EconioColor accentBgColor);
 
 void PrintNavControls(State state,  Point p, Size maxSize);
 #endif //SOKOBAN2_MENU_H

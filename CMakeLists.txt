@@ -22,4 +22,6 @@ add_executable(sokoban2 src/main.c
         headers/statistics.h
         src/menu.c
         headers/menu.h
+        src/lib.c
+        headers/lib.h
 )

@@ -10,7 +10,7 @@
 #endif
 
 
-void ReadDirectoryLevelNames(char directory[], char **levelList[], int *numOfFiles){
+void level_ReadDirectory(char directory[], char **levelList[], int *numOfFiles){
     DIR *folder = opendir(directory);
     struct dirent *dir;
     int count = 0;
@@ -41,7 +41,7 @@ void ReadDirectoryLevelNames(char directory[], char **levelList[], int *numOfFil
     *numOfFiles = count;
     closedir(folder);
 }
-void FreeLevelList(char ***levelList, const int *numOfLevels){
+void level_FreeLevelList(char ***levelList, const int *numOfLevels){
     if (*levelList != NULL){
         for(int i = 0; i < *numOfLevels; i++)
         {
@@ -51,7 +51,7 @@ void FreeLevelList(char ***levelList, const int *numOfLevels){
         numOfLevels = 0;
     }
 }
-void PrintLevels(char **levelList, int numOfLevels, int selectedLevel, int maxLevels, Point start){
+void level_PrintLevels(char **levelList, int numOfLevels, int selectedLevel, int maxLevels, Point start){
     int currentIndex = 0;
     while(currentIndex < maxLevels && currentIndex < numOfLevels) {
         econio_gotoxy(start.x, start.y + currentIndex);

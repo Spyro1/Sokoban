@@ -12,7 +12,7 @@ int main() {
         SetConsoleOutputCP(CP_UTF8);
     #endif
     // Főmenü meghívása
-     MainScreen();
+    menu_MainScreen();
     // Debugmalloc loggolása fájlba
     debugmalloc_log_file("debugmalloc.txt");
     return 0;

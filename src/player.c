@@ -172,7 +172,7 @@ bool player_RemovePlayer(Player *removablePlayer, Player **playerListHead, int *
 
 void player_PrintPlayerList(Player *playerList, int selectedPlayerIndex, Point center){
     int currentIndex = 0;
-    //ClearScreenSection(0, 8, 60, 19, COL_RESET);
+    //lib_ClearScreenSection(0, 8, 60, 19, COL_RESET);
     if (playerList == NULL){
         printfc("Nincs egy játékos sem még.", center.x - (int)stringlenght("Nincs egy játékos sem még.")/2,center.y + currentIndex, baseForeColor );
     }
