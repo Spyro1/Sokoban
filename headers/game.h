@@ -34,14 +34,14 @@ bool Init(Player *player, char **levelList);
  * @param levelName A betöltendő pálya fájlneve
  * @return Logikai: Igaz, ha a játékos teljesítette a szintet; Hamis, ha a játékos kilépett a játékból
  */
-bool StartGame(Player *player, char levelName[]);
+static bool StartGame(Player *player, char levelName[]);
 /**
  * Ellenőrzi, hogy a játékos teljesítette-e a szintet, vagyis, hogy minden doboz a helyére került-e
  * @param map A pályát leíró 2D-s dinamikus mátrix
  * @param mapSize A pálya szélességét és magasságát leíró struktúra
  * @return Logikai: Igaz, ha minden doboz a helyére került; Hamis, ha van egy doboz is, ami nincs a helyén
  */
-bool CheckWin(CellType **map, Size mapSize);
+static bool CheckWin(CellType **map, Size mapSize);
  /**
  * A játékos elmozdulását tesztelő függvény a direction irányba.
  * Ha lehetséges a lépés, akor igazat ad vissza, és ha doboz van a lépés irányában akkor a dobozt eltolja, és igazat ad vissza.
@@ -53,7 +53,7 @@ bool CheckWin(CellType **map, Size mapSize);
  * @param movesListHead A játékos lépéseit eltároló láncolt lista cím szerint átadva (cím szerint)
  * @return Logikai: IGAZ, ha el tud mozdulni a játékos az adott irányba, HAMIS, ha nem lehetséges a lépés
  */
-bool MovePlayer(CellType ***map, Point *currentPosition, Point **boxPositions, Point direction, Move **movesListHead);
+ static bool MovePlayer(CellType ***map, Point *currentPosition, Point **boxPositions, Point direction, Move **movesListHead);
 /**
  * Visszavonja a játékos előző lépést. Egészen addig fut le sikeresen,
  * amíg a moveList-ben volt elem, azaz meglépett lépés.
@@ -63,7 +63,7 @@ bool MovePlayer(CellType ***map, Point *currentPosition, Point **boxPositions, P
  * @param moveListHead A játékos lépéseit eltároló láncolt lista cím szerint átadva (cím szerint)
  * @return
  */
-bool UndoMove(CellType ***map, Point *currentPosition, Point **boxPositions, Move **moveListHead);
+static bool UndoMove(CellType ***map, Point *currentPosition, Point **boxPositions, Move **moveListHead);
 
 // == BEOLVASÁS ==
 /**
@@ -75,13 +75,13 @@ bool UndoMove(CellType ***map, Point *currentPosition, Point **boxPositions, Mov
  * @param boxPositions A dobozok koordinátáinak dinamikus tömbje (cím szerint, kimenet)
  * @param boxCount A dobozok koordinátáit tároló dinamikus tömb elemszáma, dobozok száma a pályán (cím szerint, kimenet)
  */
-void ReadXSBFile(char filename[], CellType ***map, Size *mapSize, Point *playerPosition, Point **boxPositions, int *boxCount);
+static void ReadXSBFile(char filename[], CellType ***map, Size *mapSize, Point *playerPosition, Point **boxPositions, int *boxCount);
 /**
  * A beolvasott fájl egy karakterét karaktereket értelmezi és átalakítja cellType értékké
  * @param character A beolvasott fájl egy karaktere
  * @return A kapott karakter értelmezett CellType értékekké alakított értéke
  */
-CellType ConvertInputCharToCellType(char character);
+static CellType ConvertInputCharToCellType(char character);
 
 // == KIIRATÁS ==
 /**
@@ -89,47 +89,47 @@ CellType ConvertInputCharToCellType(char character);
  * @param map A pályát leíró 2D-s dinamikus mátrix
  * @param size A pálya szélességét és magasságát leíró struktúra
  */
-void PrintSimpleMap(CellType **map, Size size);
+static void PrintSimpleMap(CellType **map, Size size);
 /**
  * Kiiratja a pályát a képernyőre színesen
  * @param map A pályát leíró 2D-s dinamikus mátrix
  * @param size A pálya szélességét és magasságát leíró struktúra
  */
-void PrintStyledMap(CellType **map, Size size);
+static void PrintStyledMap(CellType **map, Size size);
 /**
  * Egy kapott koordinátán lévő mezőt írja ki a képernyőre színesen és a megfelelő definiált karaterrel
  * @param map A pályát leíró 2D-s dinamikus mátrix
  * @param pos A kiirandó karakter koordinátája
  */
-void PrintPosition(CellType **map, Point pos);
+static void PrintPosition(CellType **map, Point pos);
 /**
  *
  * @param mapSize
  * @param numOfSteps
  */
-void PrintStatsAndNav(Size mapSize, int numOfSteps, int level);
+static void PrintStatsAndNav(Size mapSize, int numOfSteps, int level);
 // == MEMÓRIAFOGLALÁS ÉS FELSZABADÍTÁS ==
 /**
  * Memóriát foglal a pályát tároló 2D-s dinamikus mátrixnak (map-nek)
  * @param map A pályát leíró 2D-s dinamikus mátrix (cím szerint)
  * @param mapSize A pálya szélességét és magasságát leíró struktúra
  */
-void AllocateMemoryToMap(CellType ***map, Size *mapSize);
+static void AllocateMemoryToMap(CellType ***map, Size *mapSize);
 /**
  * Memóriát foglal egy 1D-s dinamikus tömbnek
  * @param newArray Az új 1D-s dinamikus tömb címe (cím szerint)
  * @param lenght A létrehozandó dinamikus tömb hossza, elemszáma
  */
-void AllocateDynamicArray(Point **newArray, int lenght);
+static void AllocateDynamicArray(Point **newArray, int lenght);
 /**
  * Felszabadítja a pályát tároló 2D-s dinamikus mátrix lefoglat memóriáját, ha volt lefoglalva
  * @param map A pályát leíró 2D-s dinamikus mátrix (cím szerint)
  */
-void FreeAllocatedMemoryFromMap(CellType ***CellType);
+static void FreeAllocatedMemoryFromMap(CellType ***CellType);
 /**
  * Felszabadítja egy 1D-s dinamikus tömbnek lefoglalt memóriáját, ha volt lefoglalva
  * @param dynamicArray 1D-s dinamikus tömb címe (cím szerint)
  */
-void FreeDynamicArray(Point **dynamicArray);
+static void FreeDynamicArray(Point **dynamicArray);
 
 #endif //GITIGNORE_GAME_H

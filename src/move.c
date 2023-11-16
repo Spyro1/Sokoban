@@ -40,7 +40,7 @@ void FreeMoveList(Move **moveListHead){
         *moveListHead = temp;
     }
 }
-void FreeNode(Move **moveNode){
+static void FreeNode(Move **moveNode){
     if (moveNode != NULL){
         free(*moveNode);
     }

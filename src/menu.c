@@ -10,8 +10,7 @@
 #include "../headers/level.h"
 
 #ifdef _WIN32
-#include <windows.h>
-
+    #include <windows.h>
 #endif
 
 void MainScreen(){
@@ -73,7 +72,7 @@ void MainScreen(){
                 linesPrinted = numOfPlayers + 1;
                 break;
             case deletePlayer:
-                WarningWindow("BIZTOSAN TÖRLÖD?", p, option, &displayFirst, baseForeColor, activeForeColor, activeBgColor);
+                WarningWindow("BIZTOSAN TÖRLÖD?", p, &displayFirst, option, baseForeColor, activeForeColor, activeBgColor);
                 linesPrinted = 6;
                 break;
             case editPlayer:
@@ -99,7 +98,7 @@ void MainScreen(){
     FreeLevelList(&levelList, &numOfLevels);
 }
 
-void PrintTitle(){
+static void PrintTitle(){
     // CÍM Kiírása
     econio_textcolor(COL_LIGHTBLUE);
     printf("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n");
@@ -116,7 +115,7 @@ void PrintTitle(){
 //    printfc("Navigálás: ← ↓ →  ↲", 3 , 25,COL_LIGHTCYAN);
 }
 
-void KeyPress(int key, State *state, bool *displayFirst, int *option, int *selectedPlayer, bool *runMenu, Player *currentPlayer, Player **playerListHead, int *numOfPlayers, char **levelList){
+static void KeyPress(int key, State *state, bool *displayFirst, int *option, int *selectedPlayer, bool *runMenu, Player *currentPlayer, Player **playerListHead, int *numOfPlayers, char **levelList){
     switch (key){
         case KEY_ESCAPE:
         case KEY_BACKSPACE:
@@ -205,10 +204,10 @@ void KeyPress(int key, State *state, bool *displayFirst, int *option, int *selec
     }
 }
 
-void PrintExitWindow(bool runMenu, bool *displayFirst, int option, Point p) {
+static void PrintExitWindow(bool runMenu, bool *displayFirst, int option, Point p) {
     // Ha fut a menü
     if (runMenu){
-        WarningWindow("BIZTOSAN KILÉPSZ?", p, option, displayFirst, COL_RED, COL_WHITE, COL_LIGHTRED);
+        WarningWindow("BIZTOSAN KILÉPSZ?", p, displayFirst, option, COL_RED, COL_WHITE, COL_LIGHTRED);
     }
     else {
         // Leíállítás kiírása
@@ -218,7 +217,7 @@ void PrintExitWindow(bool runMenu, bool *displayFirst, int option, Point p) {
     }
 }
 
-void PrintMainMenu(bool *displayFirst, int option, int prevOption, Point p) {
+static void PrintMainMenu(bool *displayFirst, int option, int prevOption, Point p) {
     if (*displayFirst){
         *displayFirst = false;
         ClearScrBellow();
@@ -261,7 +260,7 @@ void PrintMainMenu(bool *displayFirst, int option, int prevOption, Point p) {
     }
 }
 
-void PrintNewPlayerSubMenu(State *state, Player **playerListHead, int *numOfPlayers, int selectedPlayer, Point p) {
+static void PrintNewPlayerSubMenu(State *state, Player **playerListHead, int *numOfPlayers, int selectedPlayer, Point p) {
     char newPlayerName[nameLenght*2+1];   // Új játékos hozzáadásakor ebbe kerül a név
     Player *editablePlayer;
     ClearScrBellow();
@@ -314,7 +313,7 @@ void PrintNewPlayerSubMenu(State *state, Player **playerListHead, int *numOfPlay
     else if (*state == editPlayer) *state = chosePlayer;
 }
 
-void PrintPlayerSubMenu(bool *displayFirst, Player **playerListHead, int *numOfPlayers, Player **currentPlayer, int selectedPlayer, Point p ) {
+static void PrintPlayerSubMenu(bool *displayFirst, Player **playerListHead, int *numOfPlayers, Player **currentPlayer, int selectedPlayer, Point p ) {
     if (*displayFirst){
         *displayFirst = false;
         ClearScrBellow();
@@ -329,7 +328,7 @@ void PrintPlayerSubMenu(bool *displayFirst, Player **playerListHead, int *numOfP
     *currentPlayer = player_GetSelectedPlayer(*playerListHead, selectedPlayer);
 }
 
-void PrintRankList(bool *displayFirst, Player *playerListHead, int *numOfPlayers, Point p, int maxDisplayLvls){
+static void PrintRankList(bool *displayFirst, Player *playerListHead, int *numOfPlayers, Point p, int maxDisplayLvls){
     if (*displayFirst){
         *displayFirst = false;
         ClearScrBellow();
@@ -398,13 +397,13 @@ void PrintRankList(bool *displayFirst, Player *playerListHead, int *numOfPlayers
     free(spaces);
 }
 
-void ResetMenuVars(bool *displayFirst, int *option, int *selectedPlayer) {
+static void ResetMenuVars(bool *displayFirst, int *option, int *selectedPlayer) {
     *displayFirst = true;
     *option = 0;
     *selectedPlayer = 0;
 }
 
-void WarningWindow(const char* Message, Point p, int option, bool *displayFirst, EconioColor baseColor, EconioColor accentForeColor, EconioColor accentBgColor){
+void WarningWindow(const char* Message, Point p, bool *displayFirst, int option, EconioColor baseColor, EconioColor accentForeColor, EconioColor accentBgColor) {
     int windowWidth = 26;
     if (*displayFirst) {
         *displayFirst = false;
@@ -429,9 +428,6 @@ void WarningWindow(const char* Message, Point p, int option, bool *displayFirst,
     }
 }
 
-void PrintEditPlayerSubMenu(){
-
-}
 void PrintNavControls(State state,  Point p, Size maxSize){
     int i = 0;
 //    ClearScreenSection(0,p.y + maxDisplayLines,maxSize.width,maxSize.height, COL_RESET);

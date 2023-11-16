@@ -117,7 +117,6 @@ void printfbc(char const str[], int x, int y, EconioColor foreColor, EconioColor
 
 int stringlenght(const char *s);
 int stringlenghtMax(const char *s, int max);
-
 bool isBlankString(const char* str);
 //char *cutAndFixString(const char *str);
 

@@ -42,7 +42,7 @@ void player_FreePlayerList(Player **playerListHead);
  * Felszabadítja egy elem lefoglalt memóriáját a listából
  * @param playerNode Egy Player struktúrára mutató pointer a láncolt listából (Cím szerint)
  */
-void player_FreePlayerNode(Player **playerNode);
+static void player_FreePlayerNode(Player **playerNode);
 
 // Láncolt Lista függvények ==
 void player_AddPlayerToEnd(Player *newPlayer, Player **playerListHead, int *numOfPlayers);

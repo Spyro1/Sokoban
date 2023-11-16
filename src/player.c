@@ -85,7 +85,7 @@ void player_FreePlayerList(Player **playerListHead){
         *playerListHead = temp;
     }
 }
-void player_FreePlayerNode(Player **playerNode){
+static void player_FreePlayerNode(Player **playerNode){
     if (*playerNode != NULL){
         if ((*playerNode)->levelStats != NULL)
             stats_FreeStatisticsList((Statistics **) &((*playerNode)->levelStats));

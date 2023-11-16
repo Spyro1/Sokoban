@@ -33,6 +33,6 @@ void FreeMoveList(Move **moveListHead);
  * Felszabadítja egy elem lefoglalt memóriáját a listából
  * @param moveNode Egy Move struktúrára mutató pointer a láncolt listából (Cím szerint)
  */
-void FreeNode(Move **moveNode);
+static void FreeNode(Move **moveNode);
 
 #endif //SOKOBAN2_MOVE_H
