@@ -10,39 +10,34 @@
 #include "../headers/level.h"
 #include "../headers/lib.h"
 
-#ifdef _WIN32
-    #include <windows.h>
-#endif
-
 void menu_MainScreen(){
 
     // Konstansok a kiiratáshoz
     const Size maxSize = {72,30};
     const int center = maxSize.width/2; // Képernyő közepe a cím szerint
 
-    Point p = {center, 9}; // A kiiratás középpontja a cím alatt
-
+    Point p;                        // A kiiratás középpontja a cím alatt
+    Point page = {0,0};
     // Menü Változók
     Player *currentPlayer = NULL;   // Aktuálisan kiválasztott játékost tároló pointer
-    int selectedLevel = 0;          // Kiválasztott szint
     int key = -1;                   // Lenyomott billentyű kódja
     bool displayFirst = true;       // Igaz, ha egy menüponba először megyünk bele, Hamis, ha már a többedjére
     bool runMenu = true;            // Amíg igaz, addig fut a menü ciklusa, hamisnál leáll a menü, és kilép a programból
     int option = 0;                 // Aktuálisan kiválasztott opció
-    int prevOption = 0;             // Előző választott opció
+    int prevOption;                 // Előző választott opció
     int numOfPlayers = 0;           // A Játékosok száma a playerListHead lácnolt listába
     int selectedPlayer = 0;         // Az aktuálisan kiválasztott játékos indexe a láncolt listában és a menüben
     Player *playerListHead = NULL;  // A Játékosok adatait tároló dinamikus láncolt lista
     char **levelList = NULL;        // A szintek fájlneveit tartalmazza a ./levels/ mappából, dinamikus string tömb
     int numOfLevels = 0;            // A beolvasott szintek száma a ./levels/ mappából, levelList tömb hossza
-    int linesPrinted = 0;               // A konzolra írt sorok száma egyes kiiratásokor
+    int linesPrinted = 0;           // A konzolra írt sorok száma egyes kiiratásokor
     State state = mainMenu;    // A menürendszer aktuális állapotát tárolja
 
     // Főcím kiiratása "SOKOBAN"
     menu_PrintTitle();
     // Szint Mappa beolvasása
     level_ReadDirectory("./levels/", &levelList, &numOfLevels);
-
+    // TODO: Errorkezelés kiiratása alulra perror() helyett printfc()
     econio_rawmode(); // Billentyűérzékelés bekapcsolása
 
     // == MENÜ FUTTATÁSA ==
@@ -50,13 +45,11 @@ void menu_MainScreen(){
         p = (Point) {center, 9};
         prevOption = option;
         // Lenyomott billentyű kiértékelése
-        menu_KeyPress(key, &state, &displayFirst, &option, &selectedPlayer, &runMenu, currentPlayer, &playerListHead, &numOfPlayers, levelList);
-
+        menu_KeyPress(key, &state, &displayFirst, &option, &selectedPlayer, &runMenu, currentPlayer, &playerListHead, &numOfPlayers, levelList, &page);
         // Képernyőre írás választott mód szerint
-        menu_EvaluateState(&key, &state, runMenu, &displayFirst, option, prevOption, &playerListHead, &currentPlayer, &numOfPlayers, selectedPlayer, p, &linesPrinted);
-
-//        PrintNavControls(state, p, maxSize);
-        if (runMenu && !displayFirst) key = econio_getch(); // Billentyűlenyomásra vár, ha fut a menü
+        menu_EvaluateState(&key, &state, runMenu, &displayFirst, option, prevOption, &playerListHead, &currentPlayer, &numOfPlayers, selectedPlayer, p, &linesPrinted, page, maxSize);
+        // Billentyűlenyomásra vár, ha fut a menü
+        if (runMenu && !displayFirst) key = econio_getch();
     }
     // Játékosok adatainak mentése
     player_WriteTxtFile(playerListHead, numOfPlayers);
@@ -83,7 +76,7 @@ static void menu_PrintTitle(){
 //    printfc("Navigálás: ← ↓ →  ↲", 3 , 25,COL_LIGHTCYAN);
 }
 
-static void menu_KeyPress(int key, State *state, bool *displayFirst, int *option, int *selectedPlayer, bool *runMenu, Player *currentPlayer, Player **playerListHead, int *numOfPlayers, char **levelList){
+static void menu_KeyPress(int key, State *state, bool *displayFirst, int *option, int *selectedPlayer, bool *runMenu, Player *currentPlayer, Player **playerListHead, int *numOfPlayers, char **levelList, Point *page){
     switch (key){
         case KEY_ESCAPE:
         case KEY_BACKSPACE:
@@ -110,11 +103,13 @@ static void menu_KeyPress(int key, State *state, bool *displayFirst, int *option
                     break;
                 case chosePlayer:
                     if (currentPlayer != NULL){
+                        *state = game;
                         // Játék indítása
                         while(game_Init(currentPlayer, levelList)) {
                             // Nem kell ide semmi, addig fut, amíg a játékból ki nem lépnek
                             // vagy nem teljesíti az összes szintet a játékos
                         }
+                        *state = chosePlayer;
                         player_WriteTxtFile(*playerListHead, *numOfPlayers);
                         menu_ResetMenuVars(displayFirst, option, selectedPlayer);
                     }
@@ -134,22 +129,26 @@ static void menu_KeyPress(int key, State *state, bool *displayFirst, int *option
         case KEY_RIGHT:
             if (*state >= exitApp && *option == 0)
                 *option = 1; // IGEN/NEM választása a kilépésnél
+            else if (*state == rankList) page->y++; // Dicsőséglistánál lapozás jobbra
             break;
         case KEY_LEFT:
             if (*state >= exitApp && *option == 1)
                 *option = 0; // IGEN/NEM választása a kilépésnél
+            else if (*state == rankList && page->y > 0) page->y--; // Dicsőséglistánál lapozás balra
             break;
         case KEY_UP:
             if (*state == mainMenu && *option > 0)
                 (*option)--; // Felfele lépés a főmenüben
             else if (*state == chosePlayer && *selectedPlayer > 0)
                 (*selectedPlayer)--; // Felfele lépés a játékosneveken
+            else if (*state == rankList && page->x > 0) page->x--; // Dicsőséglistánál lapozás felfele
             break;
         case KEY_DOWN:
             if (*state == mainMenu && *option < exitApp-1)
                 (*option)++; // Lefele lépés a főmenüben
             else if (*state == chosePlayer && *selectedPlayer < (*numOfPlayers)-1)
                 (*selectedPlayer)++; // Lefele lépés a játékosneveken
+            else if (*state == rankList) page->x++; // Dicsőséglistánál lapozás lefele
             break;
         case 'E':
         case 'e':
@@ -172,7 +171,8 @@ static void menu_KeyPress(int key, State *state, bool *displayFirst, int *option
     }
 }
 
-static void menu_EvaluateState(int *key, State *state, bool runMenu, bool *displayFirst, int option, int prevOption, Player **playerListHead, Player **currentPlayer, int *numOfPlayers, int selectedPlayer, Point p, int *linesPrinted){
+static void menu_EvaluateState(int *key, State *state, bool runMenu, bool *displayFirst, int option, int prevOption, Player **playerListHead, Player **currentPlayer, int *numOfPlayers, int selectedPlayer, Point p, int *linesPrinted, Point page, const Size maxSize){
+    menu_PrintNavControls(*displayFirst, *state, maxSize);
     switch (*state) {
         case exitApp: // Kilépési ablak
             menu_PrintExitWindow(runMenu, displayFirst, option, p);
@@ -202,7 +202,7 @@ static void menu_EvaluateState(int *key, State *state, bool runMenu, bool *displ
             *key = -1;
             break;
         case rankList: // Dicsőséglista kiiratása
-            menu_PrintRankList(displayFirst, *playerListHead, numOfPlayers, p, maxDisplayLines);
+            menu_PrintRankList(displayFirst, *playerListHead, numOfPlayers, p, maxDisplayLines, page);
             *linesPrinted = maxDisplayLines;
             break;
         default: break;
@@ -218,7 +218,7 @@ static void menu_PrintExitWindow(bool runMenu, bool *displayFirst, int option, P
         // Leíállítás kiírása
         econio_clrscr();
         printfc("LEÁLLÍTÁS", 33, 10, COL_RED);
-        Sleep(waitms);
+        econio_sleep(waitsec);
     }
 }
 
@@ -313,7 +313,7 @@ static void menu_PrintNewPlayerSubMenu(State *state, Player **playerListHead, in
     }
     else
         printfc("MÉGSE", p.x- stringlenght("MÉGSE")/2, p.y+3, baseForeColor);
-    Sleep(waitms);
+    econio_sleep(waitsec);
     if (*state == newPlayer) *state = mainMenu;
     else if (*state == editPlayer) *state = chosePlayer;
 }
@@ -333,73 +333,78 @@ static void menu_PrintPlayerSubMenu(bool *displayFirst, Player **playerListHead,
     *currentPlayer = player_GetSelectedPlayer(*playerListHead, selectedPlayer);
 }
 
-static void menu_PrintRankList(bool *displayFirst, Player *playerListHead, int *numOfPlayers, Point p, int maxDisplayLvls){
-    if (*displayFirst){
+static void menu_PrintRankList(bool *displayFirst, Player *playerListHead, int *numOfPlayers, Point p, int maxDisplayLvls, Point page){
+    if (*displayFirst) {
         *displayFirst = false;
         lib_ClearScrBellow();
         player_ReadTxtFile(&playerListHead, numOfPlayers); // Rangsorhoz beolvasás fájlból
     }
-    // Segéd változók
-    Player *mover = playerListHead;
-    int *spaces = (int*) malloc(*numOfPlayers * sizeof(int));
-    int lenght = 0;
-    int firstindent = 7; // Szint->║ Név ║
-    int totalLenght = firstindent;
-    int playerindex = 0;
-    // Nevek hosszának megállapítása
-    while (mover != NULL){
-        lenght = (int) stringlenght(mover->name);
-        totalLenght += lenght + 3;
-        spaces[playerindex++] = lenght;
-        mover = (Player *) mover->next;
-    }
-    // Segédváltozók visszaállítása
-    p = (Point) {p.x - totalLenght/2, p.y};
-    mover = playerListHead;
-    playerindex = 0;
-    int line = 0, maxline = 0;
-    printfc(" Szint ┃ ",p.x, p.y + line++, baseForeColor);
-    printfc("━━━━━━━╋ ",p.x, p.y + line++, baseForeColor);
-    char text[nameLenght+5],
-            helper[nameLenght+5];
-    int indent = firstindent + 1;
-
-    // Player listán végigmegyünk
-    while (mover != NULL){
-        line = 0;
-        // Fejléc kiiratása
-        sprintf(text, "┃ %s ", mover->name);
-        printfc(text, p.x+indent-1, p.y+line++, baseForeColor);
-        for(int i = 0; i < spaces[playerindex] + 2; i++) printfc("━", p.x + indent + i, p.y + line, baseForeColor);
-        if (playerindex < *numOfPlayers - 1) printfc("╋", p.x + indent + + spaces[playerindex] + 2, p.y + line, baseForeColor);
-        line++;
-        // Szint számának kiiratása
-        int lvl = 1;
-        for (Statistics* stat = (Statistics *) mover->levelStats; stat != NULL /*&& lvl <= maxDisplayLvls*/; stat = (Statistics *) stat->next){
-            // Szint sorszámának kiírása
-            sprintf(text, "  %3d. ┃", lvl);
-            printfc(text, p.x, p.y+line, baseForeColor);
-            // Lépésszám kiratása
-            strcpy(text, "%");
-            sprintf(helper, "%d\0", spaces[playerindex]);
-            strcat(text, helper);
-            strcat(text,"dl\0");
-            sprintf(helper, text, stat->stepCount);// Nagypapa sprnál hiba itt
-            printfc(helper, p.x+indent, p.y+line, baseForeColor);
-            line++;
-            lvl++;
+    if (*numOfPlayers > 0) {
+        // Segéd változók
+        Player *mover = playerListHead;
+        int *spaces = (int*) malloc(*numOfPlayers * sizeof(int));
+        int lenght;
+        int firstindent = 7; // Szint->║ Név ║
+        int totalLenght = firstindent;
+        int playerindex = 0;
+        // Nevek hosszának megállapítása
+        while (mover != NULL){
+            lenght = (int) stringlenght(mover->name);
+            totalLenght += lenght + 3;
+            spaces[playerindex++] = lenght;
+            mover = (Player *) mover->next;
         }
-        mover = (Player *) mover->next;
-        indent += 3 + spaces[playerindex++];
-        maxline = line > maxline ? line : maxline;
-    }
+        // Segédváltozók visszaállítása
+        p = (Point) {p.x - totalLenght/2, p.y};
+        mover = playerListHead;
+        playerindex = 0;
+        int line = 0, maxline = 0;
+        printfc(" Szint ┃ ",p.x, p.y + line++, baseForeColor);
+        printfc("━━━━━━━╋ ",p.x, p.y + line, baseForeColor);
+        char text[nameLenght+5],
+                helper[nameLenght+5];
+        int indent = firstindent + 1;
 
-    indent = firstindent + 1;
-    for(int j = 0; j < *numOfPlayers - 1; j++){
-        indent += spaces[j] + 3;
-        for(int k = 2; k < maxline; k++) printfc("┃", p.x+indent-1, p.y+k, baseForeColor);
+        // Player listán végigmegyünk
+        while (mover != NULL){
+            line = 0;
+            // Fejléc kiiratása
+            sprintf(text, "┃ %s ", mover->name);
+            printfc(text, p.x+indent-1, p.y+line++, baseForeColor);
+            for(int i = 0; i < spaces[playerindex] + 2; i++) printfc("━", p.x + indent + i, p.y + line, baseForeColor);
+            if (playerindex < *numOfPlayers - 1) printfc("╋", p.x + indent + + spaces[playerindex] + 2, p.y + line, baseForeColor);
+            line++;
+            // Szint számának kiiratása
+            int lvl = 1;
+            for (Statistics* stat = (Statistics *) mover->levelStats; stat != NULL /*&& lvl <= maxDisplayLvls*/; stat = (Statistics *) stat->next){
+                // Szint sorszámának kiírása
+                sprintf(text, "  %3d. ┃", lvl);
+                printfc(text, p.x, p.y+line, baseForeColor);
+                // Lépésszám kiratása
+                strcpy(text, "%");
+                sprintf(helper, "%d", spaces[playerindex]);
+                strcat(text, helper);
+                strcat(text,"dl\0");
+                sprintf(helper, text, stat->stepCount);// Nagypapa sprnál hiba itt
+                printfc(helper, p.x+indent, p.y+line, baseForeColor);
+                line++;
+                lvl++;
+            }
+            mover = (Player *) mover->next;
+            indent += 3 + spaces[playerindex++];
+            maxline = line > maxline ? line : maxline;
+        }
+
+        indent = firstindent + 1;
+        for(int j = 0; j < *numOfPlayers - 1; j++){
+            indent += spaces[j] + 3;
+            for(int k = 2; k < maxline; k++) printfc("┃", p.x+indent-1, p.y+k, baseForeColor);
+        }
+        free(spaces);
     }
-    free(spaces);
+    else{
+        printfc("Nincs egy játékos sem még.",p.x - (int)stringlenght("Nincs egy játékos sem még.")/2, p.y, baseForeColor);
+    }
 }
 
 static void menu_ResetMenuVars(bool *displayFirst, int *option, int *selectedPlayer) {
@@ -408,32 +413,47 @@ static void menu_ResetMenuVars(bool *displayFirst, int *option, int *selectedPla
     *selectedPlayer = 0;
 }
 
-void menu_PrintNavControls(State state,  Point p, Size maxSize){
-    int i = 0;
-//    lib_ClearScreenSection(0,p.y + maxDisplayLines,maxSize.width,maxSize.height, COL_RESET);
-    switch (state) {
-        case mainMenu:
-            printfc("[↑] : Feljebb mozgás", p.x-4, p.y + maxDisplayLines + i++, COL_LIGHTBLUE);
-            printfc("[↓] : Lejjebb mozgás", p.x-4, p.y + maxDisplayLines + i++, COL_LIGHTBLUE);
-            printfc("[↵] : Kiválasztás", p.x-4, p.y + maxDisplayLines + i++, COL_LIGHTBLUE);
-            printfc("[Esc] : Kilépés", p.x-6, p.y + maxDisplayLines + i++, COL_LIGHTBLUE);
-            break;
-        case newPlayer:
-            printfc("[↵] : Mentés / Kilépés", p.x-4, p.y + maxDisplayLines + i++, COL_LIGHTBLUE);
-            break;
-        case chosePlayer:
-            printfc("[↑] : Feljebb mozgás", p.x-4, p.y + maxDisplayLines + i++, COL_LIGHTBLUE);
-            printfc("[↓] : Lejjebb mozgás", p.x-4, p.y + maxDisplayLines + i++, COL_LIGHTBLUE);
-            printfc("[↵] : Kiválasztás", p.x-4, p.y + maxDisplayLines + i++, COL_LIGHTBLUE);
-            printfc("[Esc] : Kilépés", p.x-6, p.y + maxDisplayLines + i++, COL_LIGHTBLUE);
-            break;
-        case rankList:
-            break;
-        case exitApp:
-        case deletePlayer:
-            break;
-        case editPlayer:
-            break;
-
+void menu_PrintNavControls(bool displayFirst, State state, const Size maxSize) {
+    if (displayFirst) {
+        Point p = {6, maxDisplayLines+12};
+        int i = 0;
+        lib_ClearScreenSection(0,p.y,maxSize.width,maxSize.height, COL_RESET);
+        switch (state) {
+            case mainMenu:
+                printfc("[↑] : Feljebb mozgás", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                printfc("[↓] : Lejjebb mozgás", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                printfc("[↵] : Kiválasztás", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                printfc("[Esc] : Kilépés", p.x - 6, p.y + i++, COL_LIGHTBLUE);
+                break;
+            case newPlayer:
+            case editPlayer:
+                printfc("[↵] : Mentés / Kilépés", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                break;
+            case chosePlayer:
+                printfc("[↑] : Feljebb mozgás", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                printfc("[↓] : Lejjebb mozgás", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                printfc("[↵] : Kiválasztás", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                printfc("[E] : Szerkesztés", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                printfc("[D] : Törlés", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                printfc("[Esc] : Kilépés", p.x - 6, p.y + i++, COL_LIGHTBLUE);
+                break;
+            case rankList:
+                printfc("[↑] : Felfele lapoz", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                printfc("[↓] : Lefele lapoz", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                printfc("[→] : Jobbra lapoz", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                printfc("[←] : Balra lapoz", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                break;
+            case exitApp:
+            case deletePlayer:
+                printfc("[→] : Igen választása", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                printfc("[←] : Nem választása", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                break;
+            case game:
+                printfc("[↑] : Felfele lép", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                printfc("[↓] : Lefele lép", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                printfc("[→] : Jobbra lép", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                printfc("[←] : Balra lép", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+            default: break;
+        }
     }
 }

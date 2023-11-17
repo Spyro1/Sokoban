@@ -1,6 +1,5 @@
 #include "../headers/statistics.h"
 #include "../libraries/debugmalloc.h"
-#include "../headers/datatypes.h"
 
 void stats_AddLevelStatistics(int stepCount, Statistics **statsListHead){
     // Új statisztika létrehozása
@@ -31,7 +30,7 @@ void stats_AddLevelStatistics(int stepCount, Statistics **statsListHead){
 //    if (*moveListHead != NULL){
 //        Move *temp = (Move*) (*moveListHead)->next;
 //        Move removed = **moveListHead;
-//        FreeNode(moveListHead);
+//        move_FreeNode(moveListHead);
 //        *moveListHead = temp;
 //        return removed;
 //    }

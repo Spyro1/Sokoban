@@ -5,9 +5,6 @@
 #include "../libraries/debugmalloc.h"
 #include "../libraries/econio.h"
 #include "../headers/level.h"
-#ifdef _WIN32
-    #include <windows.h>
-#endif
 
 
 void level_ReadDirectory(char directory[], char **levelList[], int *numOfFiles){
@@ -41,17 +38,17 @@ void level_ReadDirectory(char directory[], char **levelList[], int *numOfFiles){
     *numOfFiles = count;
     closedir(folder);
 }
-void level_FreeLevelList(char ***levelList, const int *numOfLevels){
+void level_FreeLevelList(char ***levelList, int *numOfLevels){
     if (*levelList != NULL){
         for(int i = 0; i < *numOfLevels; i++)
         {
             free((*levelList)[i]);
         }
         free(*levelList);
-        numOfLevels = 0;
+        *numOfLevels = 0;
     }
 }
-void level_PrintLevels(char **levelList, int numOfLevels, int selectedLevel, int maxLevels, Point start){
+/*void level_PrintLevels(char **levelList, int numOfLevels, int selectedLevel, int maxLevels, Point start){
     int currentIndex = 0;
     while(currentIndex < maxLevels && currentIndex < numOfLevels) {
         econio_gotoxy(start.x, start.y + currentIndex);
@@ -67,5 +64,5 @@ void level_PrintLevels(char **levelList, int numOfLevels, int selectedLevel, int
         currentIndex++;
         econio_textbackground(COL_RESET);
     }
-}
+}*/
 

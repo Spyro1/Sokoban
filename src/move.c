@@ -2,7 +2,7 @@
 #include "../headers/datatypes.h"
 #include "../headers/move.h"
 
-Move* CreateMove(Point stepfrom, Point stepTo, bool boxPushed){
+Move* move_CreateMove(Point stepfrom, Point stepTo, bool boxPushed){
     Move *newMove = (Move*) malloc(sizeof(Move));
     if (newMove == NULL){
         perror("Nem sikerult az uj Move lepesnek memoriat foglalni.");
@@ -15,32 +15,32 @@ Move* CreateMove(Point stepfrom, Point stepTo, bool boxPushed){
     newMove->next = NULL;
     return newMove;
 }
-void AddMoveToList(Move *newMove, Move **moveListHead){
+void move_AddMoveToList(Move *newMove, Move **moveListHead){
     // Lista elejére beszúrás
     newMove->next = (struct Move *) *moveListHead;
     *moveListHead = newMove;
 }
 
-Move RemoveMoveFromList(Move **moveListHead){
+Move move_RemoveMoveFromList(Move **moveListHead){
     if (*moveListHead != NULL){
         Move *temp = (Move*) (*moveListHead)->next;
         Move removed = **moveListHead;
-        FreeNode(moveListHead);
+        move_FreeNode(moveListHead);
         *moveListHead = temp;
         return removed;
     }
     return (Move){-1,-1,NULL,-1,-1,NULL};
 }
 
-void FreeMoveList(Move **moveListHead){
+void move_FreeMoveList(Move **moveListHead){
     Move *temp;
     while (*moveListHead != NULL){
         temp = (Move*) (*moveListHead)->next;
-        FreeNode(moveListHead);
+        move_FreeNode(moveListHead);
         *moveListHead = temp;
     }
 }
-static void FreeNode(Move **moveNode){
+static void move_FreeNode(Move **moveNode){
     if (moveNode != NULL){
         free(*moveNode);
     }

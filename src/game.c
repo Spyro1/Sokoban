@@ -28,7 +28,7 @@ static bool game_StartGame(Player *player, char levelName[]){
     // Konstansok a kiiratáshoz
     const int center = 36; // Képernyő közepe a cím szerint
 //    const int maxDisplayLines = 10;
-    Point p = {center, 9}; // A kiiratás középpontja a cím alatt
+    Point p; // = {center, 9}; // A kiiratás középpontja a cím alatt
 
     // Játék inicializálása
     Point playerPosition;
@@ -116,13 +116,13 @@ static bool game_StartGame(Player *player, char levelName[]){
             case 'R':
             case 'r':
                 // Játék során használt memóriaterületek felszababadítása
-                FreeMoveList(&PlayerMovesListHead); // Elmozdulásokat regisztráló láncoltl ista felszabadítása
+                move_FreeMoveList(&PlayerMovesListHead); // Elmozdulásokat regisztráló láncoltl ista felszabadítása
                 game_FreeAllocatedMemoryFromMap(&map); // Mátrix felszabadítása
                 game_FreeDynamicArray(&boxPositions); // Doboz tömb felszabadítása
                 game_FreeDynamicArray(&targetPositions); // Célmező tömb felszabadítása
                 // Pálya resetelése
                 return true;
-                break;
+                //break;
             default:
                 break;
         }
@@ -132,7 +132,7 @@ static bool game_StartGame(Player *player, char levelName[]){
         }
     }
     // Játék során használt memóriaterületek felszababadítása
-    FreeMoveList(&PlayerMovesListHead);     // Elmozdulásokat regisztráló láncoltl ista felszabadítása
+    move_FreeMoveList(&PlayerMovesListHead);     // Elmozdulásokat regisztráló láncoltl ista felszabadítása
     game_FreeAllocatedMemoryFromMap(&map);           // Mátrix felszabadítása
     game_FreeDynamicArray(&boxPositions);        // Doboz tömb felszabadítása
     game_FreeDynamicArray(&targetPositions);     // Célmező tömb felszabadítása
@@ -175,7 +175,7 @@ static bool game_MovePlayer(CellType ***map, Point *currentPosition, Point **box
             if (*destinationCell == TARGET) *destinationCell = PLAYERONTARGET;
             else if (*destinationCell == EMPTY) *destinationCell = PLAYER;
             // Lépés eltárolása
-            AddMoveToList(CreateMove(*currentPosition, destinationPoint, false), movesListHead);
+            move_AddMoveToList(move_CreateMove(*currentPosition, destinationPoint, false), movesListHead);
             *currentPosition = destinationPoint;
             game_PrintPosition(*map, destinationPoint);
 
@@ -209,7 +209,7 @@ static bool game_MovePlayer(CellType ***map, Point *currentPosition, Point **box
                 if (*destinationCell == TARGET) *destinationCell = PLAYERONTARGET;
                 else if (*destinationCell == EMPTY) *destinationCell = PLAYER;
                 // Lépés eltárolása
-                AddMoveToList(CreateMove(*currentPosition, destinationPoint, true), movesListHead);
+                move_AddMoveToList(move_CreateMove(*currentPosition, destinationPoint, true), movesListHead);
                 *currentPosition = destinationPoint;
                 game_PrintPosition(*map, destinationPoint);
                 return true;
@@ -224,7 +224,7 @@ static bool game_MovePlayer(CellType ***map, Point *currentPosition, Point **box
 static bool game_UndoMove(CellType ***map, Point *currentPosition, Point **boxPositions, Move **moveListHead){
     // Ha volt már elmozdulás
     if (*moveListHead != NULL){
-        Move lastMove = RemoveMoveFromList(moveListHead);
+        Move lastMove = move_RemoveMoveFromList(moveListHead);
         Point moveDirection = subPoints(lastMove.to, lastMove.from);
 //        Point undoDirection = subPoints(lastMove.from, lastMove.to);
         Point boxPosition = addPoints(lastMove.to, moveDirection);
@@ -342,7 +342,7 @@ static void game_PrintStatsAndNav(Size mapSize, int numOfSteps, int level){
         printfc(printer, p.x, p.y+i++, clrBoxOnTarget);
         sprintf(printer, "Célmező: %s", chrTarget);
         printfc(printer, p.x, p.y+i++, clrTarget);
-        printfc("Jó játékot!", p.x, p.y+i++, baseForeColor);
+        printfc("Jó játékot!", p.x, p.y+i, baseForeColor);
     }
     else{
         i = 0;
@@ -353,7 +353,7 @@ static void game_PrintStatsAndNav(Size mapSize, int numOfSteps, int level){
         i++;
         printfc("[V] : Visszalépés", p.x, p.y + i++, baseForeColor);
         printfc("[R] : Szint újrakezése", p.x, p.y + i++, baseForeColor);
-        printfc("[Esc] : Kilépés/Mentés", p.x, p.y + i++, baseForeColor);
+        printfc("[Esc] : Kilépés/Mentés", p.x, p.y + i, baseForeColor);
     }
 }
 

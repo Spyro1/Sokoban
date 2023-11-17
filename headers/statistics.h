@@ -1,6 +1,7 @@
 #ifndef SOKOBAN2_STATISTICS_H
 #define SOKOBAN2_STATISTICS_H
 #include "datatypes.h"
+
 /**
  * Beszúrja a paraméterként kapott stepCount értéket a statsListHead láncolt lista végére
  * @param stepCount A szinten megtett lépések száma

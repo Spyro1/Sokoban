@@ -11,28 +11,28 @@
  * @param boxPushed Logikai: IGAZ, ha eltolt doboz, HAMIS, ha csak a játékos mozdult el
  * @return Move strúktúrára mutató pointer a kapott paraméterekkel
  */
-Move* CreateMove(Point stepfrom, Point stepTo, bool boxPushed);
+Move* move_CreateMove(Point stepfrom, Point stepTo, bool boxPushed);
 /**
  * Beszúrja a paraméterként kapott newMove elemet a láncolt lista (moveListHead) elejére
  * @param newMove Új elmozdulást tároló struktúrára mutató pointer
  * @param moveListHead Az elmozdulásokat tároló láncolt lista (Verem/Stack)
  */
-void AddMoveToList(Move *newMove, Move **moveListHead);
+void move_AddMoveToList(Move *newMove, Move **moveListHead);
 /**
  * Eltávolítja az első elemet a láncolt listából (Veremből/Stack)
  * @param moveListHead Az elmozdulásokat tároló láncolt lista (Verem/Stack) (Cím szerint)
  * @return Visszaadja az eltávolított listaelem struktúráját
  */
-Move RemoveMoveFromList(Move **moveListHead);
+Move move_RemoveMoveFromList(Move **moveListHead);
 /**
  * Felszabadítja a az egész láncolt listának foglalt memóriát
  * @param moveListHead Az elmozdulásokat tároló láncolt lista (Verem/Stack) (Cím szerint)
  */
-void FreeMoveList(Move **moveListHead);
+void move_FreeMoveList(Move **moveListHead);
 /**
  * Felszabadítja egy elem lefoglalt memóriáját a listából
  * @param moveNode Egy Move struktúrára mutató pointer a láncolt listából (Cím szerint)
  */
-static void FreeNode(Move **moveNode);
+static void move_FreeNode(Move **moveNode);
 
 #endif //SOKOBAN2_MOVE_H

@@ -16,7 +16,7 @@ void lib_WarningWindow(const char* Message, Point p, bool *displayFirst, int opt
         printfc("║", p.x+windowWidth/2-1,p.y+i++,baseColor);
         printfc("║                        ║", p.x-windowWidth/2,p.y+i++,baseColor);
         printfc("║     NEM       IGEN     ║", p.x-windowWidth/2,p.y+i++,baseColor);
-        printfc("╚════════════════════════╝", p.x-windowWidth/2,p.y+i--,baseColor);
+        printfc("╚════════════════════════╝", p.x-windowWidth/2,p.y+i,baseColor);
     } // Kilépő ablak kiírása
     if (option == 0) {
         printfbc("NEM", p.x-windowWidth/2+6,p.y+4, accentForeColor, accentBgColor);

@@ -3,9 +3,10 @@
 #include <string.h>
 #include "../libraries/debugmalloc.h"
 #include "../libraries/econio.h"
-#include "../headers/player.h"
-#include "../headers/statistics.h"
 #include "../headers/datatypes.h"
+#include "../headers/player.h"
+#include "../headers/lib.h"
+#include "../headers/statistics.h"
 
 
 
