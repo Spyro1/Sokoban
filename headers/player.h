@@ -28,9 +28,9 @@ void player_WriteTxtFile(Player *playerListHead, int numOfPlayers);
 /**
  * Létrehoz egy Player struktúrára mutató pointert a paraméterként kapott értékekből, hogy aztán Lístába lehessen fűzni.
  * @param name A játékos neve (max 20 karakter)
- * @param numOfLevels
- * @param statsListHead
- * @return
+ * @param numOfLevels A játékos által teljesített szintek száma
+ * @param statsListHead A játékos lépésstatisztikájának láncolt listája
+ * @return Player struktúrűra mutató pointer a kapott adatokkal
  */
 Player *player_MakePlayer(char name[], int numOfLevels, Statistics *statsListHead);
 /**

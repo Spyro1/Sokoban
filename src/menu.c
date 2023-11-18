@@ -270,13 +270,15 @@ static void menu_PrintNewPlayerSubMenu(State *state, Player **playerListHead, in
     Player *editablePlayer;
     lib_ClearScrBellow();
     // Alcím kiírása jáékos név kipontozása
-    printfc("Név (max 20 karakter):", p.x-11, p.y, baseForeColor);
-    printfc("____________________", p.x-10, p.y+1, baseForeColor);
+    printfc("ÚJ JÁTÉKOS FELVÉTELE", p.x-10, p.y, baseForeColor);
+    printfc("Név (max 20 karakter):", p.x-11, p.y+1, baseForeColor);
+    printfc("____________________", p.x-10, p.y+2, baseForeColor);
     if (*state == editPlayer){ // Játékosnév változtatásához eredeti név kiírása
          editablePlayer = player_GetSelectedPlayer(*playerListHead, selectedPlayer);
-        printfc(editablePlayer->name, p.x - 10, p.y + 1, baseForeColor);
+        printfc("JÁTÉKOSNÉV SZERKESZTÉS", p.x-11, p.y, baseForeColor);
+        printfc(editablePlayer->name, p.x - 10, p.y + 2, baseForeColor);
     }
-    econio_gotoxy(p.x-10, p.y+1);
+    econio_gotoxy(p.x-10, p.y+2);
     // Bemenet várása a felhasználótól
     fgets(newPlayerName, nameLenght*2+1, stdin);
 
@@ -427,7 +429,7 @@ void menu_PrintNavControls(bool displayFirst, State state, const Size maxSize) {
                 break;
             case newPlayer:
             case editPlayer:
-                printfc("[↵] : Mentés / Kilépés", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                printfc("[↵] : Mentés / Vissza", p.x - 4, p.y + i++, COL_LIGHTBLUE);
                 break;
             case chosePlayer:
                 printfc("[↑] : Feljebb mozgás", p.x - 4, p.y + i++, COL_LIGHTBLUE);
@@ -435,24 +437,27 @@ void menu_PrintNavControls(bool displayFirst, State state, const Size maxSize) {
                 printfc("[↵] : Kiválasztás", p.x - 4, p.y + i++, COL_LIGHTBLUE);
                 printfc("[E] : Szerkesztés", p.x - 4, p.y + i++, COL_LIGHTBLUE);
                 printfc("[D] : Törlés", p.x - 4, p.y + i++, COL_LIGHTBLUE);
-                printfc("[Esc] : Kilépés", p.x - 6, p.y + i++, COL_LIGHTBLUE);
+                printfc("[Esc] : Vissza", p.x - 6, p.y + i++, COL_LIGHTBLUE);
                 break;
             case rankList:
                 printfc("[↑] : Felfele lapoz", p.x - 4, p.y + i++, COL_LIGHTBLUE);
                 printfc("[↓] : Lefele lapoz", p.x - 4, p.y + i++, COL_LIGHTBLUE);
                 printfc("[→] : Jobbra lapoz", p.x - 4, p.y + i++, COL_LIGHTBLUE);
                 printfc("[←] : Balra lapoz", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                printfc("[Esc] : Vissza", p.x - 6, p.y + i++, COL_LIGHTBLUE);
                 break;
             case exitApp:
             case deletePlayer:
                 printfc("[→] : Igen választása", p.x - 4, p.y + i++, COL_LIGHTBLUE);
                 printfc("[←] : Nem választása", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                printfc("[Esc] : Vissza", p.x - 6, p.y + i++, COL_LIGHTBLUE);
                 break;
             case game:
                 printfc("[↑] : Felfele lép", p.x - 4, p.y + i++, COL_LIGHTBLUE);
                 printfc("[↓] : Lefele lép", p.x - 4, p.y + i++, COL_LIGHTBLUE);
                 printfc("[→] : Jobbra lép", p.x - 4, p.y + i++, COL_LIGHTBLUE);
                 printfc("[←] : Balra lép", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                printfc("[Esc] : Kilépés a játékból", p.x - 6, p.y + i++, COL_LIGHTBLUE);
             default: break;
         }
     }

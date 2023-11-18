@@ -15,12 +15,11 @@
 #define maxDisplayLines 10
 
 
-//Függvények
+// Függvények
 /**
  * A főmenüt futtató függvény. Egyszer hivandó meg a mainben
  */
 void menu_MainScreen();
-
 
 /**
  * Kiirítja a főcímet a képernyő tetejére nagy betűkkel több sorosan
@@ -31,24 +30,35 @@ static void menu_PrintTitle();
  * @param key A lenyomott billentyű kódja
  * @param state A program állapotát tároló érték (Cím szerint)
  * @param displayFirst Először megy-e be a ciklus a menüpontba tulajdonság (Cím szerint)
- * @param option  A kiválasztott opciók változója (Cím szerint)
+ * @param option  A kiválasztott opció (Cím szerint)
  * @param selectedPlayer A kiválasztott játékos indexének változója (Cím szerint)
  * @param runMenu Menü futtatását beállító logikai változó (Cím szerint)
- * @param currentPlayer Az kiválasztott játékos struktúrájára mutató pointer, playerList elem
+ * @param currentPlayer A kiválasztott játékos struktúrájára mutató pointer, playerList elem
  * @param playerListHead A játékosok adatait tartalmazó láncolt lista (Cím szerint)
  * @param numOfPlayers  A játékosok darabszáma (Cím szerint)
  * @param levelList A szintek fájlnevét tároló dinamikus string tömb
+ * @param page
  */
 static void menu_KeyPress(int key, State *state, bool *displayFirst, int *option, int *selectedPlayer, bool *runMenu, Player *currentPlayer, Player **playerListHead, int *numOfPlayers, char **levelList, Point *page);
-
-static void menu_EvaluateState(int *key, State *state, bool runMenu, bool *displayFirst, int option, int prevOption, Player **playerListHead, Player **currentPlayer, int *numOfPlayers, int selectedPlayer, Point p, int *linesPrinted, Point page, Size maxSize);
 /**
- *
- * @param runMenu
- * @param displayFirst
- * @param option
- * @param p
+ * Az aktuális állapotnak megfelelően végrehajtja a szükséges utasításokat, és kiértékeli a bemeneteket
+ * @param key A lenyomott billentyű kódja (Cím szerint)
+ * @param state A program állapotát tároló érték (Cím szerint)
+ * @param runMenu Fut-e a menü
+ * @param displayFirst Először megy-e be a ciklus a menüpontba tulajdonság (Cím szerint)
+ * @param option A kiválasztott opció
+ * @param prevOption Az előző kiválasztott opció
+ * @param playerListHead A játékosok adatait tartalmazó láncolt lista (Cím szerint)
+ * @param currentPlayer  A kiválasztott játékos struktúrájára mutató pointer, playerList elem
+ * @param numOfPlayers A játékosok darabszáma (Cím szerint)
+ * @param selectedPlayer Az aktuálisan kiválasztott játékos indexe
+ * @param p A kiíráshoz legfelső középső pont a képernyőn
+ * @param linesPrinted Az előző menüpontba a képernyőre írt sorok száma
+ * @param page Az aktuális lap száma a dicsőséglista kiiratásánál
+ * @param maxSize A pálya méretét leíró struktúra
  */
+static void menu_EvaluateState(int *key, State *state, bool runMenu, bool *displayFirst, int option, int prevOption, Player **playerListHead, Player **currentPlayer, int *numOfPlayers, int selectedPlayer, Point p, int *linesPrinted, Point page, Size maxSize);
+
 static void menu_PrintExitWindow(bool runMenu, bool *displayFirst, int option, Point p);
 static void menu_PrintMainMenu(bool *displayFirst, int option, int prevOption, Point p);
 static void menu_PrintNewPlayerSubMenu(State *state, Player **playerListHead, int *numOfPlayers, int selectedPlayer, Point p);
@@ -63,15 +73,10 @@ static void menu_PrintRankList(bool *displayFirst, Player *playerListHead, int *
  */
 static void menu_ResetMenuVars(bool *displayFirst, int *option, int *selectedPlayer);
 /**
- *
- * @param Message
- * @param p
- * @param displayFirst
- * @param option
- * @param baseColor
- * @param accentForeColor
- * @param accentBgColor
+ * Kiírja a képernyő aljára az aktuális menüpot nevigációs lehetőségeit
+ * @param displayFirst  Először megy-e be a ciklus a menüpontba tulajdonság
+ * @param state A program állapotát tároló érték
+ * @param maxSize A pálya méretét leíró struktúra
  */
-
 void menu_PrintNavControls(bool displayFirst, State state, Size maxSize);
 #endif //SOKOBAN2_MENU_H

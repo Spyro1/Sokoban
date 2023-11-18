@@ -103,9 +103,10 @@ static void game_PrintStyledMap(CellType **map, Size mapSize);
  */
 static void game_PrintPosition(CellType **map, Point pos);
 /**
- *
- * @param mapSize
- * @param numOfSteps
+ * Kiírja a képernyőre a játéktér mellé az aktuális szintet és a lépések számát, vagy a tutorial pályánál a leírást
+ * @param mapSize A pálya szélességét és magasságát leíró struktúra
+ * @param numOfSteps A szinten megtett lépések száma
+ * @param level Az aktuális szint száma
  */
 static void game_PrintStatsAndNav(Size mapSize, int numOfSteps, int level);
 // == MEMÓRIAFOGLALÁS ÉS FELSZABADÍTÁS ==

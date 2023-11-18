@@ -19,10 +19,10 @@ void lib_ClearScrBellow();
  */
 void lib_ClearScreenSection(int x1, int y1, int x2, int y2, EconioColor bgColor);
 /**
- *
- * @param errormessage
+ * Kiírja képernyőre a hibaüzenetet
+ * @param errormessage Hibaüzenet
  */
-void lib_printError(const char* errormessage)
+void lib_printError(const char* errormessage);
 /**
  * Kiírja a képernyőre a kapott szöveget a megadott kezdő koordinátákra
  * @param str Kiírandó szöveg
