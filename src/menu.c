@@ -288,7 +288,7 @@ static void menu_PrintNewPlayerSubMenu(State *state, Player **playerListHead, in
         int maxDisplayableCharacters= stringlenghtMax(newPlayerName, nameLenght);
         int realLenght = numOfDisplayedCharacter <= nameLenght ? strlen(newPlayerName) : maxDisplayableCharacters;
         newPlayerName[realLenght] = '\0';
-
+        // TODO: Képernyőtörlés hülye felhasználók miatt
         // Player Listába beolvasás fájlból
         player_ReadTxtFile(playerListHead, numOfPlayers); // Új játékoshoz beolvasás fájlból
 
@@ -296,7 +296,7 @@ static void menu_PrintNewPlayerSubMenu(State *state, Player **playerListHead, in
         int exists = player_GetIndexOfPlayer(*playerListHead, newPlayerName);
         if (exists == -1) {
             // Új játékos hozzáaadása a láncolt listához
-            if (*state == editPlayer && strcmp(editablePlayer->name, newPlayerName) != 0){
+            if (*state == editPlayer){
                 player_AddPlayerInOrder(player_MakePlayer(newPlayerName, editablePlayer->numOfCompletedLevels, (Statistics*) editablePlayer->levelStats), playerListHead, numOfPlayers);
                 player_RemovePlayer(editablePlayer, playerListHead, numOfPlayers);
             }

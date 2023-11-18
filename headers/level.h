@@ -18,15 +18,6 @@ void level_ReadDirectory(char directory[], char **levelList[], int *numOfFiles);
  * @param numOfLevels
  */
 void level_FreeLevelList(char ***levelList, int *numOfLevels);
-/**
- *
- * @param levelList
- * @param numOfLevels
- * @param selectedLevel
- * @param maxLevels
- * @param start
- *//*
-void level_PrintLevels(char **levelList, int numOfLevels, int selectedLevel, int maxLevels, Point start);*/
 
 
 #endif //SOKOBAN2_LEVEL_H

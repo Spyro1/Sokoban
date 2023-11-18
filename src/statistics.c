@@ -1,11 +1,12 @@
 #include "../headers/statistics.h"
 #include "../libraries/debugmalloc.h"
+#include "../headers/lib.h"
 
 void stats_AddLevelStatistics(int stepCount, Statistics **statsListHead){
     // Új statisztika létrehozása
     Statistics *newStat = (Statistics*) malloc(sizeof(Statistics));
     if (newStat == NULL){
-        perror("Nem sikerult az uj Move lepesnek memoriat foglalni.");
+        lib_printError("Nem sikerült az új Move lépésnek memóriat foglalni.");
         return;
     }
     // Értékátadás
@@ -25,17 +26,6 @@ void stats_AddLevelStatistics(int stepCount, Statistics **statsListHead){
         mover->next = (struct Statistics *) newStat;
     }
 }
-
-//Move RemoveStat(Move **moveListHead){
-//    if (*moveListHead != NULL){
-//        Move *temp = (Move*) (*moveListHead)->next;
-//        Move removed = **moveListHead;
-//        move_FreeNode(moveListHead);
-//        *moveListHead = temp;
-//        return removed;
-//    }
-//    return (Move){-1,-1,NULL,-1,-1,NULL};
-//}
 
 void stats_FreeStatisticsList(Statistics **statsListHead){
     Statistics *temp;

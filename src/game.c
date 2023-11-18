@@ -368,7 +368,8 @@ static void game_ReadXSBFile(char filename[], CellType ***map, Size *mapSize, Po
     strcat(directory, filename); // Mappa és fájlnév egyesítése
     FILE* fp = fopen(directory, "r"); // Fájl megnyitása
     if (fp == NULL) { // Error kezelés
-        printf("Nem sikerült megnyitni a fájlt: %s\n", filename);
+        sprintf(directory, "Nem sikerült megnyitni a fájlt pálya fájlját: %s", filename);
+        lib_printError(directory);
         return;
     }
     // Sorok és oszlopok megszámlálása
@@ -389,7 +390,7 @@ static void game_ReadXSBFile(char filename[], CellType ***map, Size *mapSize, Po
                     break;
                 case '$':
                 case '*':
-                    (*boxCount)++; // Doboz és célmezők számának növelése
+                    (*boxCount)++; // Dobozok számának növelése
                     break;
                 default:
                     break;
@@ -404,8 +405,6 @@ static void game_ReadXSBFile(char filename[], CellType ***map, Size *mapSize, Po
     // Dobozok és célmező tömb felszabadítása és foglalása
     game_FreeDynamicArray(boxPositions);
     game_AllocateDynamicArray(boxPositions, *boxCount + 1);
-//    game_FreeDynamicArray(targetPositions);
-//    game_AllocateDynamicArray(targetPositions, *boxCount + 1);
 
     // Tömbbe olvasás
     while(fgets(line, maxLineLenght, fp)){
@@ -423,7 +422,7 @@ static void game_ReadXSBFile(char filename[], CellType ***map, Size *mapSize, Po
     }
     fclose(fp); // Fájl bezárása
     if (mapSize->width < 3 && mapSize->height < 3){
-        perror("Hiba a fájl beolvasásánál!");
+        lib_printError("Túl kicsi a pálya a játékhoz!");
     } // Hibakezelés
 }
 static CellType game_ConvertInputCharToCellType(char character){
@@ -442,12 +441,12 @@ static void game_AllocateMemoryToMap(CellType ***map, Size *mapSize){
     CellType **newMap;
     newMap = (CellType**) malloc(mapSize->height * sizeof(CellType*)+1); //  Pointerre mutató pointer tömb memóriafoglalás
     if (newMap == NULL) {
-        perror("Nem sikerult memoriateruletet foglalni newMap matrixnak");
+        lib_printError("Nem sikerült memóriaterületet foglalni newMap mátrixnak.");
         return;
     } // Hibakezelés
     newMap[0] = (CellType*) malloc((mapSize->height * mapSize->width+1) * sizeof(CellType)); // Mátrix memóriafoglalása
     if (newMap[0] == NULL) {
-        perror("Nem sikerult memoriateruletet fogallni a newMap[0] tombnek");
+        lib_printError("Nem sikerült memóriaterületet fogallni a newMap[0] tömbnek.");
         return;
     } // Hibakezelés
     // Pointerek értékadása
@@ -460,7 +459,7 @@ static void game_AllocateDynamicArray(Point **newArray, int lenght){
     Point *helperArray;
     helperArray = (Point*) malloc(lenght * sizeof(Point)); // Dobozok tömbjének memóriafoglalása
     if(helperArray == NULL) {
-        perror("Nem sikerult memoriat foglalni a newArray tömbnek.");
+        lib_printError("Nem sikerült memóriat foglalni a newArray tömbnek.");
         return;
     } // Hibakezelés
     *newArray = helperArray; // Címátadás

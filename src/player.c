@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <string.h>
-#include <string.h>
 #include "../libraries/debugmalloc.h"
 #include "../libraries/econio.h"
 #include "../headers/datatypes.h"
@@ -15,7 +14,7 @@ void player_ReadTxtFile(Player **playerListHead, int *numOfPlayers) {
     FILE *fp;
     fp = fopen(playerDataPath, "r");
     if (fp == NULL) {
-        printf("Nem lehet megnyitni a fájlt\n");
+        lib_printError("Nem lehet megnyitni a player.txt fájlt az olvasáshoz!");
         return;
     }
 
@@ -39,30 +38,25 @@ void player_ReadTxtFile(Player **playerListHead, int *numOfPlayers) {
                 sscanf(inputRest, "%d", &stepCount);
                 stats_AddLevelStatistics(stepCount, &statsListHead);
                 completedLevels = actualNumOfCompletedLevels;
-                //player_AddPlayerToEnd(player_MakePlayer(name, completedLevels, statsListHead), playerListHead, numOfPlayers);
                 player_AddPlayerInOrder(player_MakePlayer(name, completedLevels, statsListHead), playerListHead, numOfPlayers);
             }
             else if (args == 2){
-                //player_AddPlayerToEnd(player_MakePlayer(name, completedLevels, statsListHead), playerListHead, numOfPlayers);
                 player_AddPlayerInOrder(player_MakePlayer(name, completedLevels, statsListHead), playerListHead, numOfPlayers);
             }
             else if (*playerListHead == NULL) {
                 return;
             }
             else{
-                perror("Hiba a player.txt beolvasasanal, nem megfelelo bemenet!");
+                lib_printError("Hiba a player.txt beolvasásánál, nem megfelelő bemenet!");
             }
         }
-
-    fclose(fp);
-
-    // Ide még kell a rendezés név szerint
+    fclose(fp); // Fájl bezárása
 }
 
 void player_WriteTxtFile(Player *playerListHead, int numOfPlayers){
     FILE *fp = fopen(playerDataPath, "wt");
     if (fp == NULL){
-        perror("Nem sikerult megnyitni a player.txt fajlt.");
+        lib_printError("Nem sikerült megnyitni a player.txt fájlt az íráshoz!");
         return;
     }
     // irandó Sor létrehozása
@@ -71,7 +65,7 @@ void player_WriteTxtFile(Player *playerListHead, int numOfPlayers){
         sprintf(printer,"%s;%d", mover->name, mover->numOfCompletedLevels);
         for (Statistics* stat = (Statistics *) mover->levelStats; stat != NULL; stat = (Statistics *) stat->next){
             sprintf(printer, "%s;%d", printer, stat->stepCount); // Sorhoz fűzés
-
+            // TODO: Itt hibát dob játékos törlésekor valmiért
         }
         fprintf(fp, "%s\n", printer); // Fájlba írás
     }
@@ -90,7 +84,6 @@ static void player_FreePlayerNode(Player **playerNode){
     if (*playerNode != NULL){
         if ((*playerNode)->levelStats != NULL)
             stats_FreeStatisticsList((Statistics **) &((*playerNode)->levelStats));
-//            free((*playerNode)->levelStats);
         free(*playerNode);
     }
 }
@@ -99,7 +92,7 @@ Player *player_MakePlayer(char name[], int numOfLevels, Statistics *statsListHea
     // Memóriafoglalás
     Player *uj = (Player *) malloc(sizeof(Player));
     if (uj == NULL){
-        perror("Nem sikerult az uj Player node-nak memoriat foglalni.");
+        lib_printError("Nem sikerült az új Player node-nak memóriat foglaln!");
         return NULL;
     }
     // Adatok átadása
@@ -127,8 +120,6 @@ void player_AddPlayerInOrder(Player *newPlayer, Player **playerListHead, int *nu
     Player *prev = NULL;
     Player *mover = *playerListHead;
     // Hely keresése
-//    while (mover != NULL && strcmp(newPlayer->num, mover->name) > 0){ // ABCabccÁÉáé szerint rendetls
-//    while (mover != NULL && newPlayer->numOfCompletedLevels > mover->numOfCompletedLevels){ // Szint szerint rendezés
     while (mover != NULL && (stringlenght(newPlayer->name) > stringlenght(mover->name) || newPlayer->numOfCompletedLevels > mover->numOfCompletedLevels)) { // Névhossz szerint rendezés
         prev = mover;
         mover = (Player *) mover->next;
@@ -149,10 +140,10 @@ bool player_RemovePlayer(Player *removablePlayer, Player **playerListHead, int *
     Player *temp = *playerListHead, *prev;
     // Player Keresése
     // Ha az első elem a keresett
-    // STRCMPPPPP
-    if (temp != NULL && temp->name == removablePlayer->name) {
+    if (temp != NULL && strcmp(temp->name, removablePlayer->name) == 0) {
         *playerListHead = (Player *) temp->next; // Első elem továbbléptetése
         player_FreePlayerNode(&temp); // Törlés
+        (*numOfPlayers)--;
         return true; // Sikeres törlés
     }
     // removablePlayer keresése a név alapján
@@ -167,6 +158,7 @@ bool player_RemovePlayer(Player *removablePlayer, Player **playerListHead, int *
     else {
         prev->next = temp->next; // Mutató átmozgatása a következő elemre
         player_FreePlayerNode(&temp);
+        (*numOfPlayers)--;
         return true;
     }
 }

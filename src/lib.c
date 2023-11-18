@@ -44,6 +44,9 @@ void lib_ClearScreenSection(int x1, int y1, int x2, int y2, EconioColor bgColor)
         econio_gotoxy(x1,y1+i);
     }
 }
+void lib_printError(const char* errormessage){
+    printf(errormessage, 7, 7, COL_RED);
+}
 void print(char const str[], int x, int y){
     econio_textbackground(COL_RESET);
     econio_gotoxy(x,y);

@@ -45,18 +45,50 @@ void player_FreePlayerList(Player **playerListHead);
 static void player_FreePlayerNode(Player **playerNode);
 
 // Láncolt Lista függvények ==
+/**
+ *
+ * @param newPlayer
+ * @param playerListHead
+ * @param numOfPlayers
+ */
 void player_AddPlayerToEnd(Player *newPlayer, Player **playerListHead, int *numOfPlayers);
+/**
+ *
+ * @param newPlayer
+ * @param playerListHead
+ * @param numOfPlayers
+ */
 void player_AddPlayerInOrder(Player *newPlayer, Player **playerListHead, int *numOfPlayers);
-
+/**
+ *
+ * @param removablePlayer
+ * @param playerListHead
+ * @param numOfPlayers
+ * @return
+ */
 bool player_RemovePlayer(Player *removablePlayer, Player **playerListHead, int *numOfPlayers);
-
+/**
+ *
+ * @param playerListHead
+ * @param selectedPlayer
+ * @return
+ */
 Player* player_GetSelectedPlayer(Player *playerListHead, int selectedPlayer);
-
+/**
+ *
+ * @param playerListHead
+ * @param name
+ * @return
+ */
 int player_GetIndexOfPlayer(Player *playerListHead, char name[]);
 
 // == Kiíratás ==
+/**
+ *
+ * @param playerList
+ * @param selectedPlayerIndex
+ * @param start
+ */
 void player_PrintPlayerList(Player *playerList, int selectedPlayerIndex, Point start);
-
-
 
 #endif //SOKOBAN2_PLAYER_H
