@@ -10,6 +10,11 @@
 #define strChosePlayer "JÁTÉK INDÍTÁSA"
 #define strRankList "DICSŐSÉGLISTA"
 #define strExitApp "KILÉPÉS"
+#define strNewPlayerTitle "= ÚJ JÁTÉKOS FELVÉTELE ="
+#define strEditPlayerTitle "= JÁTÉKOSNÉV SZERKESZTÉS ="
+#define strChosePlayerTitle "= JÁTÉKOSOK ="
+#define strRankListTitle "= DICSŐSÉGLISTA ="
+
 
 #define waitsec 0.6
 #define maxDisplayLines 10
@@ -63,7 +68,7 @@ static void menu_PrintExitWindow(bool runMenu, bool *displayFirst, int option, P
 static void menu_PrintMainMenu(bool *displayFirst, int option, int prevOption, Point p);
 static void menu_PrintNewPlayerSubMenu(State *state, Player **playerListHead, int *numOfPlayers, int selectedPlayer, Point p);
 static void menu_PrintPlayerSubMenu(bool *displayFirst, Player **playerListHead, int *numOfPlayers, Player **currentPlayer, int selectedPlayer, Point p );
-static void menu_PrintRankList(bool *displayFirst, Player *playerListHead, int *numOfPlayers, Point p, int maxDisplayLvls, Point page);
+static void menu_PrintRankList(bool *displayFirst, Player **playerListHead, int *numOfPlayers, Point p, int maxDisplayLvls, Point page, const Size maxSize);
 
 /**
  * Visszaállítja a kezdőértékeket a menüben, ha menüpont váltás volt

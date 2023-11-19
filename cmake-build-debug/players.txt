@@ -1,0 +1,3 @@
+Marci;5;1;1;8;20;24
+Krisztián;0
+Kálmán Bácsi;2;1;1
