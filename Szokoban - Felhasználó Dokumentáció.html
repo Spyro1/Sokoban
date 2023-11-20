@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Szokoban - Felhasználó Dokumentáció.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="szokoban---felhaszn%C3%A1l%C3%B3i-dokument%C3%A1ci%C3%B3">Szokoban - Felhasználói dokumentáció</h1>
+<blockquote>
+<p>Készítette: Szenes Márton</p>
+</blockquote>
+<h2 id="j%C3%A1t%C3%A9kr%C3%B3l">Játékról</h2>
+<p>A Szokoban egy olyan játék, ahol a játékosnak ládákat kell tologatni a játékterületen úgy, hogy azok a megfelelő helyre kerüljenek. A pálya viszont olyan, hogy könnyű betolni olyan helyre a ládákat, ahonnan már nem lehet elmozdítani őket. A pálya egy 2 dimenziós felülnézetű térben helyezkedik el. A játékterület (amin belül a ládák vannak elhelyezve és a játékos) mindig fallal van körbe véve, hogy ne tudjon azon kívül mozdulni egyik objektum se. Egy adott pálya akkor van teljesítve, ha az összes célmezőre egy-egy láda lett tolva. A Pályák nehézség szerinti sorrendben következnek egymás után.</p>
+<h2 id="program-haszn%C3%A1lata">Program használata</h2>
+<h3 id="f%C5%91men%C3%BC">Főmenü</h3>
+<p>A program elindításakor a <strong><a href="#f%C5%91men%C3%BC">Főmenü</a></strong> jelenik meg a terminálon. A programban mindig a bal alsó sarokban találhatóak meg a navigációs billentyűk, amikkel lehet a kiválasztást vagy a játékost mozgatni vagy belemenni egy menüpontba, vagy kilépni belőle.<br>
+A főmenüben a következő menüpontokat lehet találni:</p>
+<ul>
+<li><a href="#%C3%BAj-j%C3%A1t%C3%A9kos">Új játékos</a></li>
+<li><a href="#j%C3%A1t%C3%A9k-ind%C3%ADt%C3%A1sa">Játék indítása</a></li>
+<li><a href="#dics%C5%91s%C3%A9glista">Dicsőséglista</a></li>
+<li><a href="#kil%C3%A9p%C3%A9s">Kilépés</a></li>
+</ul>
+<p><img src="./docs/mainmenu.PNG" alt="Főmenü" title="Főmenü képernyőkép"></p>
+<p>A menüben a <code>↑</code>(fel), <code>↓</code> (le), <code>→</code> (jobbra), <code>←</code> (balra) kurzor billentyűkkel lehet navigálni. Egy menüpont  kiválasztása az <code>Enter</code> billentyű lenyomásával lehetéséges. Visszalépni egy menüpontból az <code>Esc</code> vagy a <code>Backspace</code> billentyűkkel lehetséges. Ha a főképernyőn nyomjuk meg utóbbi billentyűk valamelyikét, akkor a <a href="#kil%C3%A9p%C3%A9s">Kilépés</a> menü jön fel.</p>
+<h3 id="%C3%BAj-j%C3%A1t%C3%A9kos">Új játékos</h3>
+<p>Az <em>Új játékos</em> menüt kiválasztva megjelenik egy 20 karakter széles beviteli mező. Ide lehet bevinni a billentyűzetről az új játékos nevét, ami tartalmazhat ékezetes- és nem ékezetes karaktereket is. A kívánt név beírása után az <code>Enter</code>-t lenyomva elmenti a program a játékosnevet, és visszalép a <a href="#f%C5%91men%C3%BC">Főmenü</a>-be. Ha mégsem szeretne a felhasználó új nevet bevinni, akkor üres sornál nyomja meg az <code>Enter</code>-t.<br>
+<img src="./docs/addnewplayer.PNG" alt="Új játékos" title="Új játékos képernyőkép"></p>
+<h3 id="j%C3%A1t%C3%A9k-ind%C3%ADt%C3%A1sa">Játék indítása</h3>
+<p>A <em>Játék indítása</em> menüt kiválasztva megjelennek az adatbázisban szereplő játékosok és teljesített szintjeik száma. Amennyiben még egy játékos sem lett felvéve az adatbázisba, akkor a <em>&quot;Nincs egy játékos sem még.&quot;</em> felirat jelenik meg. A Játékos felvételéhez navigáljon az <a href="#%C3%BAj-j%C3%A1t%C3%A9kos">Új játékos</a> menübe. A játékosok között a kurzor billentyűkkel ( <code>↑</code>(fel), <code>↓</code> (le) ) lehet navigálni, és az <code>Enter</code> billentyűt lenyomva lehet kiválasztani egy játékost és elindítani a <a href="#j%C3%A1t%C3%A9kmenet">Játékot</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Üres játékoslista</th>
+<th>Nem üres játékoslista</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="./docs/noexistingplayer.PNG" alt="Nincs egy játékos sem még" title="Nincs egy játékos sem még"></td>
+<td><img src="./docs/playerlist.PNG" alt="Játékos lista" title="Játékoslista"></td>
+</tr>
+</tbody>
+</table>
+<h4 id="j%C3%A1t%C3%A9kosn%C3%A9v-szerkeszt%C3%A9se">Játékosnév szerkesztése</h4>
+<p>A felvett játékosok nevét lehet szerkeszteni. Ehhez navigálja a kijelölést a kívánt játékosra a listában, és az <code>E</code> billentyű lenyomásával megnyílik a játékosnév szerkesztése almenü, amiben átírhatja a nevet. A mentéshez nyomja meg az <code>Enter</code>-t. Ha mégsem szeretné szerkeszteni, nyomjon <code>Enter</code>-t az üres sornál.<br>
+<img src="./docs/editplayer.PNG" alt="Játékosnév szerkesztése" title="Játékosnév szerkesztése"></p>
+<h4 id="j%C3%A1t%C3%A9kos-t%C3%B6rl%C3%A9se">Játékos törlése</h4>
+<p>A felvett játékosokat lehet törölni. Ehhez navigálja a kijelölést az eltávolítani kívánt játékosra a listába, és a <code>D</code> / <code>DELETE</code> billentyű lenyomásával megjelenik egy ablak, amiben rákérdez a program, hogy <em>&quot;Biztos törlöd?&quot;</em>-e. <em>Igen</em>/<em>Nem</em> opciók közül az <em>Igen</em>-t választva törlődik a játékos az adatbázisból, a <em>Nem</em>-et választva pedig visszatér a program a <a href="#j%C3%A1t%C3%A9k-ind%C3%ADt%C3%A1sa">Játékoslistához</a>.<br>
+<img src="./docs/deleteplayer.PNG" alt="Játékos törlése" title="Játékos törlése"></p>
+<h3 id="dics%C5%91s%C3%A9glista">Dicsőséglista</h3>
+<p>A <em>Dicsőséglista</em> menüt kiválasztva megjelenik egy táblázat, amiben a játékosok a egyes szinteken megtett lépések számát jeleníti meg. A fejlécben a játékosok nevei találhatóak, a bal szélső oszlopban pedig a szint sorszáma.</p>
+<p><img src="./docs/ranklist.png" alt="Dicsőséglista" title="Dicsőséglista"></p>
+<h3 id="kil%C3%A9p%C3%A9s">Kilépés</h3>
+<p>A <em>Kilépés</em> menüt kiválasztva megjelenik egy ablak, amiben rákérdez a program, hogy <em>&quot;Biztos kilépsz?&quot;</em>-e. <em>Igen</em>/<em>Nem</em> opciók közül az <em>Igen</em>-t választva a program leáll, a <em>Nem</em>-et választva pedig visszatér a program a <a href="#f%C5%91men%C3%BC">Főmenü</a>-be.</p>
+<p><img src="./docs/exitmenu.PNG" alt="Kilépés" title="Kilépési ablak"></p>
+<h2 id="j%C3%A1t%C3%A9kmenet">Játékmenet</h2>
+<h3 id="tutorial-p%C3%A1lya">Tutorial pálya</h3>
+<p>A játék elindításakor megjelenik a pálya, a pálya szintjének a sorszáma és a megtett lépések száma. Ha új játékos indítja el első alkalommal a játékot, akkor a tutorial szint indul el, ahol röviden elmagyarázza a program a játékot. Ez a szint nem számít bele a statisztikába. Célja, hogy megismerje a felhasználó a játékos bábu mozgatását és a doboz tologatási lehetőségét.
+A pályánt kirajzoló elemek:</p>
+<ul>
+<li><span style="color: gray">Fal: █</span></li>
+<li><span style="color: dodgerblue">Játékos: ☻</span></li>
+<li><span style="color: red">Játékos a célmezőn: ☻</span></li>
+<li><span style="color: gold">Doboz: ◼</span></li>
+<li><span style="color: green">Doboz a célmezőn: ◼</span></li>
+<li><span style="color: crimson">Célmező: ◻</span></li>
+</ul>
+<p><img src="./docs/tutoriallvl.PNG" alt="Tutorial pálya" title="Tutorial pálya"></p>
+<h3 id="a-j%C3%A1t%C3%A9k">A játék</h3>
+<p>A további szinteken már csak a szint sorszáma és a lépésszám lesz megjelenítve a pálya mellett. A navigációs billentyűk, ahogy a menüben is a képernyő bal alsó sarkában találhatóak.</p>
+<ul>
+<li><strong>Mozgás:</strong> A játékos bábu mozgatását a kurzor billentyűkkel lehet (<code>↑</code>(fel), <code>↓</code> (le), <code>→</code> (jobbra), <code>←</code> (balra))</li>
+<li><strong>Visszalépés:</strong> Egy lépés visszavonását a <code>V</code> billentyű lenyomásával lehet elérni, azonban minden egyes visszalépés ugyanúgy lépésnek számít, így egyel növeli a lépések számát, hogy <em>fair play</em> (sportszerű) legyen ennek a funkciónak a használata.</li>
+<li><strong>Újrakezdés:</strong> Az <code>R</code> billentyű lenyomásával újraindul az adott szint, visszaáll minden mező az eredeti állapotára és a lépésszámláló is nullázódik. Ezáltal újból megpróbálhatja a játékos a pályát teljesíteni elölről.</li>
+</ul>
+<h2 id="j%C3%A1t%C3%A9k-men%C3%BCrendszere">Játék menürendszere</h2>
+<!--![Folyamatábra](./docs/menuflowchard.png "Menürendszer folyamatábra")-->
+<pre><code class="language-mermaid"><div class="mermaid">flowchart TD
+    A[Főmenü] <--> |Enter| B(Új játékos)
+    A <--> |Enter| C(Új játék)
+    A <--> |Enter| D(Dicsőséglista)
+    A <--> |Esc| E(Kilépés)
+    C --- F[Játékos választás]
+    F <--> |D/DEL| G(Játékos törlése)
+    F <--> |E| H(Átnevezés)
+    F --> |Enter| I(Játék indítása)
+    I --- J[Játék]
+    J <--> |Esc| K(Kilépés a Játékból)
+    J --> |Szintlépés| J
+    K --> F
+
+</div></code></pre>
+<blockquote>
+<p>Jó játékot kíván a készítő, Szenes Márton!</p>
+</blockquote>
+
+</body>
+</html>

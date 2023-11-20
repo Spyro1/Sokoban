@@ -71,6 +71,7 @@ A további szinteken már csak a szint sorszáma és a lépésszám lesz megjele
 
 
 ## Játék menürendszere
+<!--![Folyamatábra](./docs/menuflowchard.png "Menürendszer folyamatábra")-->
 ```mermaid
 flowchart TD
     A[Főmenü] <--> |Enter| B(Új játékos)

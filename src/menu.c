@@ -10,10 +10,13 @@
 #include "../headers/level.h"
 #include "../headers/lib.h"
 
+
+const Size maxSize = {72,30};
+
 void menu_MainScreen(){
 
     // Konstansok a kiiratáshoz
-    const Size maxSize = {72,30};
+
     const int center = maxSize.width/2; // Képernyő közepe a cím szerint
 
     Point p;                        // A kiiratás középpontja a cím alatt
@@ -36,7 +39,6 @@ void menu_MainScreen(){
     menu_PrintTitle();
     // Szint Mappa beolvasása
     level_ReadDirectory("./levels/", &levelList, &numOfLevels);
-    // TODO: Errorkezelés kiiratása alulra perror() helyett printfc()
     econio_rawmode(); // Billentyűérzékelés bekapcsolása
 
     // == MENÜ FUTTATÁSA ==
@@ -44,9 +46,9 @@ void menu_MainScreen(){
         p = (Point) {center, 9};
         prevOption = option;
         // Lenyomott billentyű kiértékelése
-        menu_KeyPress(key, &state, &displayFirst, &option, &selectedPlayer, &runMenu, currentPlayer, &playerListHead, &numOfPlayers, levelList, maxSize);
+        menu_KeyPress(key, &state, &displayFirst, &option, &selectedPlayer, &runMenu, currentPlayer, &playerListHead, &numOfPlayers, levelList, numOfLevels);
         // Képernyőre írás választott mód szerint
-        menu_EvaluateState(&key, &state, runMenu, &displayFirst, option, prevOption, &playerListHead, &currentPlayer, &numOfPlayers, selectedPlayer, p, &linesPrinted, maxSize);
+        menu_EvaluateState(&key, &state, runMenu, &displayFirst, option, prevOption, &playerListHead, &currentPlayer, &numOfPlayers, selectedPlayer, p, &linesPrinted);
         // Billentyűlenyomásra vár, ha fut a menü
         if (runMenu && !displayFirst) key = econio_getch();
     }
@@ -75,7 +77,7 @@ static void menu_PrintTitle(){
 //    printfc("Navigálás: ← ↓ →  ↲", 3 , 25,COL_LIGHTCYAN);
 }
 
-static void menu_KeyPress(int key, State *state, bool *displayFirst, int *option, int *selectedPlayer, bool *runMenu, Player *currentPlayer, Player **playerListHead, int *numOfPlayers, char **levelList, Size maxSize){
+static void menu_KeyPress(int key, State *state, bool *displayFirst, int *option, int *selectedPlayer, bool *runMenu, Player *currentPlayer, Player **playerListHead, int *numOfPlayers, char **levelList, int numOfLevels){
     switch (key){
         case KEY_ESCAPE:
         case KEY_BACKSPACE:
@@ -108,13 +110,14 @@ static void menu_KeyPress(int key, State *state, bool *displayFirst, int *option
                 case chosePlayer:
                     if (currentPlayer != NULL){
                         *state = game;
-                        menu_PrintNavControls(true,*state,maxSize);
+                        menu_PrintNavControls(true,*state);
                         // Játék indítása
-                        while(game_Init(currentPlayer, levelList)) {
+                        while(game_Init(currentPlayer, levelList) && currentPlayer->numOfCompletedLevels < numOfLevels) {
                             // Nem kell ide semmi, addig fut, amíg a játékból ki nem lépnek
                             // vagy nem teljesíti az összes szintet a játékos
                         }
-                        *state = chosePlayer;
+                        if (currentPlayer->numOfCompletedLevels == numOfLevels) *state = winGame;
+                        else *state = chosePlayer;
                         player_WriteTxtFile(*playerListHead, *numOfPlayers);
                         menu_ResetMenuVars(displayFirst, option, selectedPlayer);
                     }
@@ -176,8 +179,8 @@ static void menu_KeyPress(int key, State *state, bool *displayFirst, int *option
     }
 }
 
-static void menu_EvaluateState(int *key, State *state, bool runMenu, bool *displayFirst, int option, int prevOption, Player **playerListHead, Player **currentPlayer, int *numOfPlayers, int selectedPlayer, Point p, int *linesPrinted, const Size maxSize){
-    menu_PrintNavControls(*displayFirst, *state, maxSize);
+static void menu_EvaluateState(int *key, State *state, bool runMenu, bool *displayFirst, int option, int prevOption, Player **playerListHead, Player **currentPlayer, int *numOfPlayers, int selectedPlayer, Point p, int *linesPrinted){
+    menu_PrintNavControls(*displayFirst, *state);
     switch (*state) {
         case exitApp: // Kilépési ablak
             menu_PrintExitWindow(runMenu, displayFirst, option, p);
@@ -207,8 +210,13 @@ static void menu_EvaluateState(int *key, State *state, bool runMenu, bool *displ
             *key = -1;
             break;
         case rankList: // Dicsőséglista kiiratása
-            menu_PrintRankList(displayFirst, playerListHead, numOfPlayers, p, maxDisplayLines, maxSize);
+            menu_PrintRankList(displayFirst, playerListHead, numOfPlayers, p, maxDisplayLines);
             *linesPrinted = maxDisplayLines;
+            break;
+        case winGame:
+            lib_ClearScrBellow();
+            printfc("TELJESÍTETTED AZ ÖSSZES SZINTEN!", p.x-16, p.y+3,COL_LIGHTGREEN);
+            printfc("GRATULÁLOK!", p.x-6, p.y+4,COL_LIGHTYELLOW);
             break;
         default: break;
     }
@@ -342,7 +350,7 @@ static void menu_PrintPlayerSubMenu(bool *displayFirst, Player **playerListHead,
     *currentPlayer = player_GetSelectedPlayer(*playerListHead, selectedPlayer);
 }
 
-static void menu_PrintRankList(bool *displayFirst, Player **playerListHead, int *numOfPlayers, Point p, int maxDisplayLvls, const Size maxSize){
+static void menu_PrintRankList(bool *displayFirst, Player **playerListHead, int *numOfPlayers, Point p, int maxDisplayLvls){
     if (*displayFirst) {
         *displayFirst = false;
         lib_ClearScrBellow();
@@ -434,7 +442,7 @@ static void menu_ResetMenuVars(bool *displayFirst, int *option, int *selectedPla
     *selectedPlayer = 0;
 }
 
-void menu_PrintNavControls(bool displayFirst, State state, const Size maxSize) {
+void menu_PrintNavControls(bool displayFirst, State state) {
     if (displayFirst) {
         Point p = {6, maxDisplayLines+12};
         int i = 0;
