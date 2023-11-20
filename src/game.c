@@ -351,9 +351,9 @@ static void game_PrintStatsAndNav(Size mapSize, int numOfSteps, int level){
         sprintf(printer, "Lépés: %d", numOfSteps);
         printfc(printer, p.x, p.y+i++, baseForeColor);
         i++;
-        printfc("[V] : Visszalépés", p.x, p.y + i++, baseForeColor);
-        printfc("[R] : Szint újrakezése", p.x, p.y + i++, baseForeColor);
-        printfc("[Esc] : Kilépés/Mentés", p.x, p.y + i, baseForeColor);
+//        printfc("[V] : Visszalépés", p.x, p.y + i++, baseForeColor);
+//        printfc("[R] : Szint újrakezése", p.x, p.y + i++, baseForeColor);
+//        printfc("[Esc] : Kilépés/Mentés", p.x, p.y + i, baseForeColor);
     }
 }
 
