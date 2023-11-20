@@ -61,11 +61,13 @@ static void menu_KeyPress(int key, State *state, bool *displayFirst, int *option
  */
 static void menu_EvaluateState(int *key, State *state, bool runMenu, bool *displayFirst, int option, int prevOption, Player **playerListHead, Player **currentPlayer, int *numOfPlayers, int selectedPlayer, Point p, int *linesPrinted);
 
+// = Almenü kiíró függvények =
 static void menu_PrintExitWindow(bool runMenu, bool *displayFirst, int option, Point p);
 static void menu_PrintMainMenu(bool *displayFirst, int option, int prevOption, Point p);
 static void menu_PrintNewPlayerSubMenu(State *state, Player **playerListHead, int *numOfPlayers, int selectedPlayer, Point p);
 static void menu_PrintPlayerSubMenu(bool *displayFirst, Player **playerListHead, int *numOfPlayers, Player **currentPlayer, int selectedPlayer, Point p );
 static void menu_PrintRankList(bool *displayFirst, Player **playerListHead, int *numOfPlayers, Point p, int maxDisplayLvls);
+static void menu_PrintWinGame(State *state, bool *displayFirst, Point p);
 
 /**
  * Visszaállítja a kezdőértékeket a menüben, ha menüpont váltás volt
