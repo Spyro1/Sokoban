@@ -81,5 +81,5 @@ static void menu_ResetMenuVars(bool *displayFirst, int *option, int *selectedPla
  * @param displayFirst  Először megy-e be a ciklus a menüpontba tulajdonság
  * @param state A program állapotát tároló érték
  */
-void menu_PrintNavControls(bool displayFirst, State state);
+static void menu_PrintNavControls(bool displayFirst, State state);
 #endif //SOKOBAN2_MENU_H

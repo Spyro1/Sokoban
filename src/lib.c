@@ -67,19 +67,19 @@ void printfbc(char const str[], int x, int y, EconioColor foreColor, EconioColor
     econio_textbackground(COL_RESET);
 }
 
-int stringlenght(const char *s) {
+int stringlenght(const char *str) {
     int count = 0;
-    while (*s) {
-        count += (*s++ & 0xC0) != 0x80;
+    while (*str) {
+        count += (*str++ & 0xC0) != 0x80;
     }
     return count;
 }
 
-int stringlenghtMax(const char *s, int max){
+int stringlenghtMax(const char *str, int max){
     int count = 0;
     int bytes = 0;
-    while (*s && count < max) {
-        count += (*s++ & 0xC0) != 0x80;
+    while (*str && count < max) {
+        count += (*str++ & 0xC0) != 0x80;
         bytes++;
     }
     return bytes;

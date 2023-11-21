@@ -4,13 +4,13 @@
 #include "../libraries/econio.h"
 
 // Makrók
-#define nameLenght 20 // A játékos nevének maximális hossza
-#define maxLineLenght 400 // A fájlból beolvasható sor maximális hossza
-#define maxFileNameLenght 200 // A féjlnév maximális hossza
+#define nameLenght 20           // A játékos nevének maximális hossza
+#define maxLineLenght 400       // A fájlból beolvasható sor maximális hossza
+#define maxFileNameLenght 200   // A féjlnév maximális hossza
 
-#define activeForeColor COL_LIGHTCYAN
-#define activeBgColor COL_RESET
-#define baseForeColor COL_LIGHTBLUE
+#define activeForeColor COL_LIGHTCYAN   // Kiválasztás betűszine
+#define activeBgColor COL_RESET         // Kiválasztás háttérszíne
+#define baseForeColor COL_LIGHTBLUE     // Alap betűszín
 // == Adatstruktúrák ==
 
 /* A pálya egyes mezőinek lehetséges értékei */
@@ -20,7 +20,7 @@ typedef enum celltype { null, EMPTY, WALL, TARGET, PLAYER, PLAYERONTARGET, BOX, 
 typedef enum State { mainMenu, newPlayer, chosePlayer, rankList, exitApp, deletePlayer, editPlayer, game, exitGame, winGame } State;
 
 /* Egy koordinátát eltároló struktúra, mely láncolt listába fűzhető */
-typedef struct position{
+typedef struct point{
     int x, y;           // Koordinátái
     struct Point *next; // A következő pontra mutató pointer a láncolt listában
 } Point;
@@ -36,7 +36,7 @@ typedef struct move{
     Point from;         // A játékos által elhagyott mező koordinátája
     Point to;           // A játékos által meglépett mező koordinátája
     bool boxPushed;     // Logikai, eltolt-e a játékos a lépés során dobozt
-    struct Move *next;  // a lépéseket tároló láncolt listában a következő elemre mutató pointer
+    struct Move *next;  // A lépéseket tároló láncolt listában a következő elemre mutató pointer
 } Move;
 
 /* A játékos egy szinten megtett lépéseinek számát tároló struktúra, mely láncolt listába fűzhető */

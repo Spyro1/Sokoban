@@ -291,9 +291,9 @@ static void menu_PrintNewPlayerSubMenu(State *state, Player **playerListHead, in
         // Új játékosnév lerövidítése
         newPlayerName[strlen(newPlayerName)-1] = '\0';
         int numOfDisplayedCharacter = stringlenght(newPlayerName);
-        int maxDisplayableCharacters= stringlenghtMax(newPlayerName, nameLenght);
-        int realLenght = numOfDisplayedCharacter <= nameLenght ? strlen(newPlayerName) : maxDisplayableCharacters;
-        newPlayerName[realLenght] = '\0';
+        int maxDisplayableCharactersBytes= stringlenghtMax(newPlayerName, nameLenght);
+        int realByteLenght = numOfDisplayedCharacter <= nameLenght ? strlen(newPlayerName) : maxDisplayableCharactersBytes;
+        newPlayerName[realByteLenght] = '\0';
         // TODO: Képernyőtörlés hülye felhasználók miatt
         // Player Listába beolvasás fájlból
         player_ReadTxtFile(playerListHead, numOfPlayers); // Új játékoshoz beolvasás fájlból
@@ -438,7 +438,7 @@ static void menu_ResetMenuVars(bool *displayFirst, int *option, int *selectedPla
     *selectedPlayer = 0;
 }
 
-void menu_PrintNavControls(bool displayFirst, State state) {
+static void menu_PrintNavControls(bool displayFirst, State state) {
     if (displayFirst) {
         Point p = {6, maxDisplayLines+12};
         int i = 0;

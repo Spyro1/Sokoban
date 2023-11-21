@@ -76,10 +76,10 @@ typedef struct player {
 } Player;
 ```
 
-!!! bug Ez egy bug
-!!! attention
-!!! deprecated
-!!! warning
+!!! bug Ez egy bug  
+!!! attention  
+!!! deprecated  
+!!! warning  
 
 ## Algoritmusok
 

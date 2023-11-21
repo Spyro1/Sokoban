@@ -163,19 +163,19 @@ bool player_RemovePlayer(Player *removablePlayer, Player **playerListHead, int *
     }
 }
 
-void player_PrintPlayerList(Player *playerList, int selectedPlayerIndex, Point center){
+void player_PrintPlayerList(Player *playerList, int selectedPlayerIndex, Point p){
     int currentIndex = 0;
     //lib_ClearScreenSection(0, 8, 60, 19, COL_RESET);
     if (playerList == NULL){
-        printfc("Nincs egy játékos sem még.", center.x - (int)stringlenght("Nincs egy játékos sem még.")/2,center.y + currentIndex, baseForeColor );
+        printfc("Nincs egy játékos sem még.", p.x - (int)stringlenght("Nincs egy játékos sem még.") / 2, p.y + currentIndex, baseForeColor );
     }
     while(playerList != NULL){
         char text[maxLineLenght];
         sprintf(text,"%s, Szint: %d", playerList->name, playerList->numOfCompletedLevels);
         if (currentIndex == selectedPlayerIndex)
-            printfbc(text,center.x - (int)stringlenght(text)/2,center.y + currentIndex, activeForeColor, activeBgColor);
+            printfbc(text, p.x - (int)stringlenght(text) / 2, p.y + currentIndex, activeForeColor, activeBgColor);
         else
-            printfc(text,center.x - (int)stringlenght(text)/2,center.y + currentIndex, baseForeColor);
+            printfc(text, p.x - (int)stringlenght(text) / 2, p.y + currentIndex, baseForeColor);
         playerList = (Player*) playerList->next;
         currentIndex++;
     }
