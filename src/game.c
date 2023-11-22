@@ -329,7 +329,7 @@ static void game_PrintStatsAndNav(Size mapSize, int numOfSteps, int level){
         printfc("Szint: Tutorial", p.x, p.y, baseForeColor);
         printfc("Mozgáshoz használd", p.x, p.y+i++, baseForeColor);
         printfc("a kurzor billentyűket.", p.x, p.y+i++, baseForeColor);
-        printfc("A célod, hogy a barna", p.x, p.y+i++, baseForeColor);
+        printfc("A célod, hogy a sárga", p.x, p.y+i++, baseForeColor);
         printfc("dobozokat a helyükre told. ", p.x, p.y+i++, baseForeColor);
 
         sprintf(printer, "Fal: %s", chrWall);

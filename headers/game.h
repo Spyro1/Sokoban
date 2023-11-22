@@ -23,9 +23,9 @@
 // == JÁTÉKMENET ==
 /**
  * Ezzel kell meghívni a játékot. Inicializálja a játékhoz szükséges elemeket
- * @param player Az aktuális játékos adatait tartalmazza (Cím szerint)
- * @param levelList A pályák fájlneveit tartalmazó string tömb
- * @return Logikai: Igaz, ha a játékos teljesítette a szintet; Hamis, ha a játékos kilépett a játékból
+ * @param player Player* Az aktuális játékos adatait tartalmazza (Cím szerint)
+ * @param levelList char[][] A pályák fájlneveit tartalmazó string tömb
+ * @return bool Igaz, ha a játékos teljesítette a szintet; Hamis, ha a játékos kilépett a játékból
  */
 bool game_Init(Player *player, char **levelList);
 /**

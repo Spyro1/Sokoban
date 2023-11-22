@@ -1,6 +1,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include "../headers/lib.h"
+#include "../headers/datatypes.h"
 
 
 void lib_WarningWindow(const char* Message, Point p, bool *displayFirst, int option, EconioColor baseColor, EconioColor accentForeColor, EconioColor accentBgColor) {
@@ -65,6 +66,16 @@ void printfbc(char const str[], int x, int y, EconioColor foreColor, EconioColor
     econio_textbackground(bgColor);
     printf("%s", str);
     econio_textbackground(COL_RESET);
+}
+
+Point addPoints(Point a, Point b){
+    return (Point) {a.x + b.x, a.y + b.y};
+}
+Point subPoints(Point a, Point b){
+    return (Point) {a.x - b.x, a.y - b.y};
+}
+bool comparePoints(Point a, Point b){
+    return  a.x == b.x && a.y == b.y;
 }
 
 int stringlenght(const char *str) {

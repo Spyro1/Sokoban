@@ -36,13 +36,14 @@ void menu_MainScreen(){
 
     // Főcím kiiratása "SOKOBAN"
     menu_PrintTitle();
-    // Szint Mappa beolvasása
+    // Szintek mappájának beolvasása
     level_ReadDirectory("./levels/", &levelList, &numOfLevels);
     econio_rawmode(); // Billentyűérzékelés bekapcsolása
 
     // == MENÜ FUTTATÁSA ==
     while(runMenu){
         p = (Point) {center, 9};
+        // Előző kijelölés eltárolása;
         prevOption = option;
         // Lenyomott billentyű kiértékelése
         menu_KeyPress(key, &state, &displayFirst, &option, &selectedPlayer, &runMenu, currentPlayer, &playerListHead, &numOfPlayers, levelList, numOfLevels);
@@ -106,7 +107,6 @@ static void menu_KeyPress(int key, State *state, bool *displayFirst, int *option
                     if (currentPlayer != NULL){
                         *state = game;
                         menu_PrintNavControls(true,*state);
-                        numOfLevels = 6;
                         // Játék indítása
                         while(game_Init(currentPlayer, levelList) && currentPlayer->numOfCompletedLevels <= numOfLevels) {
                             // Nem kell ide semmi, addig fut, amíg a játékból ki nem lépnek
@@ -294,7 +294,6 @@ static void menu_PrintNewPlayerSubMenu(State *state, Player **playerListHead, in
         int maxDisplayableCharactersBytes= stringlenghtMax(newPlayerName, nameLenght);
         int realByteLenght = numOfDisplayedCharacter <= nameLenght ? strlen(newPlayerName) : maxDisplayableCharactersBytes;
         newPlayerName[realByteLenght] = '\0';
-        // TODO: Képernyőtörlés hülye felhasználók miatt
         // Player Listába beolvasás fájlból
         player_ReadTxtFile(playerListHead, numOfPlayers); // Új játékoshoz beolvasás fájlból
 
@@ -457,7 +456,7 @@ static void menu_PrintNavControls(bool displayFirst, State state) {
             case chosePlayer:
                 printfc("[↑] : Feljebb mozgás", p.x - 4, p.y + i++, COL_LIGHTBLUE);
                 printfc("[↓] : Lejjebb mozgás", p.x - 4, p.y + i++, COL_LIGHTBLUE);
-                printfc("[↵] : Kiválasztás", p.x - 4, p.y + i++, COL_LIGHTBLUE);
+                printfc("[↵] : Játék indítása", p.x - 4, p.y + i++, COL_LIGHTBLUE);
                 printfc("[E] : Szerkesztés", p.x - 4, p.y + i++, COL_LIGHTBLUE);
                 printfc("[D] : Törlés", p.x - 4, p.y + i++, COL_LIGHTBLUE);
                 printfc("[Esc] : Vissza", p.x - 6, p.y + i++, COL_LIGHTBLUE);

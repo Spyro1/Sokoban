@@ -71,15 +71,15 @@ static void menu_PrintWinGame(State *state, bool *displayFirst, Point p);
 
 /**
  * Visszaállítja a kezdőértékeket a menüben, ha menüpont váltás volt
- * @param displayFirst Először megy-e be a ciklus a menüpontba tulajdonság
- * @param option A kiválasztott opciók változója
- * @param selectedPlayer A kiválasztott játékos indexének változója
+ * @param displayFirst bool* Először megy-e be a ciklus a menüpontba tulajdonság
+ * @param option int* A kiválasztott opciók változója
+ * @param selectedPlayer int* A kiválasztott játékos indexének változója
  */
 static void menu_ResetMenuVars(bool *displayFirst, int *option, int *selectedPlayer);
 /**
  * Kiírja a képernyő aljára az aktuális menüpot nevigációs lehetőségeit
- * @param displayFirst  Először megy-e be a ciklus a menüpontba tulajdonság
- * @param state A program állapotát tároló érték
+ * @param displayFirst bool Először megy-e be a ciklus a menüpontba tulajdonság
+ * @param state State A program állapotát tároló érték
  */
 static void menu_PrintNavControls(bool displayFirst, State state);
 #endif //SOKOBAN2_MENU_H

@@ -7,15 +7,15 @@
 
 /**
  * Beolvassa a megadott mappából a fájlneveket, és eltárolja egy dinamikusan foglalt tömbben
- * @param directory A mappa elérési útvonala
- * @param levelList A dinamikusan foglalt string tömb (Cím szerint)
- * @param numOfFiles A Beolvasott fájlnevek száma (Cím szerint)
+ * @param directory char[] A mappa elérési útvonala
+ * @param levelList *char[][] A dinamikusan foglalt string tömb (Cím szerint)
+ * @param numOfFiles int* A Beolvasott fájlnevek száma (Cím szerint)
  */
 void level_ReadDirectory(char directory[], char **levelList[], int *numOfFiles);
 /**
  * Felszabadítja a dinamikusan foglalt fájlnevek string tömbjét
- * @param levelList A dinamikusan foglalt string tömb (Cím szerint)
- * @param numOfLevels A Beolvasott fájlnevek száma (Cím szerint)
+ * @param levelList *char[][] A dinamikusan foglalt string tömb (Cím szerint)
+ * @param numOfLevels int* A Beolvasott fájlnevek száma (Cím szerint)
  */
 void level_FreeLevelList(char **levelList[], int *numOfLevels);
 
