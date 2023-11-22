@@ -29,7 +29,7 @@
  */
 bool game_Init(Player *player, char **levelList);
 /**
- * Ezzel a fügvénnyel indítja el ésfuttatja a játékot
+ * Ezzel a fügvénnyel indítja el és futtatja a játékot
  * @param player Az aktuális játékos adatait tartalmazza (Cím szerint)
  * @param levelName A betöltendő pálya fájlneve
  * @return Logikai: Igaz, ha a játékos teljesítette a szintet; Hamis, ha a játékos kilépett a játékból

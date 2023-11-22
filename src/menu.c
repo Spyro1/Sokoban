@@ -47,7 +47,7 @@ void menu_MainScreen(){
         prevOption = option;
         // Lenyomott billentyű kiértékelése
         menu_KeyPress(key, &state, &displayFirst, &option, &selectedPlayer, &runMenu, currentPlayer, &playerListHead, &numOfPlayers, levelList, numOfLevels);
-        // Képernyőre írás választott mód szerint
+        // Képernyőre írás menüpont alapján
         menu_EvaluateState(&key, &state, runMenu, &displayFirst, option, prevOption, &playerListHead, &currentPlayer, &numOfPlayers, selectedPlayer, p, &linesPrinted);
         // Billentyűlenyomásra vár, ha fut a menü
         if (runMenu && !displayFirst) key = econio_getch();
