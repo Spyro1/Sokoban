@@ -9,6 +9,7 @@ A program két fő részből áll, a [menürendszerbő](#a-menü) (menu.c) és a
 A program indítása után a `main` beállítja a karaterkódolást, és meghívja a [`void menu_MainScreen() {...}`]()-t. Ez az eljárás futtatja ciklikusan a menüt, amíg ki nem lép a felhasználó a programból.
 A menü állapotait egy [`enum State {...}`](#menü-állapotai-state)-ben tárolja a program, mivel véges számú állapota lehet a menünek, és ezáltal könnyű azonosítani az egyes menüpontokat. 
 #### Menü állapotai (State)
+
 ```c
 /** A menü lehetséges állapotértékei */
 typedef enum State {
@@ -24,8 +25,12 @@ typedef enum State {
     winGame
 } State;
 ```
-#### Menü eljárás pszeudókóddal
-```
+
+#### Menü működése (MainScreen)
+
+Pszedudókóddal:
+
+```c
 Eljárás menu_MainScreen():
     Változók inicializálása
     Főcím kiiratása
@@ -33,15 +38,25 @@ Eljárás menu_MainScreen():
 
     Ciklus amíg menü fut
         Lenyomott billentyű kiértékelése
+        Ha játékos kiválasztva, akkor
+            Játék indítás
         Képernyőre írás menüpont alapján
-        Ha fut a menü, billentyűlenyomásra vár
+        Ha fut a menü, akkor
+            Billentyűnyomásra vár
     Ciklus vége
 
     Játékosok adatainak mentése
     Lefoglalt memóriaterületek felszabadítása
 Eljárás vége
 ```
-A fő adatstruktúra a menüben a `Player` struktúra:
+
+##### Játékos (Player) struktúra
+A fő adatstruktúra a menüben a `Player` struktúra. Ebben tárolja a program az egyes játékosok adatait: név, szint, statisztika, következő játékosra mutató pointer.  
+A `name` mező hossza a `datatypes.h` fájlban található makró szerint határozott meg (`#define nameLenght 20`). Ez azt jelenti, hogy a képernyőn 20 db karakter fog maximum megjelenni. Mivel ékezetes karaktereket is tartalmazhat a név (á, é, í, ó, ö, ő, ú, ü, ű), amik 2 byte-on tárolódnak, ezért a 2-szeresét vesszük és +1 byte-ot a lezáró nullának, így jön ki a hossza.  
+A `numOfCompletedLevels` mező a játékos szintjét tárolja, hogy hágy szintet teljesített már.  
+A `levelStats` egy [`Statistics`](#szint-statisztika-statistics) típusú láncolt lista első elemére mutató pointer. Ebben tárolja el a program a játékos által megtett lépések számát az egyes szinteken.  
+A `*next` a láncolt listában a következő Player struktúrára mutató pointer.
+
 ```c
 /* A játékos adatait eltároló struktúra, mely láncolt listába fűzhető */
 typedef struct player {
@@ -52,6 +67,16 @@ typedef struct player {
 } Player;
 ```
 
+##### Szint statisztika (Statistics)
+
+
+```c
+/* A játékos egy szinten megtett lépéseinek számát tároló struktúra, mely láncolt listába fűzhető */
+typedef struct statistic{
+    int stepCount;
+    struct Statistics *next; 
+} Statistics;
+```
 ### A játék
 
 A játékot a [`bool game_Init()`]() eljárással lehet meghívni...
@@ -80,6 +105,7 @@ flowchart
 /* A pálya egyes mezőinek lehetséges értékei.*/
 typedef enum celltype { null, EMPTY, WALL, TARGET, PLAYER, PLAYERONTARGET, BOX, BOXONTARGET } CellType;
 ```
+
 ### Struktúrák
 
 #### Pozíció (Point)
@@ -114,15 +140,7 @@ typedef struct move{
 } Move;
 ```
 
-#### Szint statisztika (Statistics)
 
-```c
-/* A játékos egy szinten megtett lépéseinek számát tároló struktúra, mely láncolt listába fűzhető */
-typedef struct statistic{
-    int stepCount;           // Egy szinten a játékos által megtett lépések száma
-    struct Statistics *next; // A statisztika láncolt listában a következő elemre mutató pointer
-} Statistics;
-```
 
 ## Kód szerekzete
 
