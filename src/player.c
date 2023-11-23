@@ -53,18 +53,20 @@ void player_ReadTxtFile(Player **playerListHead, int *numOfPlayers) {
     fclose(fp); // Fájl bezárása
 }
 
-void player_WriteTxtFile(Player *playerListHead, int numOfPlayers){
+void player_WriteTxtFile(Player *playerListHead){
     FILE *fp = fopen(playerDataPath, "wt");
     if (fp == NULL){
         lib_printError("Nem sikerült megnyitni a player.txt fájlt az íráshoz!");
         return;
     }
     // irandó Sor létrehozása
-    char printer[maxLineLenght];
+    char printer[maxLineLenght-1];
     for(Player *mover = playerListHead; mover != NULL; mover = (Player *) mover->next){ // Listán végigjáró ciklus
         sprintf(printer,"%s;%d", mover->name, mover->numOfCompletedLevels);
+        char helper[maxLineLenght+1];
         for (Statistics* stat = (Statistics *) mover->levelStats; stat != NULL; stat = (Statistics *) stat->next){
             sprintf(printer, "%s;%d", printer, stat->stepCount); // Sorhoz fűzés
+//            strcat(printer, helper);
             // TODO: Itt hibát dob játékos törlésekor valmiért
         }
         fprintf(fp, "%s\n", printer); // Fájlba írás
@@ -80,7 +82,7 @@ void player_FreePlayerList(Player **playerListHead){
         *playerListHead = temp;
     }
 }
-static void player_FreePlayerNode(Player **playerNode){
+ void player_FreePlayerNode(Player **playerNode){
     if (*playerNode != NULL){
         if ((*playerNode)->levelStats != NULL)
             stats_FreeStatisticsList((Statistics **) &((*playerNode)->levelStats));
@@ -103,7 +105,7 @@ Player *player_MakePlayer(char name[], int numOfLevels, Statistics *statsListHea
     return uj;
 }
 
-void player_AddPlayerToEnd(Player *newPlayer, Player **playerListHead, int *numOfPlayers){
+/*void player_AddPlayerToEnd(Player *newPlayer, Player **playerListHead, int *numOfPlayers){
     if (*playerListHead == NULL){ // Ha a lista üres, akkor a fejléc legyen az első elem
         *playerListHead = newPlayer;
     }
@@ -115,7 +117,7 @@ void player_AddPlayerToEnd(Player *newPlayer, Player **playerListHead, int *numO
         lastNode->next = (struct Player *) newPlayer; // Beillesztés a végére
     }
     (*numOfPlayers)++;
-}
+}*/
 void player_AddPlayerInOrder(Player *newPlayer, Player **playerListHead, int *numOfPlayers){
     Player *prev = NULL;
     Player *mover = *playerListHead;

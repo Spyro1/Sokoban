@@ -29,7 +29,8 @@ Move move_RemoveMoveFromList(Move **moveListHead){
         *moveListHead = temp;
         return removed;
     }
-    return (Move){-1,-1,NULL,-1,-1,NULL};
+    Move temp = {{-1,-1},{-1,-1}, false};
+    return temp;
 }
 
 void move_FreeMoveList(Move **moveListHead){
@@ -40,7 +41,7 @@ void move_FreeMoveList(Move **moveListHead){
         *moveListHead = temp;
     }
 }
-static void move_FreeNode(Move **moveNode){
+ void move_FreeNode(Move **moveNode){
     if (moveNode != NULL){
         free(*moveNode);
     }

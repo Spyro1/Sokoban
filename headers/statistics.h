@@ -17,6 +17,6 @@ void stats_FreeStatisticsList(Statistics **statsListHead);
  * Felszabadítja egy elem lefoglalt memóriáját a listából
  * @param statNode Statistics** Egy Statistics struktúrára mutató pointer a láncolt listából (Cím szerint)
  */
-static void stats_FreeStatNode(Statistics **statNode);
+void stats_FreeStatNode(Statistics **statNode);
 
 #endif //SOKOBAN2_STATISTICS_H

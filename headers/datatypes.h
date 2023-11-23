@@ -42,7 +42,7 @@ typedef enum State {
 /** Egy koordinátát eltároló struktúra, mely láncolt listába fűzhető */
 typedef struct point{
     int x, y;           // Koordináták
-    struct Point *next; // A következő pontra mutató pointer a láncolt listában
+    //struct Point *next; // A következő pontra mutató pointer a láncolt listában
 } Point;
 
 /** A pálya méretét eltároló struktúra */

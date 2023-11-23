@@ -34,8 +34,7 @@ void stats_FreeStatisticsList(Statistics **statsListHead){
         stats_FreeStatNode(statsListHead);
         *statsListHead = temp;
     }
-}
-static void stats_FreeStatNode(Statistics **statNode){
+} void stats_FreeStatNode(Statistics **statNode){
     if (*statNode != NULL){
         free(*statNode);
     }

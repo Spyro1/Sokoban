@@ -20,7 +20,7 @@ bool game_Init(Player *player, char **levelList){
     lib_ClearScrBellow();
     return game_StartGame(player, levelList[player->numOfCompletedLevels]);
 }
-static bool game_StartGame(Player *player, char levelName[]){
+ bool game_StartGame(Player *player, char levelName[]){
     // Fő változók deklarálása
     CellType **map = NULL; // Pálya
     Size mapSize; // Pálya mérete
@@ -149,7 +149,7 @@ static bool game_StartGame(Player *player, char levelName[]){
 
 }
 
-static bool game_CheckWin(CellType **map, Size mapSize){
+ bool game_CheckWin(CellType **map, Size mapSize){
     for (int y = 0; y < mapSize.height; y++){
         for(int x = 0; x < mapSize.width; x++){
             if (map[y][x] == BOX) return false; // Ha talál akár egy dobozt is, ami nincs célmezőn, akkor még nem nyert a játékos
@@ -157,7 +157,7 @@ static bool game_CheckWin(CellType **map, Size mapSize){
     }
     return true; // Ha egy sima dobozt sem talált, akkor mind a helyén van --> Nyert
 }
-static bool game_MovePlayer(CellType ***map, Point *currentPosition, Point **boxPositions, Point direction, Move **movesListHead){
+ bool game_MovePlayer(CellType ***map, Point *currentPosition, Point **boxPositions, Point direction, Move **movesListHead){
     CellType *originCell =  &((*map)[currentPosition->y][currentPosition->x]);
     Point destinationPoint = addPoints(*currentPosition, direction);
     CellType *destinationCell = &((*map)[destinationPoint.y][destinationPoint.x]); // A lépendő mezőre mutató pointer. Így nem kell majd hosszú sort írni mindig
@@ -221,7 +221,7 @@ static bool game_MovePlayer(CellType ***map, Point *currentPosition, Point **box
             //break;
     }
 }
-static bool game_UndoMove(CellType ***map, Point *currentPosition, Point **boxPositions, Move **moveListHead){
+ bool game_UndoMove(CellType ***map, Point *currentPosition, Point **boxPositions, Move **moveListHead){
     // Ha volt már elmozdulás
     if (*moveListHead != NULL){
         Move lastMove = move_RemoveMoveFromList(moveListHead);
@@ -272,22 +272,22 @@ static bool game_UndoMove(CellType ***map, Point *currentPosition, Point **boxPo
         return false;
 }
 // Konzolra Írás
-static void game_PrintSimpleMap(CellType **map, Size mapSize){
+/* void game_PrintSimpleMap(CellType **map, Size mapSize){
     for(int y = 0; y < mapSize.height; y++){
         for(int x = 0; x < mapSize.width; x++){
             printf("%c", map[y][x]);
         }
         printf("\n");
     }
-}
-static void game_PrintStyledMap(CellType **map, Size mapSize){
+}*/
+ void game_PrintStyledMap(CellType **map, Size mapSize){
     for(int y = 0; y < mapSize.height; y++){
         for(int x = 0; x < mapSize.width; x++){
             game_PrintPosition(map, (Point) {x, y});
         }
     }
 }
-static void game_PrintPosition(CellType **map, Point pos){
+ void game_PrintPosition(CellType **map, Point pos){
     econio_gotoxy(corner.x + pos.x, corner.y + pos.y);
     econio_textbackground(COL_RESET);
     econio_textcolor(COL_RESET);
@@ -321,7 +321,7 @@ static void game_PrintPosition(CellType **map, Point pos){
             break;
     }
 }
-static void game_PrintStatsAndNav(Size mapSize, int numOfSteps, int level){
+ void game_PrintStatsAndNav(Size mapSize, int numOfSteps, int level){
     char printer[maxLineLenght];
     Point p = {corner.x + mapSize.width + 3, corner.y};
     int i = 2;
@@ -349,8 +349,8 @@ static void game_PrintStatsAndNav(Size mapSize, int numOfSteps, int level){
         sprintf(printer, "Szint: %d", level);
         printfc(printer, p.x, p.y + i++, baseForeColor);
         sprintf(printer, "Lépés: %d", numOfSteps);
-        printfc(printer, p.x, p.y+i++, baseForeColor);
-        i++;
+        printfc(printer, p.x, p.y+i, baseForeColor);
+//        i++;
 //        printfc("[V] : Visszalépés", p.x, p.y + i++, baseForeColor);
 //        printfc("[R] : Szint újrakezése", p.x, p.y + i++, baseForeColor);
 //        printfc("[Esc] : Kilépés/Mentés", p.x, p.y + i, baseForeColor);
@@ -359,7 +359,7 @@ static void game_PrintStatsAndNav(Size mapSize, int numOfSteps, int level){
 
 
 // INIT: Játék előkészítéséhez szükséges függvények
-static void game_ReadXSBFile(char filename[], CellType ***map, Size *mapSize, Point *playerPosition, Point **boxPositions, int *boxCount){
+ void game_ReadXSBFile(char filename[], CellType ***map, Size *mapSize, Point *playerPosition, Point **boxPositions, int *boxCount){
     *mapSize = (Size) { 0, 0}; // pálya méretének inicializálása
     *boxCount = 0; // dobozok darabszáma == Célmezők darabszáma
     int k = 0; // map index cikluscáltozója
@@ -425,7 +425,7 @@ static void game_ReadXSBFile(char filename[], CellType ***map, Size *mapSize, Po
         lib_printError("Túl kicsi a pálya a játékhoz!");
     } // Hibakezelés
 }
-static CellType game_ConvertInputCharToCellType(char character){
+ CellType game_ConvertInputCharToCellType(char character){
         switch(character){
             case ' ': return EMPTY; //break;
             case '#': return WALL; //break;
@@ -437,7 +437,7 @@ static CellType game_ConvertInputCharToCellType(char character){
             default: return null;
         }
 }
-static void game_AllocateMemoryToMap(CellType ***map, Size *mapSize){
+ void game_AllocateMemoryToMap(CellType ***map, Size *mapSize){
     CellType **newMap;
     newMap = (CellType**) malloc(mapSize->height * sizeof(CellType*)+1); //  Pointerre mutató pointer tömb memóriafoglalás
     if (newMap == NULL) {
@@ -455,7 +455,7 @@ static void game_AllocateMemoryToMap(CellType ***map, Size *mapSize){
     }
     *map = newMap; // Címátadás
 }
-static void game_AllocateDynamicArray(Point **newArray, int lenght){
+ void game_AllocateDynamicArray(Point **newArray, int lenght){
     Point *helperArray;
     helperArray = (Point*) malloc(lenght * sizeof(Point)); // Dobozok tömbjének memóriafoglalása
     if(helperArray == NULL) {
@@ -464,14 +464,14 @@ static void game_AllocateDynamicArray(Point **newArray, int lenght){
     } // Hibakezelés
     *newArray = helperArray; // Címátadás
 }
-static void game_FreeAllocatedMemoryFromMap(CellType ***map){
+ void game_FreeAllocatedMemoryFromMap(CellType ***map){
     if (*map != NULL) {
         if ((*map)[0] != NULL)
             free((*map)[0]);
         free(*map);
     }
 }
-static void game_FreeDynamicArray(Point **dynamicArray){
+ void game_FreeDynamicArray(Point **dynamicArray){
     if (*dynamicArray != NULL){
         free(*dynamicArray);
     }

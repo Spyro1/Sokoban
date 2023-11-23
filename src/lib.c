@@ -1,7 +1,7 @@
 #include <ctype.h>
 #include <stdio.h>
-#include "../headers/lib.h"
 #include "../headers/datatypes.h"
+#include "../headers/lib.h"
 
 
 void lib_WarningWindow(const char* Message, Point p, bool *displayFirst, int option, EconioColor baseColor, EconioColor accentForeColor, EconioColor accentBgColor) {
@@ -31,9 +31,9 @@ void lib_WarningWindow(const char* Message, Point p, bool *displayFirst, int opt
 void lib_ClearScrBellow(){
     lib_ClearScreenSection(0, 8, 73, 23, COL_RESET);
 }
-void lib_ClearScrLines(int lines){
+/*void lib_ClearScrLines(int lines){
     lib_ClearScreenSection(0, 8, 8 + lines, 23, COL_RESET);
-}
+}*/
 void lib_ClearScreenSection(int x1, int y1, int x2, int y2, EconioColor bgColor){
     econio_gotoxy(x1,y1);
     econio_textcolor(COL_RESET);
@@ -46,13 +46,14 @@ void lib_ClearScreenSection(int x1, int y1, int x2, int y2, EconioColor bgColor)
     }
 }
 void lib_printError(const char* errormessage){
-    printf(errormessage, 7, 7, COL_RED);
+//    printf(errormessage, 7, 7, COL_RED);
+    perror(errormessage);
 }
-void print(char const str[], int x, int y){
+/*void print(char const str[], int x, int y){
     econio_textbackground(COL_RESET);
     econio_gotoxy(x,y);
     printf("%s", str);
-}
+}*/
 void printfc(char const str[], int x, int y, EconioColor foreColor){
     econio_textbackground(COL_RESET);
     econio_gotoxy(x,y);

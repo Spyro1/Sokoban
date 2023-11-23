@@ -22,7 +22,7 @@ void player_ReadTxtFile(Player **playerListHead, int *numOfPlayers);
  * @param playerListHead Player* sA játékosok adatait tartalmazó láncolt lista (Cím szerint)
  * @param numOfPlayers int A játékosok darabszáma (Cím szerint)
  */
-void player_WriteTxtFile(Player *playerListHead, int numOfPlayers);
+void player_WriteTxtFile(Player *playerListHead);
 
 // == Memória foglalás és felszabadítás ==
 /**
@@ -34,7 +34,7 @@ void player_WriteTxtFile(Player *playerListHead, int numOfPlayers);
  */
 Player *player_MakePlayer(char name[], int numOfLevels, Statistics *statsListHead);
 /**
- * Felszabadítja a az egész láncolt listának foglalt memóriát 
+ * Felszabadítja a az egész láncolt listának foglalt memóriát
  * @param playerListHead Player** A játékosok adatait tartalmazó láncolt lista (Cím szerint)
  */
 void player_FreePlayerList(Player **playerListHead);
@@ -42,7 +42,7 @@ void player_FreePlayerList(Player **playerListHead);
  * Felszabadítja egy elem lefoglalt memóriáját a listából
  * @param playerNode Player** Egy Player struktúrára mutató pointer a láncolt listából (Cím szerint)
  */
-static void player_FreePlayerNode(Player **playerNode);
+void player_FreePlayerNode(Player **playerNode);
 
 // == Láncolt Lista függvények ==
 /**
@@ -51,7 +51,7 @@ static void player_FreePlayerNode(Player **playerNode);
  * @param playerListHead Player** A játékosok adatait tartalmazó láncolt lista (Cím szerint)
  * @param numOfPlayers int* A játékosok darabszáma (Cím szerint)
  */
-void player_AddPlayerToEnd(Player *newPlayer, Player **playerListHead, int *numOfPlayers);
+//void player_AddPlayerToEnd(Player *newPlayer, Player **playerListHead, int *numOfPlayers);
 /**
  * Beszúrja a játékoslistába au új játékost a nevének a hossza szerint növekvő sorrendben
  * @param newPlayer Player* Új játékos struktúrájára mutató pointer

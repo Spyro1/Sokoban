@@ -45,8 +45,8 @@ A Játékos felvételéhez navigáljon az [Új játékos](#új-játékos) menüb
 fel), `↓` (le) ) lehet navigálni, és az `Enter` billentyűt lenyomva lehet kiválasztani egy játékost és elindítani
 a [Játékot](#játékmenet).
 
-| Üres játékoslista                                           | Nem üres játékoslista                                 |
-|-------------------------------------------------------------|-------------------------------------------------------|
+| Üres játékoslista                                             | Nem üres játékoslista                |
+|---------------------------------------------------------------|--------------------------------------|
 | ![Nincs egy játékos sem még](./docs/noexistingplayer.PNG "Nincs egy játékos sem még") | ![Játékos lista](./docs/playerlist.PNG "Játékoslista") |
 
 #### Játékosnév szerkesztése

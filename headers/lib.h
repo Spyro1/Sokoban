@@ -40,7 +40,7 @@ void lib_printError(const char errormessage[]);
  * @param x int x koordináta a képernyőn
  * @param y int y koordniáta a képernyőn
  */
-void print(char const str[], int x, int y);
+//void print(char const str[], int x, int y);
 /**
  * Kiírja a képernyőre a kapott szöveget a megadott kezdő koordinátákra a megadott betűszínnel
  * @param str char[] Kiírandó szöveg
