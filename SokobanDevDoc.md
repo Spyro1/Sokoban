@@ -150,16 +150,27 @@ Függvény vége
 
 #### A pálya
 
-A játékban a pályát, vagyis az adott szint mezőinek elrendezését két fő változó tárolja:
+A játékban a pályát, vagyis az adott szint mezőinek elrendezését a program a `levels` mappából olvassa be. Minden pálya külön [`.xsb` fájlban]() van eltárolva. Így a `levels` mappához tetszés szerint lehet pályákat hozzáadni és elvenni. Fontos megjegyezni, hogy a program a pályákat fájlnevek szerint 'abc' rendben fogja beolvasni és eltárolni. Tehát fájlnév szerint növekvő sorrendbe rendezve fognak következni egymás után a szintek. Így könnyő besorolni az egyes szinteket nehézségük szerint.  
+A pályákat két fő változó írja le:
 
 ```c
-CellType **map = NULL; // Pálya
-Size mapSize; // Pálya mérete
+CellType **map = NULL;
+Size mapSize;
 ```
 
-A `**map` egy kétdimenziós dinamikus tömb (mátrix), aminek minden eleme a pályán egy-egy mező, amiben `CellType` típussal kódolja a program a mező értékeit.
-A `mapSize` a pálya méretét tárolja el
-#### Mezőtípusok (CellType)
+A `**map` egy kétdimenziós dinamikus tömb (mátrix), aminek minden eleme a pályán egy-egy mező, amiben [`CellType`](#cellatípusok-celltype) típussal kódolja a program a mező értékeit.
+A `mapSize` egy [`Size`](#méret-size) struktúrában tárolja el a pálya méreteit. 
+#### Cellatípusok (CellType)
+
+Egy pálya beolvasásakor az `.xsb` fájlt dekódolja a program, és a dekódolt értékeket a `**map`-ben tárolja el. Az egyes cellák a következő értékeket vehetik fel:  
+- `null`: Érvénytelen cellatípus, a fájl beolvasáskor rossz bemeneti karakter esetén.
+- `EMPTY`: Üres mező, ami vagy a játéktéren kívül van, vagy a falakon belül, amin tud mozogni a játékos bábuja.
+- `WALL`: A fal a játéktér határoló karatere. Erre nem léphet a játékos, nem tudja elmozdítani
+- `TARGET`: A dobozok célmezője. Ezekkel jelölt cellákra kell a játékosnak tolnia a dobozokat. Erre léphet a játékos, de nem tudja elmozdítani. 
+- `PLAYER`: A játékbábu, ha üres mezőn áll.
+- `PLAYERONTARGET`: A játékosbábú, ha célmezőn áll.
+- `BOX`: A doboz, elmozdíthatja a játékos, de nem léphet rá erre a cellára.
+- `BOXONTARGET`: A doboz, ha célmezőn van. A játékos el tudja mozdítni, de nem léphet rá. 
 
 ```c
 typedef enum celltype {
@@ -173,6 +184,16 @@ typedef enum celltype {
     BOXONTARGET
 } CellType;
 ```
+#### Méret (Size)
+
+A pálya beolvasásnál először meghatározza a program, hogy mekkora pályára lesz szüksége a cellák eltárolásához. Így a pályának a szélessége az egyes sorokból a leghosszabb karakterszámú lesz, a magassága pedig a beolvasott nem üres sorok száma.  
+Ezt a `mapSzize` változóban tárolja a program
+```c
+typedef struct size{
+    int width;
+    int height;
+} Size;
+```
 
 ### Struktúrák
 
@@ -185,15 +206,7 @@ typedef struct point{
 } Point;
 ```
 
-#### Méret (Size)
 
-```c
-/** A pálya méretét eltároló struktúra */
-typedef struct size{
-    int width;  // A pálya szélessége
-    int height; // A pálya magassága
-} Size;
-```
 
 #### Lépés (Move)
 
@@ -216,7 +229,7 @@ stateDiagram-v2
     direction TB
     state switch <<choice>>
     state stateChange <<choice>>
-    [*]--> menu.c
+    [*]--> menu.c 
     menu.c --> game.c
     menu.c --> [*]
     state menu.c{ 

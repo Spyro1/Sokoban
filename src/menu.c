@@ -451,9 +451,6 @@ static void menu_EvaluateState(Player **playerListHead, int *numOfPlayers, Playe
     }
 }
 
-
-
-
 void menu_MainScreen(){
 
     // Konstansok a kiiratáshoz

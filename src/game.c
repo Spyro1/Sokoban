@@ -101,7 +101,7 @@ static void game_PrintStatsAndNav(Size mapSize, int numOfSteps, int level){
     }
 }
 
-// = Játék függvényei =
+// = Lépés függvények  =
 static bool game_CheckWin(CellType **map, Size mapSize){
     for (int y = 0; y < mapSize.height; y++){
         for(int x = 0; x < mapSize.width; x++){
@@ -225,7 +225,7 @@ static bool game_UndoMove(CellType ***map, Point *currentPosition, Point **boxPo
         return false;
 }
 
-// INIT: Játék előkészítéséhez szükséges függvények
+// = INIT: Játék előkészítéséhez szükséges függvények =
 static CellType game_ConvertInputCharToCellType(char character){
     switch(character){
         case ' ': return EMPTY; //break;

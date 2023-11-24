@@ -13,7 +13,7 @@
 #define baseForeColor COL_LIGHTBLUE     // Alap betűszín
 // == Adatstruktúrák ==
 
-/** A pálya egyes mezőinek lehetséges értékei */
+/** A pálya egyes celláinak lehetséges értékei */
 typedef enum celltype {
     null,
     EMPTY,
@@ -41,8 +41,7 @@ typedef enum State {
 
 /** Egy koordinátát eltároló struktúra, mely láncolt listába fűzhető */
 typedef struct point{
-    int x, y;           // Koordináták
-    //struct Point *next; // A következő pontra mutató pointer a láncolt listában
+    int x, y;   // Koordináták
 } Point;
 
 /** A pálya méretét eltároló struktúra */
