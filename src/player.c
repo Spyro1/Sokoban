@@ -121,7 +121,7 @@ void player_AddPlayerInOrder(Player *newPlayer, Player **playerListHead, int *nu
     Player *prev = NULL;
     Player *mover = *playerListHead;
     // Hely keresése
-    while (mover != NULL && (stringlenght(newPlayer->name) > stringlenght(mover->name) || newPlayer->numOfCompletedLevels > mover->numOfCompletedLevels)) { // Névhossz szerint rendezés
+    while (mover != NULL && (utf8_strlen(newPlayer->name) > utf8_strlen(mover->name) || newPlayer->numOfCompletedLevels > mover->numOfCompletedLevels)) { // Névhossz szerint rendezés
         prev = mover;
         mover = (Player *) mover->next;
     }
@@ -168,15 +168,15 @@ void player_PrintPlayerList(Player *playerList, int selectedPlayerIndex, Point p
     int currentIndex = 0;
     //lib_ClearScreenSection(0, 8, 60, 19, COL_RESET);
     if (playerList == NULL){
-        printfc("Nincs egy játékos sem még.", p.x - (int)stringlenght("Nincs egy játékos sem még.") / 2, p.y + currentIndex, baseForeColor );
+        printfc("Nincs egy játékos sem még.", p.x - (int) utf8_strlen("Nincs egy játékos sem még.") / 2, p.y + currentIndex, baseForeColor );
     }
     while(playerList != NULL){
         char text[maxLineLenght];
         sprintf(text,"%s, Szint: %d", playerList->name, playerList->numOfCompletedLevels);
         if (currentIndex == selectedPlayerIndex)
-            printfbc(text, p.x - (int)stringlenght(text) / 2, p.y + currentIndex, activeForeColor, activeBgColor);
+            printfbc(text, p.x - (int) utf8_strlen(text) / 2, p.y + currentIndex, activeForeColor, activeBgColor);
         else
-            printfc(text, p.x - (int)stringlenght(text) / 2, p.y + currentIndex, baseForeColor);
+            printfc(text, p.x - (int) utf8_strlen(text) / 2, p.y + currentIndex, baseForeColor);
         playerList = (Player*) playerList->next;
         currentIndex++;
     }

@@ -226,39 +226,65 @@ typedef struct move{
 
 ```mermaid
 stateDiagram-v2
-    direction TB
-    state switch <<choice>>
+    
+    state switchState <<choice>>
     state stateChange <<choice>>
+    state winGame <<choice>>
+    state keyDown <<choice>>
+    state collector <<join>>
     [*]--> menu.c 
     menu.c --> game.c
     menu.c --> [*]
-    state menu.c{ 
+    state menu.c{
+        direction TB
         [*] --> menu_MainScreen
         menu_MainScreen --> menu_KeyPress
         menu_KeyPress --> stateChange : key → state
         stateChange --> game.c : state == game
         stateChange --> menu_EvaluateState : state != game
         menu_EvaluateState --> menu_MainScreen
+        menu_EvaluateState --> [*]
+        
       
         state menu_EvaluateState{
-            direction TB            
-            switch -->  menu_PrintExitWindow : exitApp
-            switch --> menu_MainMenu : mainMenu
-            switch --> menu_PrintPlayerSubMenu : chosePlayer
+            direction LR
+            [*] --> switchState
+            switchState -->  menu_PrintExitWindow : exitApp
+            switchState --> menu_PrintMainMenu : mainMenu
+            switchState --> menu_PrintPlayerSubMenu : chosePlayer
             menu_PrintPlayerSubMenu --> lib_WarningWindow : deletePlayer
-            switch --> menu_PrintNewPlayerSubMenu : newPlayer
+            switchState --> menu_PrintNewPlayerSubMenu : newPlayer
+            switchState --> menu_PrintRankList : rankList
             menu_PrintPlayerSubMenu --> menu_PrintNewPlayerSubMenu : editPlayer
-            switch --> menu_PrintRankList : rankList
-            switch --> menu_PrintWinGame : winGame
+            switchState --> menu_PrintWinGame : winGame
+            menu_PrintExitWindow --> [*]
+            menu_PrintMainMenu --> [*]
+            menu_PrintNewPlayerSubMenu --> [*]
+            menu_PrintPlayerSubMenu --> [*]
+            lib_WarningWindow --> [*]
+            menu_PrintRankList --> [*]
+            menu_PrintWinGame --> [*]
         }
     }
     
     state game.c{
+        direction TB
         [*] --> game_Init
         game_Init --> game_StartGame
         game_StartGame --> game_ReadXSBFile
         game_ReadXSBFile --> game_CheckWin
-        game_CheckWin --> d
+        game_CheckWin --> winGame
+        winGame --> game_KeyPress : False
+        winGame --> [*] : True
+        game_KeyPress --> keyDown : key → direction
+        keyDown --> game_MovePlayer : key == Cursor
+        keyDown --> game_UndoMove : key == V
+        keyDown --> game_Init : key == R
+        keyDown --> [*] : key == Esc
+        game_MovePlayer --> collector : direction → move
+        game_UndoMove --> collector
+        collector --> game_CheckWin
+        
     }
    
 
@@ -424,9 +450,9 @@ Két pontot hasonlít össze, hogy egyenlőek-e
 
 **Visszatér:** `bool` — Egyenlőek e a paraméterként kapott koordináták
 
-#### `int stringlenght(const char str[])`
+#### `int utf8_strlen(const char str[])`
 
-Megszámolja, hogy a kapott string hány valós karakterből áll, hány krakter íródik ki a képernyőre
+Megszámolja, hogy a kapott string hány utf8 karakterből áll, hány krakter íródik ki a képernyőre
 **Paraméterek:**
 
 - `char[]` — `str` — Karaktertömb, string (Bemenet)

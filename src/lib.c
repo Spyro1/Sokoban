@@ -13,7 +13,7 @@ void lib_WarningWindow(const char* Message, Point p, bool *displayFirst, int opt
         printfc("╔════════════════════════╗", p.x-windowWidth/2,p.y+i++,baseColor);
         printfc("║                        ║", p.x-windowWidth/2,p.y+i++,baseColor);
         printfc("║", p.x-windowWidth/2,p.y+i,baseColor);
-        printfc(Message, p.x- stringlenght(Message)/2, p.y+i,baseColor);
+        printfc(Message, p.x - utf8_strlen(Message) / 2, p.y + i, baseColor);
         printfc("║", p.x+windowWidth/2-1,p.y+i++,baseColor);
         printfc("║                        ║", p.x-windowWidth/2,p.y+i++,baseColor);
         printfc("║     NEM       IGEN     ║", p.x-windowWidth/2,p.y+i++,baseColor);
@@ -79,7 +79,7 @@ bool comparePoints(Point a, Point b){
     return  a.x == b.x && a.y == b.y;
 }
 
-int stringlenght(const char *str) {
+int utf8_strlen(const char *str) {
     int count = 0;
     while (*str) {
         count += (*str++ & 0xC0) != 0x80;

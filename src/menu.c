@@ -103,40 +103,40 @@ static void menu_PrintMainMenu(Point p) {
     if (displayFirstM){
         displayFirstM = false;
         lib_ClearScrBellow();
-        printfc(strNewPlayer, p.x - (int)stringlenght(strNewPlayer)/2, p.y, baseForeColor); // 0
-        printfc(strChosePlayer, p.x - (int)stringlenght(strChosePlayer)/2, p.y+1, baseForeColor); // 0
-        printfc(strRankList, p.x - (int)stringlenght(strRankList)/2, p.y+2, baseForeColor); // 0
-        printfc(strExitApp, p.x - (int)stringlenght(strExitApp)/2, p.y+3, baseForeColor); // 0
+        printfc(strNewPlayer, p.x - (int) utf8_strlen(strNewPlayer) / 2, p.y, baseForeColor); // 0
+        printfc(strChosePlayer, p.x - (int) utf8_strlen(strChosePlayer) / 2, p.y + 1, baseForeColor); // 0
+        printfc(strRankList, p.x - (int) utf8_strlen(strRankList) / 2, p.y + 2, baseForeColor); // 0
+        printfc(strExitApp, p.x - (int) utf8_strlen(strExitApp) / 2, p.y + 3, baseForeColor); // 0
     }
     // Előző opcó deaktiválása
     switch (prevOption) {
         case 0:
-            printfc(strNewPlayer, p.x - (int)stringlenght(strNewPlayer)/2, p.y, baseForeColor); // 0
+            printfc(strNewPlayer, p.x - (int) utf8_strlen(strNewPlayer) / 2, p.y, baseForeColor); // 0
             break;
         case 1:
-            printfc(strChosePlayer, p.x - (int)stringlenght(strChosePlayer)/2, p.y+prevOption, baseForeColor); // 0
+            printfc(strChosePlayer, p.x - (int) utf8_strlen(strChosePlayer) / 2, p.y + prevOption, baseForeColor); // 0
             break;
         case 2:
-            printfc(strRankList, p.x - (int)stringlenght(strRankList)/2, p.y+prevOption, baseForeColor); // 0
+            printfc(strRankList, p.x - (int) utf8_strlen(strRankList) / 2, p.y + prevOption, baseForeColor); // 0
             break;
         case 3:
-            printfc(strExitApp, p.x - (int)stringlenght(strExitApp)/2, p.y+prevOption, baseForeColor); // 0
+            printfc(strExitApp, p.x - (int) utf8_strlen(strExitApp) / 2, p.y + prevOption, baseForeColor); // 0
             break;
         default: break;
     }
     // Aktuális opció kiemelésa
     switch (optionM){
         case 0:
-            printfbc(strNewPlayer,p.x - (int)stringlenght(strNewPlayer)/2, p.y, activeForeColor, activeBgColor); // 0
+            printfbc(strNewPlayer,p.x - (int) utf8_strlen(strNewPlayer) / 2, p.y, activeForeColor, activeBgColor); // 0
             break;
         case 1:
-            printfbc(strChosePlayer, p.x - (int)stringlenght(strChosePlayer)/2, p.y + optionM, activeForeColor, activeBgColor); // 0
+            printfbc(strChosePlayer, p.x - (int) utf8_strlen(strChosePlayer) / 2, p.y + optionM, activeForeColor, activeBgColor); // 0
             break;
         case 2:
-            printfbc(strRankList, p.x - (int)stringlenght(strRankList)/2, p.y + optionM, activeForeColor, activeBgColor); // 0
+            printfbc(strRankList, p.x - (int) utf8_strlen(strRankList) / 2, p.y + optionM, activeForeColor, activeBgColor); // 0
             break;
         case 3:
-            printfbc(strExitApp, p.x - (int)stringlenght(strExitApp)/2, p.y + optionM, activeForeColor, activeBgColor); // 0
+            printfbc(strExitApp, p.x - (int) utf8_strlen(strExitApp) / 2, p.y + optionM, activeForeColor, activeBgColor); // 0
             break;
         default: break;
     }
@@ -146,7 +146,7 @@ static void menu_PrintNewPlayerSubMenu(Player **playerListHead, int *numOfPlayer
     Player *editablePlayer;
     lib_ClearScrBellow();
     // Alcím kiírása jáékos név kipontozása
-    printfc(strNewPlayerTitle, p.x - stringlenght(strNewPlayerTitle)/2, p.y, baseForeColor);
+    printfc(strNewPlayerTitle, p.x - utf8_strlen(strNewPlayerTitle) / 2, p.y, baseForeColor);
     printfc("Név (max 20 karakter):", p.x-11, p.y+1, baseForeColor);
     printfc("____________________", p.x-10, p.y+2, baseForeColor);
     if (state == editPlayer){ // Játékosnév változtatásához eredeti név kiírása
@@ -162,7 +162,7 @@ static void menu_PrintNewPlayerSubMenu(Player **playerListHead, int *numOfPlayer
     if (!isBlankString(newPlayerName)){
         // Új játékosnév lerövidítése
         newPlayerName[strlen(newPlayerName)-1] = '\0';
-        int numOfDisplayedCharacter = stringlenght(newPlayerName);
+        int numOfDisplayedCharacter = utf8_strlen(newPlayerName);
         int maxDisplayableCharactersBytes= stringlenghtMax(newPlayerName, nameLenght);
         int realByteLenght = numOfDisplayedCharacter <= nameLenght ? (int)strlen(newPlayerName) : maxDisplayableCharactersBytes;
         newPlayerName[realByteLenght] = '\0';
@@ -182,14 +182,14 @@ static void menu_PrintNewPlayerSubMenu(Player **playerListHead, int *numOfPlayer
             }
             // Player Láncoltl ista fájlba mentése
             player_WriteTxtFile(*playerListHead);
-            printfc("ELMENTVE", p.x- stringlenght("ELMENTVE")/2, p.y+4, baseForeColor);
+            printfc("ELMENTVE", p.x - utf8_strlen("ELMENTVE") / 2, p.y + 4, baseForeColor);
         }
         else{
-            printfc("LÉTEZIK MÁR ILYEN NEVŰ JÁTÉKOS!", p.x- stringlenght("LÉTEZIK MÁR ILYEN NEVŰ JÁTÉKOS!")/2, p.y+4, baseForeColor);
+            printfc("LÉTEZIK MÁR ILYEN NEVŰ JÁTÉKOS!", p.x - utf8_strlen("LÉTEZIK MÁR ILYEN NEVŰ JÁTÉKOS!") / 2, p.y + 4, baseForeColor);
         }
     }
     else
-        printfc("MÉGSE", p.x- stringlenght("MÉGSE")/2, p.y+4, baseForeColor);
+        printfc("MÉGSE", p.x - utf8_strlen("MÉGSE") / 2, p.y + 4, baseForeColor);
     econio_sleep(waitsec);
     econio_clrscr();
     menu_PrintTitle();
@@ -201,7 +201,7 @@ static void menu_PrintPlayerSubMenu(Player **playerListHead, Player **currentPla
         displayFirstM = false;
         lib_ClearScrBellow();
         // Alcím kiírása
-        printfc(strChosePlayerTitle, p.x - stringlenght(strChosePlayerTitle)/2, p.y, baseForeColor);
+        printfc(strChosePlayerTitle, p.x - utf8_strlen(strChosePlayerTitle) / 2, p.y, baseForeColor);
         // Player Listába beolvasás fájlból
         player_ReadTxtFile(playerListHead, numOfPlayers); // Játékosok kiiratásához beolvasás
     }
@@ -215,7 +215,7 @@ static void menu_PrintRankList( Player **playerListHead, int *numOfPlayers, Poin
         displayFirstM = false;
         lib_ClearScrBellow();
         player_ReadTxtFile(playerListHead, numOfPlayers); // Rangsorhoz beolvasás fájlból
-        printfc(strRankListTitle,p.x-stringlenght(strRankListTitle)/2, p.y, baseForeColor);
+        printfc(strRankListTitle, p.x - utf8_strlen(strRankListTitle) / 2, p.y, baseForeColor);
     }
     if (*numOfPlayers > 0) {
         // Segéd változók
@@ -230,7 +230,7 @@ static void menu_PrintRankList( Player **playerListHead, int *numOfPlayers, Poin
 //        int maxLvls = 0;
         // Nevek hosszának és max szintek megállapítása
         while (mover != NULL){
-            lenght = (int) stringlenght(mover->name); // Játékosnév karakterhossza
+            lenght = (int) utf8_strlen(mover->name); // Játékosnév karakterhossza
             totalLenght += lenght + 3; // Hosssz + Szóközök hozzáadása
             spaces[playerindex++] = lenght;
 //            maxLvls = maxLvls < mover->numOfCompletedLevels ? mover->numOfCompletedLevels : maxLvls;
@@ -292,7 +292,7 @@ static void menu_PrintRankList( Player **playerListHead, int *numOfPlayers, Poin
         free(spaces);
     }
     else{
-        printfc("Nincs egy játékos sem még.",p.x - (int)stringlenght("Nincs egy játékos sem még.")/2, p.y, baseForeColor);
+        printfc("Nincs egy játékos sem még.",p.x - (int) utf8_strlen("Nincs egy játékos sem még.") / 2, p.y, baseForeColor);
     }
 }
 static void menu_PrintWinGame(Point p) {

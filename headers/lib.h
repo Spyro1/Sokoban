@@ -81,11 +81,11 @@ Point subPoints(Point a, Point b);
 bool comparePoints(Point a, Point b);
 
 /**
- * Megszámolja, hogy a kapott string hány valós karakterből áll, hány krakter íródik ki a képernyőre
+ * Megszámolja, hogy a kapott string hány utf8 karakterből áll, hány krakter íródik ki a képernyőre
  * @param str char[] Karaktertömb, string (Bemenet)
  * @return int A string hossza megjelenített karakterszámban
  */
-int stringlenght(const char str[]);
+int utf8_strlen(const char str[]);
 /**
  * Megszámolja, hogy hány byte-on tárolódik a max karakterszámú string
  * @param str char[] Karaktertömb, string (Bemenet)
