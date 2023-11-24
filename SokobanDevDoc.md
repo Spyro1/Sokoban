@@ -2,16 +2,44 @@
 
 > Készítette: Szenes Mártons
 
+---
+
+## Tartalom
+
+- [Program felépítése](#program-felépítése)
+  - [A menü](#a-menü)
+    - [Menü állapotai](#menü-állapotai-state)
+    - [Menü működése](#menü-működése-mainscreen)
+    - [Játékos struktúra](#játékos-player-struktúra)
+    - [Szint statisztika](#szint-statisztika-statistics-struktúra)
+  - [A játék](#a-játék)
+    - [Játékmenet működése](#játékmenet-működése)
+
 ## Program felépítése
 
 A program két fő részből áll, a [menürendszerbő](#a-menü) (menu.c) és a [játékból](#a-játék) (game.c). Az indításkor először a menürendszer nyílik meg, és onnan tud a felhasználó elnavigálni az _Új játék_ almenübe, majd a játékos kiválasztása után elindul a játék. A játék befejeztével visszalép a program a menübe, és innen tud a felhasználó más almenükbe átlépni vagy kilépni a programból.
+
 ### A menü
-A program indítása után a `main` beállítja a karaterkódolást, és meghívja a [`void menu_MainScreen() {...}`]()-t. Ez az eljárás futtatja ciklikusan a menüt, amíg ki nem lép a felhasználó a programból.
-A menü állapotait egy [`enum State {...}`](#menü-állapotai-state)-ben tárolja a program, mivel véges számú állapota lehet a menünek, és ezáltal könnyű azonosítani az egyes menüpontokat. 
+
+A program indítása után a `main` beállítja a karaterkódolást, és meghívja a [`void menu_MainScreen() {...}`](#menü-működése-mainscreen)-t. Ez az eljárás futtatja ciklikusan a menüt, amíg ki nem lép a felhasználó a programból.
+A menü állapotait egy [`enum State {...}`](#menü-állapotai-state)-ben tárolja a program, mivel véges számú állapota lehet a menünek, és ezáltal könnyű azonosítani az egyes menüpontokat.
+
 #### Menü állapotai (State)
 
+A menüben való navigálás során a következő állapotok léphetnek fel:
+
+- `mainMenu`: A program indításákor ez az alapállot, a főmenüt jelenti.
+- `newPlayer`: A főmenü első menüpontja, ez az állapot az új játékos hozzáadását jelenti.
+- `chosePlayer`: A főmenü második menüpontja, ez az állapot a játékosválasztást jelenti.
+- `rankList`: A főmenü harmadik menüpontja, a dicsőséglistát jelenti.
+- `exitApp`: A főmenü negyedik menüpontja, kilépés a programból.
+- `deletePlayer`: A `chosePlayer` állapotból léphet ebbe a program. A játékos törlését jelenti.
+- `editPlayer`: A `chosePlayer` állapotból léphet ebbe a program. A játékosnév szerkesztését jelenti.
+- `game`: A `chosePlayer` állapotból léphet ebbe a program. A játék futtatását jelenti.
+- `exitGame`: A `game` állapotból léphet ebbe a program. A játékból való kilépést jelenti.
+- `winGame`: A `game` állapotból léphet ebbe a program. Az összes szint teljesítését jelenti.
+
 ```c
-/** A menü lehetséges állapotértékei */
 typedef enum State {
     mainMenu,
     newPlayer,
@@ -28,10 +56,10 @@ typedef enum State {
 
 #### Menü működése (MainScreen)
 
-Pszedudókóddal:
+A [`void menu_MainScreen()`](#void-menumainscreen) eljárás pszedudókóddal leírva:
 
-```c
-Eljárás menu_MainScreen():
+```
+Eljárás Menü():
     Változók inicializálása
     Főcím kiiratása
     Szintek mappájának beolvasás
@@ -40,7 +68,7 @@ Eljárás menu_MainScreen():
         Lenyomott billentyű kiértékelése
         Ha játékos kiválasztva, akkor
             Játék indítás
-        Képernyőre írás menüpont alapján
+        Képernyőre írás menüpont
         Ha fut a menü, akkor
             Billentyűnyomásra vár
     Ciklus vége
@@ -51,59 +79,99 @@ Eljárás vége
 ```
 
 ##### Játékos (Player) struktúra
+
 A fő adatstruktúra a menüben a `Player` struktúra. Ebben tárolja a program az egyes játékosok adatait: név, szint, statisztika, következő játékosra mutató pointer.  
-A `name` mező hossza a `datatypes.h` fájlban található makró szerint határozott meg (`#define nameLenght 20`). Ez azt jelenti, hogy a képernyőn 20 db karakter fog maximum megjelenni. Mivel ékezetes karaktereket is tartalmazhat a név (á, é, í, ó, ö, ő, ú, ü, ű), amik 2 byte-on tárolódnak, ezért a 2-szeresét vesszük és +1 byte-ot a lezáró nullának, így jön ki a hossza.  
+A `name` mező a játékos nevét tárolja. Hossza a `datatypes.h` fájlban található makró szerint határozott meg (`#define nameLenght 20`). Ez azt jelenti, hogy a képernyőn 20 db karakter fog maximum megjelenni. Mivel ékezetes karaktereket is tartalmazhat a név (á, é, í, ó, ö, ő, ú, ü, ű), amik 2 byte-on tárolódnak, ezért a 2-szeresét vesszük és +1 byte-ot a lezáró nullának, így jön ki a hossza.  
 A `numOfCompletedLevels` mező a játékos szintjét tárolja, hogy hágy szintet teljesített már.  
-A `levelStats` egy [`Statistics`](#szint-statisztika-statistics) típusú láncolt lista első elemére mutató pointer. Ebben tárolja el a program a játékos által megtett lépések számát az egyes szinteken.  
-A `*next` a láncolt listában a következő Player struktúrára mutató pointer.
+A `*levelStats` egy [`Statistics`](#szint-statisztika-statistics-struktúra) típusú láncolt lista első elemére mutató pointer. Ebben tárolja el a program a játékos által megtett lépések számát az egyes szinteken.  
+A `*next` a következő `Player` struktúrára mutató pointer a láncolt listában.
 
 ```c
-/* A játékos adatait eltároló struktúra, mely láncolt listába fűzhető */
 typedef struct player {
-    char name[nameLenght*2+1];      
-    int numOfCompletedLevels;       
-    struct Statistics *levelStats;  
-    struct Player *next;            
+    char name[nameLenght*2+1];
+    int numOfCompletedLevels;
+    struct Statistics *levelStats;
+    struct Player *next;
 } Player;
 ```
 
-##### Szint statisztika (Statistics)
+##### Szint statisztika (Statistics) struktúra
 
+A játékosok dicsőséglistájához elengedhetetlen számon tartani, hogy mely játékos, hány lépéssel tudta teljesíteni az egyes szeinteket. Ezt a tulajdonságot egy `Statistics` struktúrában tárolja a program.  
+A megtett lépések számát egy egész számként tárolja a `stepCount` mezőben.  
+A `*next` a következő `Statistics` struktúrára mutató pointer a láncolt listában.
 
 ```c
-/* A játékos egy szinten megtett lépéseinek számát tároló struktúra, mely láncolt listába fűzhető */
 typedef struct statistic{
     int stepCount;
-    struct Statistics *next; 
+    struct Statistics *next;
 } Statistics;
 ```
+
 ### A játék
 
-A játékot a [`bool game_Init()`]() eljárással lehet meghívni...
+A játékot a [`bool game_Init()`]() fügvénnyel lehet meghívni a `game.c` fájlon kívülről. Ez hívja meg benne a `bool game_StartGame()` függvényt, ami a játékot elindítja és futtatja ciklikusan. Erre a két függvényre azért van szükség, hogy a program moduláris lehessen. Tehát ha például más játékot szeretnénk leprogramozni, amiben hasonlóan több játékos lehet és a szintek egymás után következnek, akkor ugyanazokkal a paraméterekkel meg lehet hívni a `game_Init()` függvényt, ami majd a másik játék függvényeit hívja meg.
 
-### Függvények rendszere
+#### Játékmenet működése
 
-```mermaid
-flowchart
-    subgraph Menü
-        A[menu_MainScreen] --> B(menu_KeyPress) --> C(menu_EvaluateState) --> B
-    end
-    subgraph Játék
-        B --> G[game_Init]
-        G --> H[game_StartGame]
-    end
+A `bool game_StartGame()` függvény pszeudókóddal leírva:
 
 ```
+Függvény Játék(játékos, szint): visza logikai
+    Változók inicializálása
+    Szint beolvasása fájlból
+    Szint kiírása a képernyőre
 
-## Adatstruktúrák
+    Ciklus amíg nincs a szint teljesítve
+        Billentyűnyomásra vár
+        Lenyomott billentyű kiértékelése:
+            Ha Esc, akkor
+                Kilépés
+            Különben ha kurzor billentyű, akkor
+                Ha lehetséges a lépés, akkor
+                    Lépés lebonyolítása
+            Különben ha V, akkor
+                Előző lépés visszavonása
+            Különben ha R, akkor
+                Szint újrakezdése
+        Elágazás vége
+    Ciklus vége
+    Lefoglalt memóriaterületek felszabadítása
 
-### Enumerátorok
+    Ha szint teljesítve, akkor
+        Játékos szintje növelése 1-el
+        Lépések száma hozzáadása a játékos statisztikájához
+        vissza igaz
+    Különben
+        vissza hamis
+    Elágazás vége
+Függvény vége
+```
 
+#### A pálya
+
+A játékban a pályát, vagyis az adott szint mezőinek elrendezését két fő változó tárolja:
+
+```c
+CellType **map = NULL; // Pálya
+Size mapSize; // Pálya mérete
+```
+
+A `**map` egy kétdimenziós dinamikus tömb (mátrix), aminek minden eleme a pályán egy-egy mező, amiben `CellType` típussal kódolja a program a mező értékeit.
+A `mapSize` a pálya méretét tárolja el
 #### Mezőtípusok (CellType)
 
 ```c
-/* A pálya egyes mezőinek lehetséges értékei.*/
-typedef enum celltype { null, EMPTY, WALL, TARGET, PLAYER, PLAYERONTARGET, BOX, BOXONTARGET } CellType;
+typedef enum celltype {
+    null,
+    EMPTY,
+    WALL,
+    TARGET,
+    PLAYER,
+    PLAYERONTARGET,
+    BOX,
+    BOXONTARGET
+} CellType;
 ```
 
 ### Struktúrák
@@ -113,8 +181,7 @@ typedef enum celltype { null, EMPTY, WALL, TARGET, PLAYER, PLAYERONTARGET, BOX, 
 ```c
 /** Egy koordinátát eltároló struktúra, mely láncolt listába fűzhető */
 typedef struct point{
-int x, y;           // Koordináták
-struct Point *next; // A következő pontra mutató pointer a láncolt listában
+    int x, y;   // Koordináták
 } Point;
 ```
 
@@ -123,8 +190,8 @@ struct Point *next; // A következő pontra mutató pointer a láncolt listában
 ```c
 /** A pálya méretét eltároló struktúra */
 typedef struct size{
-int width;  // A pálya szélessége
-int height; // A pálya magassága
+    int width;  // A pálya szélessége
+    int height; // A pálya magassága
 } Size;
 ```
 
@@ -140,9 +207,49 @@ typedef struct move{
 } Move;
 ```
 
-
-
 ## Kód szerekzete
+
+### Függvények rendszere
+
+```mermaid
+stateDiagram-v2
+    direction TB
+    state switch <<choice>>
+    state stateChange <<choice>>
+    [*]--> menu.c
+    menu.c --> game.c
+    menu.c --> [*]
+    state menu.c{ 
+        [*] --> menu_MainScreen
+        menu_MainScreen --> menu_KeyPress
+        menu_KeyPress --> stateChange : key → state
+        stateChange --> game.c : state == game
+        stateChange --> menu_EvaluateState : state != game
+        menu_EvaluateState --> menu_MainScreen
+      
+        state menu_EvaluateState{
+            direction TB            
+            switch -->  menu_PrintExitWindow : exitApp
+            switch --> menu_MainMenu : mainMenu
+            switch --> menu_PrintPlayerSubMenu : chosePlayer
+            menu_PrintPlayerSubMenu --> lib_WarningWindow : deletePlayer
+            switch --> menu_PrintNewPlayerSubMenu : newPlayer
+            menu_PrintPlayerSubMenu --> menu_PrintNewPlayerSubMenu : editPlayer
+            switch --> menu_PrintRankList : rankList
+            switch --> menu_PrintWinGame : winGame
+        }
+    }
+    
+    state game.c{
+        [*] --> game_Init
+        game_Init --> game_StartGame
+        game_StartGame --> game_ReadXSBFile
+        game_ReadXSBFile --> game_CheckWin
+        game_CheckWin --> d
+    }
+   
+
+```
 
 ## Kód részeltes dokumentációja
 

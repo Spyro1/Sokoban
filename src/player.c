@@ -63,11 +63,10 @@ void player_WriteTxtFile(Player *playerListHead){
     char printer[maxLineLenght-1];
     for(Player *mover = playerListHead; mover != NULL; mover = (Player *) mover->next){ // Listán végigjáró ciklus
         sprintf(printer,"%s;%d", mover->name, mover->numOfCompletedLevels);
-        char helper[maxLineLenght+1];
+//        char helper[maxLineLenght+1];
         for (Statistics* stat = (Statistics *) mover->levelStats; stat != NULL; stat = (Statistics *) stat->next){
             sprintf(printer, "%s;%d", printer, stat->stepCount); // Sorhoz fűzés
 //            strcat(printer, helper);
-            // TODO: Itt hibát dob játékos törlésekor valmiért
         }
         fprintf(fp, "%s\n", printer); // Fájlba írás
     }
