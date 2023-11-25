@@ -364,9 +364,91 @@ Forrás: [INFOC - Szöveges és grafikus megjelenítés](https://infoc.eet.bme.h
 
 <!-- BEGIN DOC-COMMENT H4 headers/menu.h -->
 
+#### `static void menu_PrintTitle()`
+
+Kiirítja a főcímet a képernyő tetejére nagy betűkkel több sorosan.
+
+#### `static void menu_PrintNavControls()`
+
+Kiírja a képernyő aljára az aktuális menüpot nevigációs lehetőségeit.
+
+#### `static void menu_PrintExitWindow(Point p)`
+
+Kiír a képernyére egy ablakot, amiben megkérdezi a felhasználót, hogy biztos ki akar e lépni, Igen/Nem válaszlehetőségekkel.
+**Parameters:**
+
+* `Point` — `p` — A kiíráshoz legfelső középső pont a képernyőn.
+
+#### `static void menu_PrintMainMenu(Point p)`
+
+Kiírja a képernyőre a főmenü menüpontjait, és kijelöli az aktuálisan kiválasztott menüpontot más színnel.
+**Parameters:**
+
+* `Point` — `p` — A kiíráshoz legfelső középső pont a képernyőn.
+
+#### `static void menu_PrintNewPlayerSubMenu(Player **playerListHead, int *numOfPlayers, Point p)`
+
+Kiírja a képernyőre az új játékos felvételéhez szükséges mezőt, és a bemenet után hozzáadja a játéklistához az új játékost.
+**Parameters:**
+
+* `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista. (Cím szerint)
+* `int*` — `numOfPlayers` — A játékosok darabszáma. (Cím szerint)
+* `Point` — `p` — A kiíráshoz legfelső középső pont a képernyőn.
+
+#### `static void menu_PrintPlayerSubMenu(Player **playerListHead, Player **currentPlayer, int *numOfPlayers, Point p )`
+
+Kiírja a képernyőre a játékoslistát, és kijelöli az aktuálisan kiválasztott játékost más színnel.
+**Parameters:**
+
+* `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista. (Cím szerint)
+* `Player**` — `currentPlayer` — A kiválasztott játékos struktúrájára mutató pointer, playerListHead elem. (Cím szerint)
+* `int*` — `numOfPlayers` — A játékosok darabszáma. (Cím szerint)
+* `Point` — `p` — A kiíráshoz legfelső középső pont a képernyőn.
+
+#### `static void menu_PrintRankList(Player **playerListHead, int *numOfPlayers, Point p)`
+
+Kiírja a képernyőre a dicsőséglistát táblázatosan.
+**Parameters:**
+
+* `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista. (Cím szerint)
+* `int*` — `numOfPlayers` — A játékosok darabszáma. (Cím szerint)
+* `Point` — `p` — A kiíráshoz legfelső középső pont a képernyőn.
+
+#### `static void menu_PrintWinGame(Point p)`
+
+Kiírja a képernyőre, hogy teljesítette a szinteket a játékos.
+**Parameters:**
+
+* `Point` — `p` — A kiíráshoz legfelső középső pont a képernyőn.
+
+#### `static void menu_ResetMenuVars()`
+
+Visszaállítja a kezdőértékeket a menüben, ha menüpontváltás volt.
+
+#### `static void menu_KeyPress(Player *currentPlayer, Player **playerListHead, int *numOfPlayers, char *levelList[], int numOfLevels)`
+
+Kiértékeli a felhasználó által lenyomott billentyőt, és megváltoztatja a program állapotát aszerint.
+**Parameters:**
+
+* `Player*` — `currentPlayer` — A kiválasztott játékos struktúrájára mutató pointer, playerListHead elem.
+* `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista. (Cím szerint)
+* `*char[]` — `numOfPlayers` — A játékosok darabszáma. (Cím szerint)
+* `int` — `levelList` — A szintek fájlnevét tároló dinamikus string tömb.
+
+#### `static void menu_EvaluateState(Player **playerListHead, int *numOfPlayers, Player **currentPlayer, Point p, int *linesPrinted)`
+
+Az aktuális állapotnak megfelelően végrehajtja a szükséges utasításokat, és kiértékeli a bemeneteket.
+**Parameters:**
+
+* `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista. (Cím szerint)
+* `int*` — `numOfPlayers` — A játékosok darabszáma. (Cím szerint)
+* `Player**` — `currentPlayer` — A kiválasztott játékos struktúrájára mutató pointer, playerListHead elem.
+* `Point` — `p` — A kiíráshoz legfelső középső pont a képernyőn.
+* `int*` — `linesPrinted` — Az előző menüpontba a képernyőre írt sorok.
+
 #### `void menu_MainScreen()`
 
-A főmenüt futtató függvény. Egyszer hivandó meg a mainben
+A főmenüt futtató függvény. Egyszer hivandó meg a mainben.
 
 <!-- END DOC-COMMENT -->
 
@@ -379,101 +461,92 @@ A főmenüt futtató függvény. Egyszer hivandó meg a mainben
 #### `void player_ReadTxtFile(Player **playerListHead, int *numOfPlayers)`
 
 Beolvassa a playerDataPath-ban megadott fájlt, és elátrolja a playerListHead láncolt listában
-**Paraméterek:**
+**Parameters:**
 
-- `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista (Cím szerint)
-- `int*` — `numOfPlayers` — A játékosok darabszáma (Cím szerint)
+* `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista (Cím szerint)
+* `int*` — `numOfPlayers` — A játékosok darabszáma (Cím szerint)
 
-#### `void player_WriteTxtFile(Player *playerListHead, int numOfPlayers)`
+#### `void player_WriteTxtFile(Player *playerListHead)`
 
 Kiírja fájlba a playeListHead-ben tárolt játékosok adatait: név;szintek;lépészámok..
-**Paraméterek:**
+**Parameters:**
 
-- `Player*` — `playerListHead` — sA játékosok adatait tartalmazó láncolt lista (Cím szerint)
-- `int` — `numOfPlayers` — A játékosok darabszáma (Cím szerint)
+* `Player*` — `playerListHead` — sA játékosok adatait tartalmazó láncolt lista (Cím szerint)
+* `int` — `numOfPlayers` — A játékosok darabszáma (Cím szerint)
 
 #### `Player *player_MakePlayer(char name[], int numOfLevels, Statistics *statsListHead)`
 
 Létrehoz egy Player struktúrára mutató pointert a paraméterként kapott értékekből, hogy aztán Lístába lehessen fűzni.
-**Paraméterek:**
+**Parameters:**
 
-- `char[]` — `name` — A játékos neve (max 20 karakter)
-- `int` — `numOfLevels` — A játékos által teljesített szintek száma
-- `Statistics` — `statsListHead` — A játékos lépésstatisztikájának láncolt listája
+* `char[]` — `name` — A játékos neve (max 20 karakter)
+* `int` — `numOfLevels` — A játékos által teljesített szintek száma
+* `Statistics` — `statsListHead` — A játékos lépésstatisztikájának láncolt listája
 
-**Visszatér:** `Player*` — Player struktúrára mutató pointer a kapott adatokkal
+**Returns:** `Player*` — Player struktúrára mutató pointer a kapott adatokkal
 
 #### `void player_FreePlayerList(Player **playerListHead)`
 
 Felszabadítja a az egész láncolt listának foglalt memóriát
-**Paraméterek:**
+**Parameters:**
 
-- `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista (Cím szerint)
+* `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista (Cím szerint)
 
-#### `static void player_FreePlayerNode(Player **playerNode)`
+#### `void player_FreePlayerNode(Player **playerNode)`
 
 Felszabadítja egy elem lefoglalt memóriáját a listából
-**Paraméterek:**
+**Parameters:**
 
-- `Player**` — `playerNode` — Egy Player struktúrára mutató pointer a láncolt listából (Cím szerint)
-
-#### `void player_AddPlayerToEnd(Player *newPlayer, Player **playerListHead, int *numOfPlayers)`
-
-Beszúrja a játékoslistának a végére az új játékos elemet
-**Paraméterek:**
-
-- `Player*` — `newPlayer` — Új játékos struktúrájára mutató pointer
-- `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista (Cím szerint)
-- `int*` — `numOfPlayers` — A játékosok darabszáma (Cím szerint)
+* `Player**` — `playerNode` — Egy Player struktúrára mutató pointer a láncolt listából (Cím szerint)
 
 #### `void player_AddPlayerInOrder(Player *newPlayer, Player **playerListHead, int *numOfPlayers)`
 
 Beszúrja a játékoslistába au új játékost a nevének a hossza szerint növekvő sorrendben
-**Paraméterek:**
+**Parameters:**
 
-- `Player*` — `newPlayer` — Új játékos struktúrájára mutató pointer
-- `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista (Cím szerint)
-- `int*` — `numOfPlayers` — A játékosok darabszáma (Cím szerint)
+* `Player*` — `newPlayer` — Új játékos struktúrájára mutató pointer
+* `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista (Cím szerint)
+* `int*` — `numOfPlayers` — A játékosok darabszáma (Cím szerint)
 
 #### `bool player_RemovePlayer(Player *removablePlayer, Player **playerListHead, int *numOfPlayers)`
 
 Törli a paramterként kapott játékost a listából
-**Paraméterek:**
+**Parameters:**
 
-- `Player*` — `removablePlayer` — A törlendő játékos struktúrájára mutató pointer
-- `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista (Cím szerint)
-- `int*` — `numOfPlayers` — A játékosok darabszáma (Cím szerint)
+* `Player*` — `removablePlayer` — A törlendő játékos struktúrájára mutató pointer
+* `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista (Cím szerint)
+* `int*` — `numOfPlayers` — A játékosok darabszáma (Cím szerint)
 
-**Visszatér:** `bool` — Igaz, ha sikeres a törlés a listából; Hamis, ha nem sikerült törölni a játékost
+**Returns:** `bool` — Igaz, ha sikeres a törlés a listából; Hamis, ha nem sikerült törölni a játékost
 
 #### `Player* player_GetSelectedPlayer(Player *playerListHead, int selectedPlayer)`
 
 Megkeresi a listában a selectedPlayer-edik elemet
-**Paraméterek:**
+**Parameters:**
 
-- `Player*` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista
-- `int` — `selectedPlayer` — A játékos sorszáma / indexe a listában
+* `Player*` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista
+* `int` — `selectedPlayer` — A játékos sorszáma / indexe a listában
 
-**Visszatér:** `Player*` — A keresett játékos struktúrájára mutató pointer, ha megtalálta, különben NULL pointer
+**Returns:** `Player*` — A keresett játékos struktúrájára mutató pointer, ha megtalálta, különben NULL pointer
 
 #### `int player_GetIndexOfPlayer(Player *playerListHead, char name[])`
 
-Megkeresi a listában a játékos nevét, és visszaadja a sorszámát / indexét a listában
-**Paraméterek:**
+Megkeresi a listában a játékos nevét, és visszaadja a sorszámát / indexét  a listában
+**Parameters:**
 
-- `Player*` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista
-- `char[]` — `name` — A keresett játékos neve
+* `Player*` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista
+* `char[]` — `name` — A keresett játékos neve
 
-**Visszatér:** `int` — A keresett játékos indexe, ha megtalálta, különben -1
+**Returns:** `int` — A keresett játékos indexe, ha megtalálta, különben -1
 
 #### `void player_PrintPlayerList(Player *playerList, int selectedPlayerIndex, Point p)`
 
 Kiírja a képernyőre a játékoslistát (nevüket és szintjüket) egymás alá, és kiemeli az aktuálisan kiválasztott játékost
-**Paraméterek:**
+**Parameters:**
 
-- `Player*` — `playerList` — A játékosok adatait tartalmazó láncolt lista
-- `int` — `selectedPlayerIndex` — Az aktuálisan kiválasztott játékos sorszáma / indexe
-- `Point` — `p` — A kiíráshoz legfelső középső pont a képernyőn
+* `Player*` — `playerList` — A játékosok adatait tartalmazó láncolt lista
+* `int` — `selectedPlayerIndex` — Az aktuálisan kiválasztott játékos sorszáma / indexe
+* `Point` — `p` — A kiíráshoz legfelső középső pont a képernyőn
 
 <!-- END DOC-COMMENT -->
 
@@ -486,17 +559,24 @@ Kiírja a képernyőre a játékoslistát (nevüket és szintjüket) egymás al�
 #### `void stats_AddLevelStatistics(int stepCount, Statistics **statsListHead)`
 
 Beszúrja a paraméterként kapott stepCount értéket a statsListHead láncolt lista végére
-**Paraméterek:**
+**Parameters:**
 
-- `int` — `stepCount` — A szinten megtett lépések száma
-- `Statistics**` — `statsListHead` — A lépések számát tároló láncolt lista (Cím szerint)
+* `int` — `stepCount` — A szinten megtett lépések száma
+* `Statistics**` — `statsListHead` — A lépések számát tároló láncolt lista (Cím szerint)
 
 #### `void stats_FreeStatisticsList(Statistics **statsListHead)`
 
 Felszabadítja a az egész láncolt listának foglalt memóriát
-**Paraméterek:**
+**Parameters:**
 
-- `Statistics**` — `statsListHead` — A lépések számát tároló láncolt lista (Cím szerint)
+* `Statistics**` — `statsListHead` — A lépések számát tároló láncolt lista (Cím szerint)
+
+#### `void stats_FreeStatNode(Statistics **statNode)`
+
+Felszabadítja egy elem lefoglalt memóriáját a listából
+**Parameters:**
+
+* `Statistics**` — `statNode` — Egy Statistics struktúrára mutató pointer a láncolt listából (Cím szerint)
 
 <!-- END DOC-COMMENT -->
 
@@ -508,13 +588,149 @@ Felszabadítja a az egész láncolt listának foglalt memóriát
 
 #### `bool game_Init(Player *player, char **levelList)`
 
-Ezzel kell meghívni a játékot. Inicializálja a játékhoz szükséges elemeket  
-**Paraméterek:**
+Ezzel kell meghívni a játékot. Inicializálja a játékhoz szükséges elemeket.
+**Parameters:**
 
-- `Player*` — `player` — Az aktuális játékos adatait tartalmazza (Cím szerint)
-- `char[][]` — `levelList` — A pályák fájlneveit tartalmazó string tömb
+* `Player*` — `player` — Az aktuális játékos adatait tartalmazza. (Cím szerint)
+* `char[][]` — `levelList` — A pályák fájlneveit tartalmazó string tömb.
 
-**Visszatér:** `bool` — Igaz, ha a játékos teljesítette a szintet; Hamis, ha a játékos kilépett a játékból
+**Returns:** `bool` — Igaz, ha a játékos teljesítette a szintet; Hamis, ha a játékos kilépett a játékból.
+
+#### `static bool game_KeyPress(CellType **map, Size mapSize, int *numOfMoves, Player *player, Point *playerPosition, Point *boxPositions, Move **movesListHead)`
+
+Kiértékeli a felhasználó által lenyomott billentyőt, és megváltoztatja a játék vagy a játékosbábu helyzetét aszerint.
+**Parameters:**
+
+* `CellType**` — `map` — A pályát leíró 2D-s dinamikus mátrix.
+* `Size` — `mapSize` — A pálya szélességét és magasságát leíró struktúra.
+* `int*` — `numOfMoves` — A megtett lépések száma a szinten. (Cím szeirnt)
+* `Player*` — `player` — Az aktuális játékos adatait tartalmazza. (Cím szerint)
+* `Point*` — `playerPosition` — A játékos kezdő koordinátája a pályán (map-en). (Cím szerint)
+* `Point*` — `boxPositions` — A dobozok koordinátáinak dinamikus tömbje. (Cím szerint)
+* `Move**` — `movesListHead` — A játékos lépéseit eltároló láncolt lista. (Cím szerint)
+
+**Returns:** `bool` — Igaz, ha újraindítja a játékos a szinten; Különben hamis
+
+#### `static bool game_StartGame(Player *player, char levelName[])`
+
+Ez a függvény indítja el és futtatja ciklikusan a játékot.
+**Parameters:**
+
+* `Player*` — `player` — Az aktuális játékos adatait tartalmazza. (Cím szerint)
+* `char[]` — `levelName` — A betöltendő pálya fájlneve.
+
+**Returns:** `bool` — Igaz, ha a játékos teljesítette a szintet; Hamis, ha a játékos kilépett a játékból.
+
+#### `static bool game_CheckWin(CellType **map, Size mapSize)`
+
+Ellenőrzi, hogy a játékos teljesítette-e a szintet, vagyis, hogy minden doboz a helyére került-e.
+**Parameters:**
+
+* `CellType**` — `map` — A pályát leíró 2D-s dinamikus mátrix.
+* `Size` — `mapSize` — A pálya szélességét és magasságát leíró struktúra.
+
+**Returns:** `bool` — Igaz, ha minden doboz a helyére került; Hamis, ha van egy doboz is, ami nincs a helyén.
+
+#### `static bool game_MovePlayer(CellType ***map, Point *currentPosition, Point **boxPositions, Point direction, Move **movesListHead)`
+
+A játékos elmozdulását tesztelő függvény a direction irányba. Ha lehetséges a lépés, vagy ha doboz van a lépés irányában akkor a dobozt eltolja, és igazat ad vissza; Hamis, ha nem lehetséges a lépés.
+**Parameters:**
+
+* `CellType***` — `map` — A pályát leíró 2D-s dinamikus mátrix. (Cím szerint)
+* `Point*` — `currentPosition` — A játékos aktuális koordinátája a pályán (map-en). (Cím szerint)
+* `Point**` — `boxPositions` — A dobozok koordinátáinak dinamikus tömbje. (Cím szerint)
+* `Point` — `direction` — A játékos elmozdulásvektora.
+* `Move**` — `movesListHead` — A játékos lépéseit eltároló láncolt lista. (Cím szerint)
+
+**Returns:** `bool` — Igaz, ha el tud mozdulni a játékos az adott irányba; Hamis, ha nem lehetséges a lépés.
+
+#### `static bool game_UndoMove(CellType ***map, Point *currentPosition, Point **boxPositions, Move **moveListHead)`
+
+Visszavonja a játékos előző lépést. Egészen addig fut le sikeresen, amíg a moveList-ben volt elem, azaz meglépett lépés.
+**Parameters:**
+
+* `Celltype**` — `map` — A pályát leíró 2D-s dinamikus mátrix (Cím szerint)
+* `Point*` — `currentPosition` — A játékos aktuális koordinátája a pályán (map-en) (Cím szerint)
+* `Point**` — `boxPositions` — A dobozok koordinátáinak dinamikus tömbje (Cím szerint)
+* `Move**` — `moveListHead` — A játékos lépéseit eltároló láncolt lista (Cím szerint)
+
+**Returns:** `bool` — Igaz, ha sikeresen visszavonta a lépést; Hamis, ha nincs több visszavonható lépés
+
+#### `static void game_ReadXSBFile(char filename[], CellType ***map, Size *mapSize, Point *playerPosition, Point **boxPositions, int *boxCount)`
+
+Beolvassa a kapott fájlnévben lévő pályát és eltárolja a map mátrixban
+**Parameters:**
+
+* `char[]` — `filename` — A pálya fájlneve (Bemenet)
+* `CellType***` — `map` — A pályát leíró 2D-s dinamikus mátrix (Cím szerint, kimenet)
+* `Size*` — `mapSize` — A pálya szélességét és magasságát leíró struktúra (Cím szerint, kimenet)
+* `Point*` — `playerPosition` — A játékos kezdő koordinátája a pályán (map-en) (Cím szerint, kimenet)
+* `Point**` — `boxPositions` — A dobozok koordinátáinak dinamikus tömbje (Cím szerint, kimenet)
+* `int*` — `boxCount` — A dobozok koordinátáit tároló dinamikus tömb elemszáma, dobozok száma a pályán (Cím szerint, kimenet)
+
+#### `static CellType game_ConvertInputCharToCellType(char character)`
+
+A beolvasott fájl egy karakterét értelmezi és átalakítja cellType értékké
+**Parameters:**
+
+* `char` — `character` — char A beolvasott fájl egy karaktere
+
+**Returns:** `CellType` — A kapott karakter értelmezett CellType értékekké alakított értéke
+
+#### `static void game_PrintStyledMap(CellType **map, Size mapSize)`
+
+Kiiratja a pályát a képernyőre színesen
+**Parameters:**
+
+* `CellType**` — `map` — A pályát leíró 2D-s dinamikus mátrix
+* `Size` — `mapSize` — A pálya szélességét és magasságát leíró struktúra
+
+#### `static void game_PrintPosition(CellType **map, Point pos)`
+
+Egy kapott koordinátán lévő mezőt írja ki a képernyőre színesen és a megfelelő definiált karaterrel
+**Parameters:**
+
+* `CellType**` — `map` — A pályát leíró 2D-s dinamikus mátrix
+* `Point` — `pos` — A kiirandó karakter koordinátája
+
+#### `static void game_PrintStatsAndNav(Size mapSize, int numOfSteps, int level)`
+
+Kiírja a képernyőre a játéktér mellé az aktuális szintet és a lépések számát, vagy a tutorial pályánál a bevezető instrukciókat
+**Parameters:**
+
+* `Size` — `mapSize` — A pálya szélességét és magasságát leíró struktúra
+* `int` — `numOfSteps` — A szinten megtett lépések száma
+* `int` — `level` — Az aktuális szint száma
+
+#### `static void game_AllocateMemoryToMap(CellType ***map, Size *mapSize)`
+
+Memóriát foglal a pályát tároló 2D-s dinamikus mátrixnak (map-nek)
+**Parameters:**
+
+* `CellType***` — `map` — A pályát leíró 2D-s dinamikus mátrix (Cím szerint)
+* `Size*` — `mapSize` — A pálya szélességét és magasságát leíró struktúra
+
+#### `static void game_AllocateDynamicArray(Point **newArray, int lenght)`
+
+Memóriát foglal egy 1D-s dinamikus tömbnek
+**Parameters:**
+
+* `Point**` — `newArray` — Az új 1D-s dinamikus tömb címe (Cím szerint)
+* `int` — `lenght` — A létrehozandó dinamikus tömb hossza, elemszáma
+
+#### `static void game_FreeAllocatedMemoryFromMap(CellType ***map)`
+
+Felszabadítja a pályát tároló 2D-s dinamikus mátrix lefoglat memóriáját, ha volt lefoglalva
+**Parameters:**
+
+* `Celltype***` — `map` — A pályát leíró 2D-s dinamikus mátrix (Cím szerint)
+
+#### `static void game_FreeDynamicArray(Point **dynamicArray)`
+
+Felszabadítja egy 1D-s dinamikus tömbnek lefoglalt memóriáját, ha volt lefoglalva
+**Parameters:**
+
+* `Point**` — `dynamicArray` — 1D-s dinamikus tömb címe (Cím szerint)
 
 <!-- END DOC-COMMENT -->
 
@@ -527,19 +743,19 @@ Ezzel kell meghívni a játékot. Inicializálja a játékhoz szükséges elemek
 #### `void level_ReadDirectory(char directory[], char **levelList[], int *numOfFiles)`
 
 Beolvassa a megadott mappából a fájlneveket, és eltárolja egy dinamikusan foglalt tömbben
-**Paraméterek:**
+**Parameters:**
 
-- `char[]` — `directory` — A mappa elérési útvonala
-- `*char[][]` — `levelList` — A dinamikusan foglalt string tömb (Cím szerint)
-- `int*` — `numOfFiles` — A Beolvasott fájlnevek száma (Cím szerint)
+* `char[]` — `directory` — A mappa elérési útvonala
+* `*char[][]` — `levelList` — A dinamikusan foglalt string tömb (Cím szerint)
+* `int*` — `numOfFiles` — A Beolvasott fájlnevek száma (Cím szerint)
 
 #### `void level_FreeLevelList(char **levelList[], int *numOfLevels)`
 
 Felszabadítja a dinamikusan foglalt fájlnevek string tömbjét
-**Paraméterek:**
+**Parameters:**
 
-- `*char[][]` — `levelList` — A dinamikusan foglalt string tömb (Cím szerint)
-- `int*` — `numOfLevels` — A Beolvasott fájlnevek száma (Cím szerint)
+* `*char[][]` — `levelList` — A dinamikusan foglalt string tömb (Cím szerint)
+* `int*` — `numOfLevels` — A Beolvasott fájlnevek száma (Cím szerint)
 
 <!-- END DOC-COMMENT -->
 
@@ -552,15 +768,15 @@ Felszabadítja a dinamikusan foglalt fájlnevek string tömbjét
 #### `void lib_WarningWindow(const char Message[], Point p, bool *displayFirst, int option, EconioColor baseColor, EconioColor accentForeColor, EconioColor accentBgColor)`
 
 Kiír a képernyőre egy figyelmeztető ablakot a megadott Message üzenettel, Igen/Nem válaszlehetőségekkel
-**Paraméterek:**
+**Parameters:**
 
-- `char[]` — `Message` — Az üzenet
-- `Point` — `p` — képernyő közepének koordinátája
-- `bool*` — `displayFirst` — Először megy-e be a ciklus a menüpontba tulajdonság (Cím szerint)
-- `int` — `option` — A kiválasztott opció
-- `EconioColor` — `baseColor` — Alap betűszíne az ablaknak
-- `EconioColor` — `accentForeColor` — Kijelölt opció betűszíne
-- `EconioColor` — `accentBgColor` — Kijelölt opció háttérszíne
+* `char[]` — `Message` — Az üzenet
+* `Point` — `p` — képernyő közepének koordinátája
+* `bool*` — `displayFirst` — Először megy-e be a ciklus a menüpontba tulajdonság (Cím szerint)
+* `int` — `option` — A kiválasztott opció
+* `EconioColor` — `baseColor` — Alap betűszíne az ablaknak
+* `EconioColor` — `accentForeColor` — Kijelölt opció betűszíne
+* `EconioColor` — `accentBgColor` — Kijelölt opció háttérszíne
 
 #### `void lib_ClearScrBellow()`
 
@@ -569,108 +785,108 @@ Letörli a cím alatt lévő területet a képernyőről
 #### `void lib_ClearScreenSection(int x1, int y1, int x2, int y2, EconioColor bgColor)`
 
 Letörli a képernyőt megadott koordinátákon belül a kapott bgColor színnel.
-**Paraméterek:**
+**Parameters:**
 
-- `int` — `x1` — Bal felső sarok x koordinátája
-- `int` — `y1` — Bal felső sarok y koordinátája
-- `int` — `x2` — Jobb alsó sarok x koordinátája
-- `int` — `y2` — Jobb alsó sarok y koordinátája
-- `EconioColor` — `bgColor` — Törlendő terület háttérszíne
+* `int` — `x1` — Bal felső sarok x koordinátája
+* `int` — `y1` — Bal felső sarok y koordinátája
+* `int` — `x2` — Jobb alsó sarok x koordinátája
+* `int` — `y2` — Jobb alsó sarok y koordinátája
+* `EconioColor` — `bgColor` — Törlendő terület háttérszíne
 
 #### `void lib_printError(const char errormessage[])`
 
 Kiírja képernyőre a hibaüzenetet
-**Paraméterek:**
+**Parameters:**
 
-- `char[]` — `errormessage` — Hibaüzenet
+* `char[]` — `errormessage` — Hibaüzenet
 
-#### `void print(char const str[], int x, int y)`
+#### `//void print(char const str[], int x, int y)`
 
 Kiírja a képernyőre a kapott szöveget a megadott kezdő koordinátákra
-**Paraméterek:**
+**Parameters:**
 
-- `char[]` — `str` — Kiírandó szöveg
-- `int` — `x` — x koordináta a képernyőn
-- `int` — `y` — y koordniáta a képernyőn
+* `char[]` — `str` — Kiírandó szöveg
+* `int` — `x` — x koordináta a képernyőn
+* `int` — `y` — y koordniáta a képernyőn
 
 #### `void printfc(char const str[], int x, int y, EconioColor foreColor)`
 
 Kiírja a képernyőre a kapott szöveget a megadott kezdő koordinátákra a megadott betűszínnel
-**Paraméterek:**
+**Parameters:**
 
-- `char[]` — `str` — Kiírandó szöveg
-- `int` — `x` — x koordináta a képernyőn
-- `int` — `y` — y koordniáta a képernyőn
-- `EconioColor` — `foreColor` — A szöveg színe
+* `char[]` — `str` — Kiírandó szöveg
+* `int` — `x` — x koordináta a képernyőn
+* `int` — `y` — y koordniáta a képernyőn
+* `EconioColor` — `foreColor` — A szöveg színe
 
 #### `void printfbc(char const str[], int x, int y, EconioColor foreColor, EconioColor bgColor)`
 
 Kiírja a képernyőre a kapott szöveget a megadott kezdő koordinátákra a megadott betűszínnel és háttérszínnel
-**Paraméterek:**
+**Parameters:**
 
-- `char[]` — `str` — Kiírandó szöveg
-- `int` — `x` — x koordináta a képernyőn
-- `int` — `y` — y koordniáta a képernyőn
-- `EconioColor` — `foreColor` — A szöveg színe
-- `EconioColor` — `bgColor` — A szöveg háttérszíne
+* `char[]` — `str` — Kiírandó szöveg
+* `int` — `x` — x koordináta a képernyőn
+* `int` — `y` — y koordniáta a képernyőn
+* `EconioColor` — `foreColor` — A szöveg színe
+* `EconioColor` — `bgColor` — A szöveg háttérszíne
 
 #### `Point addPoints(Point a, Point b)`
 
 Két pont koordinátáit összeadó függvény
-**Paraméterek:**
+**Parameters:**
 
-- `Point` — `a` — Egyik koordináta
-- `Point` — `b` — Másik koordináta
+* `Point` — `a` — Egyik koordináta
+* `Point` — `b` — Másik koordináta
 
-**Visszatér:** `Point` — Koordináták összege
+**Returns:** `Point` — Koordináták összege
 
 #### `Point subPoints(Point a, Point b)`
 
 Két pont koordinátáinak különbségét kiszámoló függvény
-**Paraméterek:**
+**Parameters:**
 
-- `Point` — `a` — Egyik koordináta
-- `Point` — `b` — Másik koordniáta
+* `Point` — `a` — Egyik koordináta
+* `Point` — `b` — Másik koordniáta
 
-**Visszatér:** `Point` — Koordináták különbsége
+**Returns:** `Point` — Koordináták különbsége
 
 #### `bool comparePoints(Point a, Point b)`
 
 Két pontot hasonlít össze, hogy egyenlőek-e
-**Paraméterek:**
+**Parameters:**
 
-- `Point` — `a` — Egyik koordináta
-- `Point` — `b` — Másik koordináta
+* `Point` — `a` — Egyik koordináta
+* `Point` — `b` — Másik koordináta
 
-**Visszatér:** `bool` — Egyenlőek e a paraméterként kapott koordináták
+**Returns:** `bool` — Egyenlőek e a paraméterként kapott koordináták
 
 #### `int utf8_strlen(const char str[])`
 
 Megszámolja, hogy a kapott string hány utf8 karakterből áll, hány krakter íródik ki a képernyőre
-**Paraméterek:**
+**Parameters:**
 
-- `char[]` — `str` — Karaktertömb, string (Bemenet)
+* `char[]` — `str` — Karaktertömb, string (Bemenet)
 
-**Visszatér:** `int` — A string hossza megjelenített karakterszámban
+**Returns:** `int` — A string hossza megjelenített karakterszámban
 
 #### `int stringlenghtMax(const char str[], int max)`
 
 Megszámolja, hogy hány byte-on tárolódik a max karakterszámú string
-**Paraméterek:**
+**Parameters:**
 
-- `char[]` — `str` — Karaktertömb, string (Bemenet)
-- `int` — `max` — Megjelenítendő karakterek száma
+* `char[]` — `str` — Karaktertömb, string (Bemenet)
+* `int` — `max` — Megjelenítendő karakterek száma
 
-**Visszatér:** `int` — Megjelenítendő string max karakterű byte hossza
+**Returns:** `int` — Megjelenítendő string max karakterű byte hossza
 
 #### `bool isBlankString(const char* str)`
 
 Megnézi a függvény, hogy a string csak üres karaktereket tartalmaz-e (szóköz, \\n, \t)
-**Paraméterek:**
+**Parameters:**
 
-- `char[]` — `str` — Karaktertömb, string (Bemenet)
+* `char[]` — `str` — Karaktertömb, string (Bemenet)
 
-**Visszatér:** `bool` — Csak üres karaktereket tartalmaz-e a string
+**Returns:** `bool` — Csak üres karaktereket tartalmaz-e a string
 
 <!-- END DOC-COMMENT -->
 
@@ -683,37 +899,44 @@ Megnézi a függvény, hogy a string csak üres karaktereket tartalmaz-e (szók�
 #### `Move* move_CreateMove(Point stepfrom, Point stepTo, bool boxPushed)`
 
 Létrehoz egy Move struktúrára mutató pointert a paraméterként kapott értékekből, hogy aztán Lístába lehessen fűzni.
-**Paraméterek:**
+**Parameters:**
 
-- `Point` — `stepfrom` — A legutolsó pozíció koordinátája
-- `Point` — `stepTo` — A következő pozíció koordinátája
-- `bool` — `boxPushed` — Igaz, ha eltolt doboz; Hamis, ha csak a játékos mozdult el
+* `Point` — `stepfrom` — A legutolsó pozíció koordinátája
+* `Point` — `stepTo` — A következő pozíció koordinátája
+* `bool` — `boxPushed` — Igaz, ha eltolt doboz; Hamis, ha csak a játékos mozdult el
 
-**Visszatér:** `Move*` — Move strúktúrára mutató pointer a kapott paraméterekkel
+**Returns:** `Move*` — Move strúktúrára mutató pointer a kapott paraméterekkel
 
 #### `void move_AddMoveToList(Move *newMove, Move **moveListHead)`
 
 Beszúrja a paraméterként kapott newMove elemet a láncolt lista (moveListHead) elejére
-**Paraméterek:**
+**Parameters:**
 
-- `Move*` — `newMove` — Új elmozdulást tároló struktúrára mutató pointer
-- `Move**` — `moveListHead` — Az elmozdulásokat tároló láncolt lista (Verem/Stack)
+* `Move*` — `newMove` — Új elmozdulást tároló struktúrára mutató pointer
+* `Move**` — `moveListHead` — Az elmozdulásokat tároló láncolt lista (Verem/Stack)
 
 #### `Move move_RemoveMoveFromList(Move **moveListHead)`
 
 Eltávolítja az első elemet a láncolt listából (Veremből/Stack)
-**Paraméterek:**
+**Parameters:**
 
-- `Move**` — `moveListHead` — Az elmozdulásokat tároló láncolt lista (Verem/Stack) (Cím szerint)
+* `Move**` — `moveListHead` — Az elmozdulásokat tároló láncolt lista (Verem/Stack) (Cím szerint)
 
-**Visszatér:** `Move` — Visszaadja az eltávolított listaelem struktúráját
+**Returns:** `Move` — Visszaadja az eltávolított listaelem struktúráját
 
 #### `void move_FreeMoveList(Move **moveListHead)`
 
 Felszabadítja a az egész láncolt listának foglalt memóriát
-**Paraméterek:**
+**Parameters:**
 
-- `Move**` — `moveListHead` — Az elmozdulásokat tároló láncolt lista (Verem/Stack) (Cím szerint)
+* `Move**` — `moveListHead` — Az elmozdulásokat tároló láncolt lista (Verem/Stack) (Cím szerint)
+
+#### `void move_FreeNode(Move **moveNode)`
+
+Felszabadítja egy elem lefoglalt memóriáját a listából
+**Parameters:**
+
+* `Move**` — `moveNode` — Egy Move struktúrára mutató pointer a láncolt listából (Cím szerint)
 
 <!-- END DOC-COMMENT -->
 
