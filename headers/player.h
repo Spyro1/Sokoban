@@ -14,7 +14,7 @@
 /**
  * Beolvassa a playerDataPath-ban megadott fájlt, és elátrolja a playerListHead láncolt listában
  * @param playerListHead Player** A játékosok adatait tartalmazó láncolt lista (Cím szerint)
- * @param numOfPlayers  int* A játékosok darabszáma (Cím szerint)
+ * @param numOfPlayers int* A játékosok darabszáma (Cím szerint)
  */
 void player_ReadTxtFile(Player **playerListHead, int *numOfPlayers);
 /**
@@ -45,13 +45,6 @@ void player_FreePlayerList(Player **playerListHead);
 void player_FreePlayerNode(Player **playerNode);
 
 // == Láncolt Lista függvények ==
-/**
- * Beszúrja a játékoslistának a végére az új játékos elemet
- * @param newPlayer Player* Új játékos struktúrájára mutató pointer
- * @param playerListHead Player** A játékosok adatait tartalmazó láncolt lista (Cím szerint)
- * @param numOfPlayers int* A játékosok darabszáma (Cím szerint)
- */
-//void player_AddPlayerToEnd(Player *newPlayer, Player **playerListHead, int *numOfPlayers);
 /**
  * Beszúrja a játékoslistába au új játékost a nevének a hossza szerint növekvő sorrendben
  * @param newPlayer Player* Új játékos struktúrájára mutató pointer

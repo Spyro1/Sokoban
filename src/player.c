@@ -104,19 +104,6 @@ Player *player_MakePlayer(char name[], int numOfLevels, Statistics *statsListHea
     return uj;
 }
 
-/*void player_AddPlayerToEnd(Player *newPlayer, Player **playerListHead, int *numOfPlayers){
-    if (*playerListHead == NULL){ // Ha a lista üres, akkor a fejléc legyen az első elem
-        *playerListHead = newPlayer;
-    }
-    else{ // Különben végiglépkedünk al istán amíg NULL-nem lesz a next pointer és oda illesztjük be az új elemet
-        Player *lastNode = *playerListHead;
-        while (lastNode->next != NULL) {
-            lastNode = (Player *) lastNode->next; // Végigfut a listán
-        }
-        lastNode->next = (struct Player *) newPlayer; // Beillesztés a végére
-    }
-    (*numOfPlayers)++;
-}*/
 void player_AddPlayerInOrder(Player *newPlayer, Player **playerListHead, int *numOfPlayers){
     Player *prev = NULL;
     Player *mover = *playerListHead;

@@ -719,4 +719,5 @@ Felszabadítja a az egész láncolt listának foglalt memóriát
 
 > powershell:
 > D:\Programozas\soko>
-> & "C:\Users\Szenes Márton\node_modules\.bin\docblox2md" .\SsokobanDevDoc.md
+> & "C:\Users\Szenes Márton\node_modules\.bin\docblox2md" .\SokobanDevDoc.md
+> & "S:\Programozas\DocumentationMaker\node_modules\docblox2md" .\SokobanDevDoc.md

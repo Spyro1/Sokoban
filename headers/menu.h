@@ -34,7 +34,7 @@ static void menu_PrintNavControls();
 // = Almenü kiíró függvények =
 /**
  * Kiír a képernyére egy ablakot, amiben megkérdezi a felhasználót, hogy biztos ki akar e lépni, Igen/Nem válaszlehetőségekkel.
- * @param p A kiíráshoz legfelső középső pont a képernyőn.
+ * @param p Point A kiíráshoz legfelső középső pont a képernyőn.
  */
 static void menu_PrintExitWindow(Point p);
 /**
