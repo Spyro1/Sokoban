@@ -22,19 +22,31 @@
 
 // == JÁTÉKMENET ==
 /**
- * Ezzel kell meghívni a játékot. Inicializálja a játékhoz szükséges elemeket
- * @param player Player* Az aktuális játékos adatait tartalmazza (Cím szerint)
- * @param levelList char[][] A pályák fájlneveit tartalmazó string tömb
- * @return bool Igaz, ha a játékos teljesítette a szintet; Hamis, ha a játékos kilépett a játékból
+ * Ezzel kell meghívni a játékot. Inicializálja a játékhoz szükséges elemeket.
+ * @param player Player* Az aktuális játékos adatait tartalmazza. (Cím szerint)
+ * @param levelList char[][] A pályák fájlneveit tartalmazó string tömb.
+ * @return bool Igaz, ha a játékos teljesítette a szintet; Hamis, ha a játékos kilépett a játékból.
  */
 bool game_Init(Player *player, char **levelList);
 /**
- * Ezzel a fügvénnyel indítja el és futtatja a játékot
- * @param player Az aktuális játékos adatait tartalmazza (Cím szerint)
- * @param levelName A betöltendő pálya fájlneve
- * @return Logikai: Igaz, ha a játékos teljesítette a szintet; Hamis, ha a játékos kilépett a játékból
+ * Kiértékeli a felhasználó által lenyomott billentyőt, és megváltoztatja a játék vagy a játékosbábu helyzetét aszerint.
+ * @param map CellType** A pályát leíró 2D-s dinamikus mátrix.
+ * @param mapSize Size A pálya szélességét és magasságát leíró struktúra.
+ * @param numOfMoves int* A megtett lépések száma a szinten. (Cím szeirnt)
+ * @param player Player* Az aktuális játékos adatait tartalmazza. (Cím szerint)
+ * @param playerPosition Point* A játékos kezdő koordinátája a pályán (map-en). (Cím szerint)
+ * @param boxPositions Point* A dobozok koordinátáinak dinamikus tömbje. (Cím szerint)
+ * @param movesListHead Move** A játékos lépéseit eltároló láncolt lista. (Cím szerint)
+ * @return bool Igaz, ha újraindítja a játékos a szinten; Különben hamis
  */
-//bool game_StartGame(Player *player, char levelName[]);
+static bool game_KeyPress(CellType **map, Size mapSize, int *numOfMoves, Player *player, Point *playerPosition, Point *boxPositions, Move **movesListHead);
+/**
+ * Ez a függvény indítja el és futtatja ciklikusan a játékot.
+ * @param player Az aktuális játékos adatait tartalmazza. (Cím szerint)
+ * @param levelName A betöltendő pálya fájlneve.
+ * @return Logikai: Igaz, ha a játékos teljesítette a szintet; Hamis, ha a játékos kilépett a játékból.
+ */
+static bool game_StartGame(Player *player, char levelName[]);
 /**
  * Ellenőrzi, hogy a játékos teljesítette-e a szintet, vagyis, hogy minden doboz a helyére került-e
  * @param map A pályát leíró 2D-s dinamikus mátrix
@@ -89,7 +101,7 @@ static CellType game_ConvertInputCharToCellType(char character);
  * @param map A pályát leíró 2D-s dinamikus mátrix
  * @param mapSize A pálya szélességét és magasságát leíró struktúra
  */
-static void game_PrintSimpleMap(CellType **map, Size mapSize);
+//static void game_PrintSimpleMap(CellType **map, Size mapSize);
 /**
  * Kiiratja a pályát a képernyőre színesen
  * @param map A pályát leíró 2D-s dinamikus mátrix
@@ -108,7 +120,7 @@ static void game_PrintPosition(CellType **map, Point pos);
  * @param numOfSteps A szinten megtett lépések száma
  * @param level Az aktuális szint száma
  */
- static void game_PrintStatsAndNav(Size mapSize, int numOfSteps, int level);
+static void game_PrintStatsAndNav(Size mapSize, int numOfSteps, int level);
 
 // == MEMÓRIAFOGLALÁS ÉS FELSZABADÍTÁS ==
 /**

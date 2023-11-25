@@ -60,7 +60,7 @@ void player_WriteTxtFile(Player *playerListHead){
         return;
     }
     // irandó Sor létrehozása
-    char printer[maxLineLenght-1];
+    char printer[maxLineLenght];
     for(Player *mover = playerListHead; mover != NULL; mover = (Player *) mover->next){ // Listán végigjáró ciklus
         sprintf(printer,"%s;%d", mover->name, mover->numOfCompletedLevels);
 //        char helper[maxLineLenght+1];

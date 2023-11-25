@@ -345,7 +345,7 @@ static void game_ReadXSBFile(char filename[], CellType ***map, Size *mapSize, Po
 }
 
 // = Játék függvényei =
-static bool game_KeyPress(CellType **map, Size mapSize, int *numOfMoves, Player *player, Point *playerPosition, Point *boxPositions, Move *PlayerMovesListHead){
+static bool game_KeyPress(CellType **map, Size mapSize, int *numOfMoves, Player *player, Point *playerPosition, Point *boxPositions, Move **movesListHead){
     switch (key){
         case KEY_ESCAPE:
         case KEY_BACKSPACE:
@@ -368,13 +368,13 @@ static bool game_KeyPress(CellType **map, Size mapSize, int *numOfMoves, Player 
             }
             break;
         case KEY_UP:
-            if (game_MovePlayer(&map, playerPosition, &boxPositions, up, &PlayerMovesListHead)){
+            if (game_MovePlayer(&map, playerPosition, &boxPositions, up, movesListHead)){
                 (*numOfMoves)++;
                 game_PrintStatsAndNav(mapSize, *numOfMoves, player->numOfCompletedLevels); // PRINT STATS
             }
             break;
         case KEY_DOWN:
-            if (game_MovePlayer(&map, playerPosition, &boxPositions, down, &PlayerMovesListHead)){
+            if (game_MovePlayer(&map, playerPosition, &boxPositions, down, movesListHead)){
                 (*numOfMoves)++;
                 game_PrintStatsAndNav(mapSize, *numOfMoves, player->numOfCompletedLevels); // PRINT STATS
             }
@@ -382,7 +382,7 @@ static bool game_KeyPress(CellType **map, Size mapSize, int *numOfMoves, Player 
         case KEY_LEFT:
             if (exitMenu) option = 0;
             else{
-                if (game_MovePlayer(&map, playerPosition, &boxPositions, left, &PlayerMovesListHead)){
+                if (game_MovePlayer(&map, playerPosition, &boxPositions, left, movesListHead)){
                     (*numOfMoves)++;
                     game_PrintStatsAndNav(mapSize, *numOfMoves, player->numOfCompletedLevels); // PRINT STATS
                 }
@@ -391,7 +391,7 @@ static bool game_KeyPress(CellType **map, Size mapSize, int *numOfMoves, Player 
         case KEY_RIGHT:
             if (exitMenu) option = 1;
             else {
-                if (game_MovePlayer(&map, playerPosition, &boxPositions, right, &PlayerMovesListHead)){
+                if (game_MovePlayer(&map, playerPosition, &boxPositions, right, movesListHead)){
                     (*numOfMoves)++;
                     game_PrintStatsAndNav(mapSize, *numOfMoves, player->numOfCompletedLevels); // PRINT STATS
                 }
@@ -400,7 +400,7 @@ static bool game_KeyPress(CellType **map, Size mapSize, int *numOfMoves, Player 
         case 'V':
         case 'v':
             // Visszalépés
-            if (game_UndoMove(&map, playerPosition, &boxPositions, &PlayerMovesListHead)){
+            if (game_UndoMove(&map, playerPosition, &boxPositions, movesListHead)){
                 (*numOfMoves)++;
                 game_PrintStatsAndNav(mapSize, *numOfMoves, player->numOfCompletedLevels); // PRINT STATS
             }
@@ -408,7 +408,7 @@ static bool game_KeyPress(CellType **map, Size mapSize, int *numOfMoves, Player 
         case 'R':
         case 'r':
             // Játék során használt memóriaterületek felszababadítása
-            move_FreeMoveList(&PlayerMovesListHead); // Elmozdulásokat regisztráló láncoltl ista felszabadítása
+            move_FreeMoveList(movesListHead); // Elmozdulásokat regisztráló láncoltl ista felszabadítása
             game_FreeAllocatedMemoryFromMap(&map); // Mátrix felszabadítása
             game_FreeDynamicArray(&boxPositions); // Doboz tömb felszabadítása
             // Pálya resetelése
@@ -431,7 +431,6 @@ static bool game_StartGame(Player *player, char levelName[]){
     // Játék inicializálása
     Point playerPosition;
     Point *boxPositions = NULL;
-    Point *targetPositions = NULL;
     int boxCount = 0;
     exitMenu = false;
     runGame = true;
@@ -443,7 +442,7 @@ static bool game_StartGame(Player *player, char levelName[]){
     game_PrintStatsAndNav(mapSize, 0, player->numOfCompletedLevels);
 
     // Lépéseket tároló lista
-    Move *PlayerMovesListHead = NULL;
+    Move *playerMovesListHead = NULL;
     int numOfMoves = 0;
     // Játék Ciklusa
     while (runGame && !game_CheckWin(map, mapSize)){
@@ -451,7 +450,7 @@ static bool game_StartGame(Player *player, char levelName[]){
         key = econio_getch();
         p = (Point) {center, 9};
         // Lenyomott billentyű kiértékelése
-        if (game_KeyPress(map, mapSize, &numOfMoves, player, &playerPosition, boxPositions,PlayerMovesListHead)){
+        if (game_KeyPress(map, mapSize, &numOfMoves, player, &playerPosition, boxPositions, &playerMovesListHead)){
             return true;
         }
 
@@ -461,10 +460,9 @@ static bool game_StartGame(Player *player, char levelName[]){
         }
     }
     // Játék során használt memóriaterületek felszababadítása
-    move_FreeMoveList(&PlayerMovesListHead);     // Elmozdulásokat regisztráló láncoltl ista felszabadítása
+    move_FreeMoveList(&playerMovesListHead);     // Elmozdulásokat regisztráló láncoltl ista felszabadítása
     game_FreeAllocatedMemoryFromMap(&map);           // Mátrix felszabadítása
     game_FreeDynamicArray(&boxPositions);        // Doboz tömb felszabadítása
-    game_FreeDynamicArray(&targetPositions);     // Célmező tömb felszabadítása
 
     if (runGame) { // A játékos teljesítete a szintet, mert a game_CheckWin feltétel léptette kia ciklusból
         if (player->numOfCompletedLevels > 0)

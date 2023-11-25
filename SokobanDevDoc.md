@@ -10,10 +10,27 @@
   - [A menü](#a-menü)
     - [Menü állapotai](#menü-állapotai-state)
     - [Menü működése](#menü-működése-mainscreen)
-    - [Játékos struktúra](#játékos-player-struktúra)
-    - [Szint statisztika](#szint-statisztika-statistics-struktúra)
+    - [Játékos (Player) struktúra](#játékos-player-struktúra)
+    - [Szint (Statistics) statisztika](#szint-statisztika-statistics-struktúra)
   - [A játék](#a-játék)
     - [Játékmenet működése](#játékmenet-működése)
+    - [A pálya](#a-pálya)
+    - [Cellatípusok (CellType)](#cellatípusok-celltype)
+    - [.XSB fájl](#xsb-fájl)
+    - [Méret (Size)](#méret-size)
+    - [Pozíció (Point)](#pozíció-point)
+    - [Lépés (Move)](#lépés-move)
+  - [Segédkönyvtárak](#segédkönyvtárak)
+    - [Debugmalloc](#debugmalloc)
+    - [Econio](#econio)
+  - [Függvénydokumentáció]()
+    - [Menu.h](#menuh)
+    - [Player.h](#playerh)
+    - [Statistics.h](#statisticsh)
+    - [Game.h](#gameh)
+    - [Level.h](#levelh)
+    - [Lib.h](#libh)
+    - [Move.h](#moveh)
 
 ## Program felépítése
 
@@ -21,7 +38,7 @@ A program két fő részből áll, a [menürendszerbő](#a-menü) (menu.c) és a
 
 ### A menü
 
-A program indítása után a `main` beállítja a karaterkódolást, és meghívja a [`void menu_MainScreen() {...}`](#menü-működése-mainscreen)-t. Ez az eljárás futtatja ciklikusan a menüt, amíg ki nem lép a felhasználó a programból.
+A program indítása után a `main` beállítja a karaterkódolást, és meghívja a [`void menu_MainScreen() {...}`](#void-menumainscreen)-t. Ez az eljárás futtatja ciklikusan a menüt, amíg ki nem lép a felhasználó a programból.
 A menü állapotait egy [`enum State {...}`](#menü-állapotai-state)-ben tárolja a program, mivel véges számú állapota lehet a menünek, és ezáltal könnyű azonosítani az egyes menüpontokat.
 
 #### Menü állapotai (State)
@@ -81,10 +98,10 @@ Eljárás vége
 ##### Játékos (Player) struktúra
 
 A fő adatstruktúra a menüben a `Player` struktúra. Ebben tárolja a program az egyes játékosok adatait: név, szint, statisztika, következő játékosra mutató pointer.  
-A `name` mező a játékos nevét tárolja. Hossza a `datatypes.h` fájlban található makró szerint határozott meg (`#define nameLenght 20`). Ez azt jelenti, hogy a képernyőn 20 db karakter fog maximum megjelenni. Mivel ékezetes karaktereket is tartalmazhat a név (á, é, í, ó, ö, ő, ú, ü, ű), amik 2 byte-on tárolódnak, ezért a 2-szeresét vesszük és +1 byte-ot a lezáró nullának, így jön ki a hossza.  
-A `numOfCompletedLevels` mező a játékos szintjét tárolja, hogy hágy szintet teljesített már.  
-A `*levelStats` egy [`Statistics`](#szint-statisztika-statistics-struktúra) típusú láncolt lista első elemére mutató pointer. Ebben tárolja el a program a játékos által megtett lépések számát az egyes szinteken.  
-A `*next` a következő `Player` struktúrára mutató pointer a láncolt listában.
+- `name`: A játékos nevét tárolja. Hossza a `datatypes.h` fájlban található makró szerint határozott meg (`#define nameLenght 20`). Ez azt jelenti, hogy a képernyőn 20 db karakter fog maximum megjelenni. Mivel ékezetes karaktereket is tartalmazhat a név (á, é, í, ó, ö, ő, ú, ü, ű), amik 2 byte-on tárolódnak, ezért a 2-szeresét vesszük és +1 byte-ot a lezáró nullának, így jön ki a hossza.  
+- `numOfCompletedLevels`: A játékos szintjét tárolja, hogy hágy szintet teljesített már.  
+- `*levelStats`: Egy [`Statistics`](#szint-statisztika-statistics-struktúra) típusú láncolt lista első elemére mutató pointer. Ebben tárolja el a program a játékos által megtett lépések számát az egyes szinteken.  
+- `*next`: A következő `Player` struktúrára mutató pointer a láncolt listában.
 
 ```c
 typedef struct player {
@@ -98,8 +115,8 @@ typedef struct player {
 ##### Szint statisztika (Statistics) struktúra
 
 A játékosok dicsőséglistájához elengedhetetlen számon tartani, hogy mely játékos, hány lépéssel tudta teljesíteni az egyes szeinteket. Ezt a tulajdonságot egy `Statistics` struktúrában tárolja a program.  
-A megtett lépések számát egy egész számként tárolja a `stepCount` mezőben.  
-A `*next` a következő `Statistics` struktúrára mutató pointer a láncolt listában.
+- `stepCount`: A megtett lépések száma a szinten  
+- `*next`: A következő `Statistics` struktúrára mutató pointer a láncolt listában.
 
 ```c
 typedef struct statistic{
@@ -110,7 +127,7 @@ typedef struct statistic{
 
 ### A játék
 
-A játékot a [`bool game_Init()`]() fügvénnyel lehet meghívni a `game.c` fájlon kívülről. Ez hívja meg benne a `bool game_StartGame()` függvényt, ami a játékot elindítja és futtatja ciklikusan. Erre a két függvényre azért van szükség, hogy a program moduláris lehessen. Tehát ha például más játékot szeretnénk leprogramozni, amiben hasonlóan több játékos lehet és a szintek egymás után következnek, akkor ugyanazokkal a paraméterekkel meg lehet hívni a `game_Init()` függvényt, ami majd a másik játék függvényeit hívja meg.
+A játékot a [`bool game_Init()`](#bool-gameinitplayer-player-char-levellist) fügvénnyel lehet meghívni a `game.c` fájlon kívülről. Ez hívja meg benne a `bool game_StartGame()` függvényt, ami a játékot elindítja és futtatja ciklikusan. Erre a két függvényre azért van szükség, hogy a program moduláris lehessen. Tehát ha például más játékot szeretnénk leprogramozni, amiben hasonlóan több játékos lehet és a szintek egymás után következnek, akkor ugyanazokkal a paraméterekkel meg lehet hívni a `game_Init()` függvényt, ami majd a másik játék függvényeit hívja meg.
 
 #### Játékmenet működése
 
@@ -150,7 +167,7 @@ Függvény vége
 
 #### A pálya
 
-A játékban a pályát, vagyis az adott szint mezőinek elrendezését a program a `levels` mappából olvassa be. Minden pálya külön [`.xsb` fájlban]() van eltárolva. Így a `levels` mappához tetszés szerint lehet pályákat hozzáadni és elvenni. Fontos megjegyezni, hogy a program a pályákat fájlnevek szerint 'abc' rendben fogja beolvasni és eltárolni. Tehát fájlnév szerint növekvő sorrendbe rendezve fognak következni egymás után a szintek. Így könnyő besorolni az egyes szinteket nehézségük szerint.  
+A játékban a pályát, vagyis az adott szint mezőinek elrendezését a program a `levels` mappából olvassa be. Minden pálya külön [`.xsb` fájlban](#xsb-fájl) van eltárolva. Így a `levels` mappához tetszés szerint lehet pályákat hozzáadni és elvenni. Fontos megjegyezni, hogy a program a pályákat fájlnevek szerint 'abc' rendben fogja beolvasni és eltárolni. Tehát fájlnév szerint növekvő sorrendben fognak következni egymás után a szintek. Így könnyű besorolni az egyes szinteket nehézségük szerint.  
 A pályákat két fő változó írja le:
 
 ```c
@@ -160,11 +177,12 @@ Size mapSize;
 
 A `**map` egy kétdimenziós dinamikus tömb (mátrix), aminek minden eleme a pályán egy-egy mező, amiben [`CellType`](#cellatípusok-celltype) típussal kódolja a program a mező értékeit.
 A `mapSize` egy [`Size`](#méret-size) struktúrában tárolja el a pálya méreteit. 
+
 #### Cellatípusok (CellType)
 
 Egy pálya beolvasásakor az `.xsb` fájlt dekódolja a program, és a dekódolt értékeket a `**map`-ben tárolja el. Az egyes cellák a következő értékeket vehetik fel:  
 - `null`: Érvénytelen cellatípus, a fájl beolvasáskor rossz bemeneti karakter esetén.
-- `EMPTY`: Üres mező, ami vagy a játéktéren kívül van, vagy a falakon belül, amin tud mozogni a játékos bábuja.
+- `EMPTY`: Üres cella, ami vagy a játéktéren kívül van, vagy a falakon belül, amin tud mozogni a játékos bábuja.
 - `WALL`: A fal a játéktér határoló karatere. Erre nem léphet a játékos, nem tudja elmozdítani
 - `TARGET`: A dobozok célmezője. Ezekkel jelölt cellákra kell a játékosnak tolnia a dobozokat. Erre léphet a játékos, de nem tudja elmozdítani. 
 - `PLAYER`: A játékbábu, ha üres mezőn áll.
@@ -183,11 +201,39 @@ typedef enum celltype {
     BOX,
     BOXONTARGET
 } CellType;
+
 ```
+
+#### .XSB fájl
+
+A szokoban játékoknál a legtöbbet használt pályaleíró kiterjesztés a `.xsb` fájlformátum. Ez egy egyszerű szöveges dokumentum igazából, amiben minden karakter egy-egy cellát jelöl a pályán. A program ezt olvassa be és alakítja át [`CellType`](#cellatípusok-celltype) típusra a kezelhetőség miatt.  
+Az `.xsb` fájl által tartalmazható karakterek:  
+
+| Karakter | Magyarázat            |     `CellType`     |
+|:--------:|-----------------------|:------------------:|
+| (Space)  | Üres cella            |      `TARGET`      |
+|   `#`    | Fal                   |       `WALL`       |
+|   `.`    | Célmező               |      `TARGET`      |
+|   `@`    | Játékos               |      `PLAYER`      |
+|   `+`    | Játékos egy célmezőn  |  `PLAYERONTARGET`  |
+|   `$`    | Doboz                 |       `BOX`        |
+|   `*`    | Doboz egy célmezőn    |   `BOXONTARGET`    |
+
+**Példa.xsb**
+```
+###
+#.###
+#*$ #
+# @ #
+#####
+```
+
 #### Méret (Size)
 
 A pálya beolvasásnál először meghatározza a program, hogy mekkora pályára lesz szüksége a cellák eltárolásához. Így a pályának a szélessége az egyes sorokból a leghosszabb karakterszámú lesz, a magassága pedig a beolvasott nem üres sorok száma.  
-Ezt a `mapSzize` változóban tárolja a program
+Ezt a `mapSize` változóban tárolja a program:
+- `width`: A pálya teljes szélessége
+- `height`: A pálya teljes magassága
 ```c
 typedef struct size{
     int width;
@@ -195,34 +241,33 @@ typedef struct size{
 } Size;
 ```
 
-### Struktúrák
-
 #### Pozíció (Point)
 
+A `Point` struktúra egy kétdimenziós térben egy pont `x` és `y` koordinátáit tárolja el. Ezt a struktúrát sok helyen használja a program. A képernyőre való kiíráshoz, a dobozok  (`*boxPositions`), a játékos poziciójának (`playerPosition`) vagy a lépések koordinátájának eltárolásához (`*playerMovesListHead`) is ez ad egyszerű kezelhetőséget.
 ```c
-/** Egy koordinátát eltároló struktúra, mely láncolt listába fűzhető */
 typedef struct point{
-    int x, y;   // Koordináták
+    int x, y;
 } Point;
 ```
 
-
-
 #### Lépés (Move)
 
+A játékos minden egyes lépését egy `Move` struktúrában tárolja el a program, és ezeket egy láncolt listába teszi ami veremként működik. Ez a lista a `Move *playerMovesListHead`. Ez azért szükséges, hogy lehessen visszavonni lépéseket. Ilyenkor a verem tetején lévő lépést visszacsinálja a program és törli azt a listából.  
+Egy lépést a következő tulajdonságok határoznak meg:
+- `from`: A játékosbábu eredeti koordinátája, ahonnan ellép a játékos.
+- `to`: A lépés irányában a követkő cella koordinátája, ahova lép a játékos.
+- `boxPushed`: Igaz, ha a lépés során eltolt egy dobozt a játékos, hamis, ha nem tolt el dobozt. Erre azért van szükség, hogy a lépés visszavonásakor tudja a program, hogy egy dobozt is kell-e visszamozdítani az előző pozíciójára vagy sem.
+- `*next`: A következő `Move` struktútára mutató pointer a veremben.
 ```c
-/* A játékos egy lépését tároló struktúra, mely láncolt listába fűzhető */
 typedef struct move{
-    Point from;         // A játékos által elhagyott mező koordinátája
-    Point to;           // A játékos által meglépett mező koordinátája
-    bool boxPushed;     // Logikai, eltolt-e a játékos a lépés során dobozt
-    struct Move *next;  // a lépéseket tároló láncolt listában a következő elemre mutató pointer
+    Point from;
+    Point to;
+    bool boxPushed;
+    struct Move *next;
 } Move;
 ```
 
-## Kód szerekzete
-
-### Függvények rendszere
+## Függvények rendszere
 
 ```mermaid
 stateDiagram-v2
@@ -232,18 +277,24 @@ stateDiagram-v2
     state winGame <<choice>>
     state keyDown <<choice>>
     state collector <<join>>
-    [*]--> menu.c 
-    menu.c --> game.c
-    menu.c --> [*]
-    state menu.c{
+    state back <<join>>
+    menu : menu.c
+    game : game.c
+    [*] --> menu
+    menu --> [*]
+    
+    state menu{
         direction TB
         [*] --> menu_MainScreen
         menu_MainScreen --> menu_KeyPress
         menu_KeyPress --> stateChange : key → state
-        stateChange --> game.c : state == game
+        stateChange --> game : state == game
         stateChange --> menu_EvaluateState : state != game
-        menu_EvaluateState --> menu_MainScreen
-        menu_EvaluateState --> [*]
+        game --> back
+        menu_EvaluateState --> back
+        back --> menu_MainScreen : runMenu == True
+        back --> [*] : runMenu == False
+%%        menu_EvaluateState --> [*]
         
       
         state menu_EvaluateState{
@@ -257,7 +308,7 @@ stateDiagram-v2
             switchState --> menu_PrintRankList : rankList
             menu_PrintPlayerSubMenu --> menu_PrintNewPlayerSubMenu : editPlayer
             switchState --> menu_PrintWinGame : winGame
-            menu_PrintExitWindow --> [*]
+            menu_PrintExitWindow --> [*] : option → runMenu
             menu_PrintMainMenu --> [*]
             menu_PrintNewPlayerSubMenu --> [*]
             menu_PrintPlayerSubMenu --> [*]
@@ -267,15 +318,15 @@ stateDiagram-v2
         }
     }
     
-    state game.c{
+    state game{
         direction TB
         [*] --> game_Init
         game_Init --> game_StartGame
         game_StartGame --> game_ReadXSBFile
         game_ReadXSBFile --> game_CheckWin
         game_CheckWin --> winGame
-        winGame --> game_KeyPress : False
         winGame --> [*] : True
+        winGame --> game_KeyPress : False
         game_KeyPress --> keyDown : key → direction
         keyDown --> game_MovePlayer : key == Cursor
         keyDown --> game_UndoMove : key == V
@@ -284,15 +335,28 @@ stateDiagram-v2
         game_MovePlayer --> collector : direction → move
         game_UndoMove --> collector
         collector --> game_CheckWin
-        
     }
+    
    
 
 ```
 
-## Kód részeltes dokumentációja
+## Segédkönyvtárak
 
-## Algoritmusok - Függvénydokumentáció
+### Debugmalloc
+Készítők: _Czirkos Zoltán_, _Szekeres Dániel_ ·  2021.08.24.
+
+A Debugmalloc egy varázs-malloc(), amely képes kilistázni a felszabadítatlan területeket, és ezzel megkönnyíti a hibakeresést. Bizonyos keretek között a túlindexelést is tudja ellenőrizni.  
+
+Forrás: [INFOC - Debugmalloc, memóriakezelés](https://infoc.eet.bme.hu/debugmalloc/#5)
+### Econio
+Készítő: _Czirkos Zoltán_ ·  2022.09.21.
+
+A nagy házi feladatban használható, szöveges és grafikus megjelenítést segítő függvénykönyvtárak.
+
+Forrás: [INFOC - Szöveges és grafikus megjelenítés](https://infoc.eet.bme.hu/megjelenites/)
+
+## Függvénydokumentáció
 
 ---
 
@@ -303,6 +367,136 @@ stateDiagram-v2
 #### `void menu_MainScreen()`
 
 A főmenüt futtató függvény. Egyszer hivandó meg a mainben
+
+<!-- END DOC-COMMENT -->
+
+---
+
+### Player.h
+
+<!-- BEGIN DOC-COMMENT H4 headers/player.h -->
+
+#### `void player_ReadTxtFile(Player **playerListHead, int *numOfPlayers)`
+
+Beolvassa a playerDataPath-ban megadott fájlt, és elátrolja a playerListHead láncolt listában
+**Paraméterek:**
+
+- `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista (Cím szerint)
+- `int*` — `numOfPlayers` — A játékosok darabszáma (Cím szerint)
+
+#### `void player_WriteTxtFile(Player *playerListHead, int numOfPlayers)`
+
+Kiírja fájlba a playeListHead-ben tárolt játékosok adatait: név;szintek;lépészámok..
+**Paraméterek:**
+
+- `Player*` — `playerListHead` — sA játékosok adatait tartalmazó láncolt lista (Cím szerint)
+- `int` — `numOfPlayers` — A játékosok darabszáma (Cím szerint)
+
+#### `Player *player_MakePlayer(char name[], int numOfLevels, Statistics *statsListHead)`
+
+Létrehoz egy Player struktúrára mutató pointert a paraméterként kapott értékekből, hogy aztán Lístába lehessen fűzni.
+**Paraméterek:**
+
+- `char[]` — `name` — A játékos neve (max 20 karakter)
+- `int` — `numOfLevels` — A játékos által teljesített szintek száma
+- `Statistics` — `statsListHead` — A játékos lépésstatisztikájának láncolt listája
+
+**Visszatér:** `Player*` — Player struktúrára mutató pointer a kapott adatokkal
+
+#### `void player_FreePlayerList(Player **playerListHead)`
+
+Felszabadítja a az egész láncolt listának foglalt memóriát
+**Paraméterek:**
+
+- `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista (Cím szerint)
+
+#### `static void player_FreePlayerNode(Player **playerNode)`
+
+Felszabadítja egy elem lefoglalt memóriáját a listából
+**Paraméterek:**
+
+- `Player**` — `playerNode` — Egy Player struktúrára mutató pointer a láncolt listából (Cím szerint)
+
+#### `void player_AddPlayerToEnd(Player *newPlayer, Player **playerListHead, int *numOfPlayers)`
+
+Beszúrja a játékoslistának a végére az új játékos elemet
+**Paraméterek:**
+
+- `Player*` — `newPlayer` — Új játékos struktúrájára mutató pointer
+- `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista (Cím szerint)
+- `int*` — `numOfPlayers` — A játékosok darabszáma (Cím szerint)
+
+#### `void player_AddPlayerInOrder(Player *newPlayer, Player **playerListHead, int *numOfPlayers)`
+
+Beszúrja a játékoslistába au új játékost a nevének a hossza szerint növekvő sorrendben
+**Paraméterek:**
+
+- `Player*` — `newPlayer` — Új játékos struktúrájára mutató pointer
+- `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista (Cím szerint)
+- `int*` — `numOfPlayers` — A játékosok darabszáma (Cím szerint)
+
+#### `bool player_RemovePlayer(Player *removablePlayer, Player **playerListHead, int *numOfPlayers)`
+
+Törli a paramterként kapott játékost a listából
+**Paraméterek:**
+
+- `Player*` — `removablePlayer` — A törlendő játékos struktúrájára mutató pointer
+- `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista (Cím szerint)
+- `int*` — `numOfPlayers` — A játékosok darabszáma (Cím szerint)
+
+**Visszatér:** `bool` — Igaz, ha sikeres a törlés a listából; Hamis, ha nem sikerült törölni a játékost
+
+#### `Player* player_GetSelectedPlayer(Player *playerListHead, int selectedPlayer)`
+
+Megkeresi a listában a selectedPlayer-edik elemet
+**Paraméterek:**
+
+- `Player*` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista
+- `int` — `selectedPlayer` — A játékos sorszáma / indexe a listában
+
+**Visszatér:** `Player*` — A keresett játékos struktúrájára mutató pointer, ha megtalálta, különben NULL pointer
+
+#### `int player_GetIndexOfPlayer(Player *playerListHead, char name[])`
+
+Megkeresi a listában a játékos nevét, és visszaadja a sorszámát / indexét a listában
+**Paraméterek:**
+
+- `Player*` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista
+- `char[]` — `name` — A keresett játékos neve
+
+**Visszatér:** `int` — A keresett játékos indexe, ha megtalálta, különben -1
+
+#### `void player_PrintPlayerList(Player *playerList, int selectedPlayerIndex, Point p)`
+
+Kiírja a képernyőre a játékoslistát (nevüket és szintjüket) egymás alá, és kiemeli az aktuálisan kiválasztott játékost
+**Paraméterek:**
+
+- `Player*` — `playerList` — A játékosok adatait tartalmazó láncolt lista
+- `int` — `selectedPlayerIndex` — Az aktuálisan kiválasztott játékos sorszáma / indexe
+- `Point` — `p` — A kiíráshoz legfelső középső pont a képernyőn
+
+<!-- END DOC-COMMENT -->
+
+---
+
+### Statistics.h
+
+<!-- BEGIN DOC-COMMENT H4 headers/statistics.h -->
+
+#### `void stats_AddLevelStatistics(int stepCount, Statistics **statsListHead)`
+
+Beszúrja a paraméterként kapott stepCount értéket a statsListHead láncolt lista végére
+**Paraméterek:**
+
+- `int` — `stepCount` — A szinten megtett lépések száma
+- `Statistics**` — `statsListHead` — A lépések számát tároló láncolt lista (Cím szerint)
+
+#### `void stats_FreeStatisticsList(Statistics **statsListHead)`
+
+Felszabadítja a az egész láncolt listának foglalt memóriát
+**Paraméterek:**
+
+- `Statistics**` — `statsListHead` — A lépések számát tároló láncolt lista (Cím szerint)
 
 <!-- END DOC-COMMENT -->
 
@@ -477,165 +671,6 @@ Megnézi a függvény, hogy a string csak üres karaktereket tartalmaz-e (szók�
 - `char[]` — `str` — Karaktertömb, string (Bemenet)
 
 **Visszatér:** `bool` — Csak üres karaktereket tartalmaz-e a string
-
-<!-- END DOC-COMMENT -->
-
----
-
-<!--### Datatypes.h-->
-
-<!-- BEGIN DOC-COMMENT H4 headers/datatypes.h -->
-<!--
-#### `typedef enum celltype`
-
-A pálya egyes mezőinek lehetséges értékei
-
-#### `typedef enum State`
-
-A menü lehetséges állapotértékei
-
-#### `typedef struct point`
-
-Egy koordinátát eltároló struktúra, mely láncolt listába fűzhető
-
-#### `int x, y`
-
-Koordinátái
-
-#### `struct Point *next`
-
-< A következő pontra mutató pointer a láncolt listában
--->
-
-<!-- END DOC-COMMENT -->
-
----
-
-### Player.h
-
-<!-- BEGIN DOC-COMMENT H4 headers/player.h -->
-
-#### `void player_ReadTxtFile(Player **playerListHead, int *numOfPlayers)`
-
-Beolvassa a playerDataPath-ban megadott fájlt, és elátrolja a playerListHead láncolt listában
-**Paraméterek:**
-
-- `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista (Cím szerint)
-- `int*` — `numOfPlayers` — A játékosok darabszáma (Cím szerint)
-
-#### `void player_WriteTxtFile(Player *playerListHead, int numOfPlayers)`
-
-Kiírja fájlba a playeListHead-ben tárolt játékosok adatait: név;szintek;lépészámok..
-**Paraméterek:**
-
-- `Player*` — `playerListHead` — sA játékosok adatait tartalmazó láncolt lista (Cím szerint)
-- `int` — `numOfPlayers` — A játékosok darabszáma (Cím szerint)
-
-#### `Player *player_MakePlayer(char name[], int numOfLevels, Statistics *statsListHead)`
-
-Létrehoz egy Player struktúrára mutató pointert a paraméterként kapott értékekből, hogy aztán Lístába lehessen fűzni.
-**Paraméterek:**
-
-- `char[]` — `name` — A játékos neve (max 20 karakter)
-- `int` — `numOfLevels` — A játékos által teljesített szintek száma
-- `Statistics` — `statsListHead` — A játékos lépésstatisztikájának láncolt listája
-
-**Visszatér:** `Player*` — Player struktúrára mutató pointer a kapott adatokkal
-
-#### `void player_FreePlayerList(Player **playerListHead)`
-
-Felszabadítja a az egész láncolt listának foglalt memóriát
-**Paraméterek:**
-
-- `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista (Cím szerint)
-
-#### `static void player_FreePlayerNode(Player **playerNode)`
-
-Felszabadítja egy elem lefoglalt memóriáját a listából
-**Paraméterek:**
-
-- `Player**` — `playerNode` — Egy Player struktúrára mutató pointer a láncolt listából (Cím szerint)
-
-#### `void player_AddPlayerToEnd(Player *newPlayer, Player **playerListHead, int *numOfPlayers)`
-
-Beszúrja a játékoslistának a végére az új játékos elemet
-**Paraméterek:**
-
-- `Player*` — `newPlayer` — Új játékos struktúrájára mutató pointer
-- `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista (Cím szerint)
-- `int*` — `numOfPlayers` — A játékosok darabszáma (Cím szerint)
-
-#### `void player_AddPlayerInOrder(Player *newPlayer, Player **playerListHead, int *numOfPlayers)`
-
-Beszúrja a játékoslistába au új játékost a nevének a hossza szerint növekvő sorrendben
-**Paraméterek:**
-
-- `Player*` — `newPlayer` — Új játékos struktúrájára mutató pointer
-- `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista (Cím szerint)
-- `int*` — `numOfPlayers` — A játékosok darabszáma (Cím szerint)
-
-#### `bool player_RemovePlayer(Player *removablePlayer, Player **playerListHead, int *numOfPlayers)`
-
-Törli a paramterként kapott játékost a listából
-**Paraméterek:**
-
-- `Player*` — `removablePlayer` — A törlendő játékos struktúrájára mutató pointer
-- `Player**` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista (Cím szerint)
-- `int*` — `numOfPlayers` — A játékosok darabszáma (Cím szerint)
-
-**Visszatér:** `bool` — Igaz, ha sikeres a törlés a listából; Hamis, ha nem sikerült törölni a játékost
-
-#### `Player* player_GetSelectedPlayer(Player *playerListHead, int selectedPlayer)`
-
-Megkeresi a listában a selectedPlayer-edik elemet
-**Paraméterek:**
-
-- `Player*` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista
-- `int` — `selectedPlayer` — A játékos sorszáma / indexe a listában
-
-**Visszatér:** `Player*` — A keresett játékos struktúrájára mutató pointer, ha megtalálta, különben NULL pointer
-
-#### `int player_GetIndexOfPlayer(Player *playerListHead, char name[])`
-
-Megkeresi a listában a játékos nevét, és visszaadja a sorszámát / indexét a listában
-**Paraméterek:**
-
-- `Player*` — `playerListHead` — A játékosok adatait tartalmazó láncolt lista
-- `char[]` — `name` — A keresett játékos neve
-
-**Visszatér:** `int` — A keresett játékos indexe, ha megtalálta, különben -1
-
-#### `void player_PrintPlayerList(Player *playerList, int selectedPlayerIndex, Point p)`
-
-Kiírja a képernyőre a játékoslistát (nevüket és szintjüket) egymás alá, és kiemeli az aktuálisan kiválasztott játékost
-**Paraméterek:**
-
-- `Player*` — `playerList` — A játékosok adatait tartalmazó láncolt lista
-- `int` — `selectedPlayerIndex` — Az aktuálisan kiválasztott játékos sorszáma / indexe
-- `Point` — `p` — A kiíráshoz legfelső középső pont a képernyőn
-
-<!-- END DOC-COMMENT -->
-
-### Statistics.h
-
----
-
-<!-- BEGIN DOC-COMMENT H4 headers/statistics.h -->
-
-#### `void stats_AddLevelStatistics(int stepCount, Statistics **statsListHead)`
-
-Beszúrja a paraméterként kapott stepCount értéket a statsListHead láncolt lista végére
-**Paraméterek:**
-
-- `int` — `stepCount` — A szinten megtett lépések száma
-- `Statistics**` — `statsListHead` — A lépések számát tároló láncolt lista (Cím szerint)
-
-#### `void stats_FreeStatisticsList(Statistics **statsListHead)`
-
-Felszabadítja a az egész láncolt listának foglalt memóriát
-**Paraméterek:**
-
-- `Statistics**` — `statsListHead` — A lépések számát tároló láncolt lista (Cím szerint)
 
 <!-- END DOC-COMMENT -->
 
