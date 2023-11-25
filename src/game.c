@@ -351,6 +351,13 @@ static bool game_KeyPress(CellType **map, Size mapSize, int *numOfMoves, Player 
         case KEY_BACKSPACE:
             exitMenu = !exitMenu; // Kilépés
             displayFirst = true;
+            if (!exitMenu)
+            {
+                displayFirst = true;
+                lib_ClearScrBellow();
+                game_PrintStyledMap(map, mapSize); // Pálya kiirítása
+                game_PrintStatsAndNav(mapSize, 0, player->numOfCompletedLevels);
+            }
             break;
         case KEY_ENTER:
             if (exitMenu){

@@ -191,7 +191,7 @@ static void menu_PrintNewPlayerSubMenu(Player **playerListHead, int *numOfPlayer
     else
         printfc("MÉGSE", p.x - utf8_strlen("MÉGSE") / 2, p.y + 4, baseForeColor);
     econio_sleep(waitsec);
-    econio_clrscr();
+    system("cls");
     menu_PrintTitle();
     if (state == newPlayer) state = mainMenu;
     else if (state == editPlayer) state = chosePlayer;
@@ -316,7 +316,7 @@ static void menu_KeyPress(Player *currentPlayer, Player **playerListHead,  int *
             else if (state == deletePlayer) state = chosePlayer;
             else if (state == rankList){
                 state = mainMenu;
-                econio_clrscr();
+                system("cls");
                 menu_PrintTitle();
             }
             else state = mainMenu;
@@ -341,6 +341,7 @@ static void menu_KeyPress(Player *currentPlayer, Player **playerListHead,  int *
                 case chosePlayer:
                     if (currentPlayer != NULL){
                         state = game;
+                        displayFirstM = true;
                         menu_PrintNavControls();
                         // Játék indítása
                         while(game_Init(currentPlayer, levelList) && currentPlayer->numOfCompletedLevels <= numOfLevels) {

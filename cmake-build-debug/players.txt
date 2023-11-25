@@ -1,3 +1,3 @@
-Marci;5;1;1;8;20;24
-Krisztián;4;1;1;8
+David;3;1;1;8
+sanyi;4;1;1;8;18
 Kálmán Bácsi;4;1;1;1;8

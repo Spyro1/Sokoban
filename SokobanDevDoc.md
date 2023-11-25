@@ -20,18 +20,18 @@
     - [Méret (Size)](#méret-size)
     - [Pozíció (Point)](#pozíció-point)
     - [Lépés (Move)](#lépés-move)
-  - [Segédkönyvtárak](#segédkönyvtárak)
-    - [Debugmalloc](#debugmalloc)
-    - [Econio](#econio)
-  - [Függvények rendszere](#függvények-rendszere)
-  - [Függvénydokumentáció](#függvénydokumentáció)
-    - [Menu.h](#menuh)
-    - [Player.h](#playerh)
-    - [Statistics.h](#statisticsh)
-    - [Game.h](#gameh)
-    - [Level.h](#levelh)
-    - [Lib.h](#libh)
-    - [Move.h](#moveh)
+- [Segédkönyvtárak](#segédkönyvtárak)
+  - [Debugmalloc](#debugmalloc)
+  - [Econio](#econio)
+- [Függvények rendszere](#függvények-rendszere)
+- [Függvénydokumentáció](#függvénydokumentáció)
+  - [Menu.h](#menuh)
+  - [Player.h](#playerh)
+  - [Statistics.h](#statisticsh)
+  - [Game.h](#gameh)
+  - [Level.h](#levelh)
+  - [Lib.h](#libh)
+  - [Move.h](#moveh)
 
 ## Program felépítése
 
@@ -276,6 +276,7 @@ Készítők: _Czirkos Zoltán_, _Szekeres Dániel_ ·  2021.08.24.
 A Debugmalloc egy varázs-malloc(), amely képes kilistázni a felszabadítatlan területeket, és ezzel megkönnyíti a hibakeresést. Bizonyos keretek között a túlindexelést is tudja ellenőrizni.  
 
 Forrás: [INFOC - Debugmalloc, memóriakezelés](https://infoc.eet.bme.hu/debugmalloc/#5)
+
 ### Econio
 Készítő: _Czirkos Zoltán_ ·  2022.09.21.
 
