@@ -25,4 +25,4 @@ add_executable(sokoban2 src/main.c
         src/lib.c
         headers/lib.h
 )
-#target_compile_options(sokoban2 PRIVATE -Wall -Werror)
+target_compile_options(sokoban2 PRIVATE -Wall -Werror)
