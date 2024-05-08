@@ -1,6 +1,6 @@
 # Szokoban - Programozói dokumentáció
 
-> Készítette: Szenes Mártons
+> Készítette: Szenes Márton, 2023. December
 
 ---
 
